@@ -1,6 +1,7 @@
 { open Parser }
 
 let char_lit = ['a'-'z' 'A'-'Z']?
+let int_lit = ['0'-'9']+
 let string_lit = ['a'-'z' 'A'-'Z']*
 let frac_lit = '$'(int_lit'/'int_lit | int_lit)'$'
 let id = ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*
