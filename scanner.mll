@@ -53,14 +53,14 @@ rule token = parse
 | "rhythm" { DATATYPE("rhythm") }
 
 
-| int_lit as lxm { INT_LIT(int_of_string lxm) }
-| string_lit as lxm { STRING_LIT(lxm) }
-| frac_lit as lxm { FRAC_LIT(lxm) }
-| id as lxm { ID(lxm) }
-| rhythm as lxm { RHYTHM(lxm) }
-| chord as lxm { CHORD(lxm) }
-| track as lxm { TRACK(lxm) }
-| composition as lxm { COMPOSITION(lxm) }
+| int_lit as lit { INT_LIT(int_of_string lit) }
+| string_lit as lxm { STRING_LIT(lit) }
+| frac_lit as lxm { FRAC_LIT(lit) }
+| id as lit { ID(lit) }
+| rhythm as lit { RHYTHM(lit) }
+| chord as lit { CHORD(lit) }
+| track as lit { TRACK(lit) }
+| composition as lit { COMPOSITION(lit) }
 | eof { EOF }
 | _ as char { raise (Failure("illegal character " ^ Char.escaped char)) }
 
