@@ -3,13 +3,13 @@
 let char_lit = ['a'-'z' 'A'-'Z']?
 let int_lit = ['0'-'9']+
 let string_lit = ['a'-'z' 'A'-'Z']*
-let frac_lit = '$'(int_lit'/'int_lit | int_lit)'$'
+let frac_lit = '$'(int_lit '/' int_lit | int_lit)'$'
 let id = ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*
-let rhythm = '['((int_lit',')*int_lit)?']'
-let pd_tuple = '('int_lit','duration')'
-let chord = '['((pd_tuple',')*pd_tuple)?']'
-let track = '['((chord',')*chord)?']'
-let composition = '['((track',')*track)?']'
+let rhythm = '['((int_lit ',' )* int_lit)? ']'
+let pd_tuple = '(' int_lit ',' frac_lit ')'
+let chord = '[' ((pd_tuple ',' )*pd_tuple)? ']'
+let track = '[' ((chord ',' )*chord)? ']'
+let composition = '[' ((track ',' )*track)? ']'
 
 rule token = parse
   [' ' '\t' '\r' '\n'] { token lexbuf } (* Whitespace *)
