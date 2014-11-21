@@ -1,0 +1,43 @@
+int i_glob;
+double d_glob;
+boolean b_glob;
+pitch p_glob;
+sound s_glob;
+
+void main() {
+	i_glob = 1;
+	d_glob = 1.0;
+	b_glob = true;
+	p_glob = A1;
+	s_glob = |A1|:0.25:100;
+	
+	//Globals
+	print(i_glob);
+	print(d_glob);
+	print(b_glob);
+	print(p_glob);
+	print(s_glob);
+	
+	//Locals
+	printlocs();
+}
+
+void printlocs() {
+	int i_loc;
+	double d_loc;
+	boolean b_loc;
+	pitch p_loc;
+	sound s_loc;
+	
+	i_loc = 2;
+	d_loc = 2.0;
+	b_loc = false;
+	p_loc = A2;
+	s_loc = |A2|:0.125:50;
+	
+	print(i_loc);
+	print(d_loc);
+	print(b_loc);
+	print(p_loc);
+	print(s_loc);
+}

@@ -1,0 +1,18 @@
+#!/bin/bash
+#./lullabtye MyMusic.llb MyMusicMidi.mid
+if [ $# -gt 0 ] && [ $# -lt 3 ]
+then
+	#java exits on 
+	touch bytecode
+	echo 'x' > bytecode
+	./interpret < $1
+
+	if [ ! -z $2 ]
+	then 
+		java -cp jfugue-4.0.3.jar:. BytecodeTranslator bytecode $2
+	else
+		java -cp jfugue-4.0.3.jar:. BytecodeTranslator bytecode llb-write.mid
+	fi
+else
+	echo "./lullabyte <*.llb> <(optional) *.mid>"
+fi
