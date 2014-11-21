@@ -17,8 +17,6 @@ rule token = parse
 | ')'      { RPAREN }
 | '{'      { LBRACE }
 | '}'      { RBRACE }
-| '['      { LBRACK }
-| ']'	   { RBRACK }
 | ';'      { SEMI }
 | ','      { COMMA }
 | '+'      { PLUS }
@@ -40,6 +38,8 @@ rule token = parse
 | "for"    { FOR }
 | "while"  { WHILE }
 | "return" { RETURN }
+
+| "true|false" as lxm { BOOLEAN_LIT(bool_of_string lxm) }
 
 | "int"    { DATATYPE("int") }                      (* Types *)
 | "char"   { DATATYPE("char") }
