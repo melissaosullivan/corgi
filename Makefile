@@ -9,8 +9,8 @@ all:
 	ocamlc -c scanner.ml; 
 	ocamlc -c parser.ml;
 	# ocamlc -c helper.ml;
-	# ocamlc -c interpreter.ml;
-	# ocamlc -o interpret helper.cmo ast.cmo parser.cmo scanner.cmo interpreter.cmo;
+	ocamlc -c interpreter.ml;
+	ocamlc -o interpret ast.cmo parser.cmo scanner.cmo interpreter.cmo;
 
 clean:
 	rm -rf *.cmo

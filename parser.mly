@@ -2,7 +2,7 @@
 
 %token SEMI LPAREN RPAREN LBRACE RBRACE COMMA
 %token PLUS MINUS TIMES DIVIDE ASSIGN
-%token EQ NEQ LT LEQ GT GEQ
+%token EQ NEQ LT LEQ GT GEQ DOLLAR
 %token RETURN IF ELIF ELSE FOR WHILE 
 
 %token <string> ID
@@ -11,6 +11,7 @@
 %token <bool> BOOLEAN_LIT
 %token <string> FRAC_LIT
 %token <string> STRING_LIT
+%token <string> RHYTHM
 %token <string> CHORD
 %token <string> TRACK
 %token <string> COMPOSITION
@@ -19,6 +20,7 @@
 %nonassoc NOELSE
 %nonassoc ELSE
 %right ASSIGN
+%right DOLLAR
 %left EQ NEQ
 %left LT GT LEQ GEQ
 %left PLUS MINUS
@@ -47,15 +49,18 @@ formals_opt:
   | formal_list   { List.rev $1 }
 
 formal_list:
-    ID                   { [$1] }
-  | formal_list COMMA ID { $3 :: $1 }
+    pdecl                { [$1] }
+  | formal_list COMMA pdecl { $3 :: $1 }
+
+pdecl:
+  DATATYPE ID { {pname = $2; ptype = $1} }
 
 vdecl_list:
     /* nothing */    { [] }
   | vdecl_list vdecl { $2 :: $1 }
 
 vdecl:
-   DATATYPE ID SEMI { $2 }
+   DATATYPE ID SEMI { {vname = $2; vtype = $1} }
 
 stmt_list:
     /* nothing */  { [] }
@@ -65,18 +70,22 @@ stmt:
     expr SEMI { Expr($1) }
   | RETURN expr SEMI { Return($2) }
   | LBRACE stmt_list RBRACE { Block(List.rev $2) }
-  | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
-  | IF LPAREN expr RPAREN stmt ELSE stmt    { If($3, $5, $7) }
+  | IF LPAREN expr RPAREN stmt elifs %prec NOELSE { If($3, $5, $6, Block([])) }
+  | IF LPAREN expr RPAREN stmt elifs ELSE stmt    { If($3, $5, $6, $8) }
   | FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN stmt
      { For($3, $5, $7, $9) }
   | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
+
+elifs:
+  /* nothing */{ [] }
+  | elifs ELIF LPAREN expr RPAREN stmt { ($4, $6) :: $1 }
 
 expr_opt:
     /* nothing */ { Noexpr }
   | expr          { $1 }
 
 expr:
-    LITERAL          { Literal($1) }
+    INT_LIT          { Literal($1) }
   | ID               { Id($1) }
   | expr PLUS   expr { Binop($1, Add,   $3) }
   | expr MINUS  expr { Binop($1, Sub,   $3) }

@@ -40,7 +40,7 @@ rule token = parse
 | "while"  { WHILE }
 | "return" { RETURN }
 
-| "true|false" as lxm { BOOLEAN_LIT(bool_of_string lxm) }
+| "true|false" as lit { BOOLEAN_LIT(bool_of_string lit) }
 
 | "int"    { DATATYPE("int") }                      (* Types *)
 | "char"   { DATATYPE("char") }
@@ -55,8 +55,8 @@ rule token = parse
 
 
 | int_lit as lit { INT_LIT(int_of_string lit) }
-| string_lit as lxm { STRING_LIT(lit) }
-| frac_lit as lxm { FRAC_LIT(lit) }
+| string_lit as lit { STRING_LIT(lit) }
+| frac_lit as lit { FRAC_LIT(lit) }
 | id as lit { ID(lit) }
 | rhythm as lit { RHYTHM(lit) }
 | chord as lit { CHORD(lit) }
