@@ -18,7 +18,7 @@
 %token EOF
 
 %nonassoc NOELSE
-%nonassoc ELSE
+%nonassoc ELSE ELIF
 %right ASSIGN
 %right DOLLAR
 %left EQ NEQ
