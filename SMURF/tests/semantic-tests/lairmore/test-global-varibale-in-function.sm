@@ -1,5 +1,0 @@
-f :: Int -> Int
-y = 1
-f x = y
-z = f 0
-main = []

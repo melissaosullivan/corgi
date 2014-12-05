@@ -1,2 +1,0 @@
-PASSED SEMANTIC CHECKS
-Fatal error: exception Values.Interp_error("Beat must be a power of 2 between 1 & 16")

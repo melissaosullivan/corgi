@@ -1,7 +1,0 @@
-/* Basic polymorphic type */
-
-
-a = 3
-a :: b
-
-main = []

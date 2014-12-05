@@ -1,5 +1,0 @@
-
-ident :: a -> a 
-ident x = x
-y = ident 1
-main = []

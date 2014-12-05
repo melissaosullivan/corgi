@@ -1,5 +1,0 @@
-/* All variables in pattern list must be unique */
-
-f a:rest [[[a]]] = 56
-
-main = []

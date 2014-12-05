@@ -1,3 +1,0 @@
-/* Testing how empty lists are treated by interpreter */
-
-main = [] : [(2,0)$4]
