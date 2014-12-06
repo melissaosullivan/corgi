@@ -1,8 +1,12 @@
 type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq
 
 type expr =
-    Literal of int
+    Bool_Lit of bool 
+  | Int_Lit of int 
+  | String_Lit of string
+  | Frac_Lit of int * int 
   | Id of string
+  | Array_Lit of expr list
   | Binop of expr * op * expr
   | Assign of string * expr
   | Call of string * expr list

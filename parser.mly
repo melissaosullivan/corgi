@@ -85,7 +85,10 @@ expr_opt:
   | expr          { $1 }
 
 expr:
-    INT_LIT          { Literal($1) }
+    INT_LIT          { Int_Literal($1) }
+  | BOOLEAN_LIT      { Boolean_Literal($1) }
+  | STRING_LIT       { String_Literal($1) }
+  | FRAC_LIT         { Frac_Literal($1) }
   | ID               { Id($1) }
   | expr PLUS   expr { Binop($1, Add,   $3) }
   | expr MINUS  expr { Binop($1, Sub,   $3) }
@@ -100,6 +103,22 @@ expr:
   | ID ASSIGN expr   { Assign($1, $3) }
   | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
   | LPAREN expr RPAREN { $2 }
+
+literal_expr:
+  LBRACKET literal_list RBRACKET { Array_Literal($1) }
+  | DOLLAR literal DIVIDE literal DOLLAR {Frac_Literal($2, $4)}
+  | literal { $1 }
+
+literal_list:
+  /* nothing */ { [] }
+  | literal { $1 }
+  | literal COMMA literal_list {$3 :: $1}
+
+literal:
+    BOOL_LIT   { Bool_Literal($1) }
+  | INT_LIT    { Int_Literal($1) }
+  | STRING_LIT { String_Literal($1) }
+
 
 actuals_opt:
     /* nothing */ { [] }

@@ -1,15 +1,20 @@
 { open Parser }
 
+
+(* regular definitions *)
+
 let char_lit = ['a'-'z' 'A'-'Z']?
 let int_lit = ['0'-'9']+
 let string_lit = ['a'-'z' 'A'-'Z']*
 let frac_lit = '$'(int_lit '/' int_lit | int_lit)'$'
 let id = ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*
-let rhythm = '['((int_lit ',' )* int_lit)? ']'
+(*let rhythm = '['((int_lit ',' )* int_lit)? ']'
 let pd_tuple = '(' int_lit ',' frac_lit ')'
 let chord = '[' ((pd_tuple ',' )*pd_tuple)? ']'
 let track = '[' ((chord ',' )*chord)? ']'
-let composition = '[' ((track ',' )*track)? ']'
+let composition = '[' ((track ',' )*track)? ']'*)
+let array_content = (char_lit | int_lit | string_lit | frac_lit | id)
+let array_lit = '['((array_content ',' )* array_content)? ']'
 
 rule token = parse
   [' ' '\t' '\r' '\n'] { token lexbuf } (* Whitespace *)
@@ -40,28 +45,23 @@ rule token = parse
 | "while"  { WHILE }
 | "return" { RETURN }
 
+| "int"    { INT }                      (* Types *)
+| "char"   { CHAR }
+| "string" { STRING }
+| "frac"   { FRAC }
+| "pitch"  { PITCH }
+| "duration" { DURATION }
+| "chord"    { CHORD }
+| "track"    { TRACK }
+| "composition" { COMPOSITION }
+| "rhythm" { RHYTHM }
+
 | "true|false" as lit { BOOLEAN_LIT(bool_of_string lit) }
-
-| "int"    { DATATYPE("int") }                      (* Types *)
-| "char"   { DATATYPE("char") }
-| "string" { DATATYPE("string") }
-| "frac"   { DATATYPE("frac") }
-| "pitch"  { DATATYPE("pitch") }
-| "duration" { DATATYPE("duration") }
-| "chord"    { DATATYPE("chord") }
-| "track"    { DATATYPE("track") }
-| "composition" { DATATYPE("composition") }
-| "rhythm" { DATATYPE("rhythm") }
-
-
 | int_lit as lit { INT_LIT(int_of_string lit) }
 | string_lit as lit { STRING_LIT(lit) }
 | frac_lit as lit { FRAC_LIT(lit) }
 | id as lit { ID(lit) }
-| rhythm as lit { RHYTHM(lit) }
-| chord as lit { CHORD(lit) }
-| track as lit { TRACK(lit) }
-| composition as lit { COMPOSITION(lit) }
+| array_lit as lit {ARRAY_LIT(lit)}
 | eof { EOF }
 | _ as char { raise (Failure("illegal character " ^ Char.escaped char)) }
 
