@@ -1,7 +1,7 @@
 all:
 	# javac -classpath ./jfugue-4.0.3.jar BytecodeTranslator.java
 	ocamllex scanner.mll;
-	ocamlyacc parser.mly; 
+	ocamlyacc -v parser.mly; 
 	ocamlc -i ast.ml > ast.mli;
 	ocamlc -c ast.mli;
 	ocamlc -c ast.ml; 

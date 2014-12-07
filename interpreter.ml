@@ -8,6 +8,7 @@ let rec string_of_expr = function
 	| Array_Lit(e) -> String.concat ", " (List.map string_of_expr e) 
 	|  Id(s) -> s 
 	|  Binop(e1, o, e2) -> "Binop here"
+	(*|  Create(t, id, rhs) -> string_of_types t ^ " " ^ id ^ " = " ^ string_of_expr rhs *)
 	|  Assign(id, rhs) -> id ^ " = " ^
 		string_of_expr rhs
 	| Call(f, e) -> 
@@ -67,4 +68,4 @@ let string_of_program (vars, funcs) =
 let _ =
 	let lexbuf = Lexing.from_channel stdin in
 	let program = Parser.program Scanner.token lexbuf in
-	print_string (string_of_program program)
+	print_string (string_of_program program) 

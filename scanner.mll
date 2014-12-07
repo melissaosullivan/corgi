@@ -5,7 +5,7 @@
 
 let char_lit = ['a'-'z' 'A'-'Z']?
 let int_lit = ['0'-'9']+
-let string_lit = ['a'-'z' 'A'-'Z']*
+let string_lit = '\"' ([^'\"']* as lxm) '\"'
 (*let frac_lit = '$'(int_lit '/' int_lit | int_lit)'$'*)
 let id = ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*
 (*let rhythm = '['((int_lit ',' )* int_lit)? ']'
@@ -61,7 +61,7 @@ rule token = parse
 
 | "true|false" as lit { BOOL_LIT(bool_of_string lit) }
 | int_lit as lit { INT_LIT(int_of_string lit) }
-| string_lit as lit { STRING_LIT(lit) }
+| '\"' ([^'\"']* as lit) '\"' { STRING_LIT(lit) }
 (*| frac_lit as lit { FRAC_LIT(lit) }*)
 | id as lit { ID(lit) }
 (*| '[' ((array_content ',' )* array_content)? as lit ']' {ARRAY_LIT(lit)}*)
