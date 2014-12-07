@@ -12,6 +12,18 @@ type expr =
   | Call of string * expr list
   | Noexpr
 
+type types = 
+    Bool_Type
+  | Int_Type
+  | Pitch_Type
+  | String_Type
+  | Frac_Type
+  | Rhythm_Type
+  | Duration_Type
+  | Chord_Type
+  | Track_Type
+  | Composition_Type
+
 type stmt =
     Block of stmt list
   | Expr of expr
@@ -22,16 +34,16 @@ type stmt =
 
 type variable = {
   vname : string;
-  vtype : string;
+  vtype : types;
 }
 
 type parameter = {
   pname : string;
-  ptype : string;
+  ptype : types;
 }
 
 type func_decl = {
-    rtype : string;
+    ret_type : types;
     fname : string;
     formals : parameter list;
     locals : variable list;

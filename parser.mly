@@ -1,20 +1,20 @@
 %{ open Ast %}
 
-%token SEMI LPAREN RPAREN LBRACE RBRACE COMMA
+%token SEMI LPAREN RPAREN LBRACE LBRACKET RBRACE RBRACKET COMMA
 %token PLUS MINUS TIMES DIVIDE ASSIGN
 %token EQ NEQ LT LEQ GT GEQ DOLLAR
 %token RETURN IF ELIF ELSE FOR WHILE 
 
+%token BOOL INT
+%token STRING RHYTHM CHORD TRACK COMPOSITION
+%token FRAC PITCH DURATION
+
 %token <string> ID
-%token <string> DATATYPE
 %token <int> INT_LIT
-%token <bool> BOOLEAN_LIT
+%token <bool> BOOL_LIT
 %token <string> FRAC_LIT
 %token <string> STRING_LIT
-%token <string> RHYTHM
-%token <string> CHORD
-%token <string> TRACK
-%token <string> COMPOSITION
+%token <string> ARRAY_LIT
 %token EOF
 
 %nonassoc NOELSE
@@ -36,9 +36,22 @@ program:
  | program vdecl { ($2 :: fst $1), snd $1 }
  | program fdecl { fst $1, ($2 :: snd $1) }
 
+types:
+  BOOL {Bool_Type}
+  | INT {Int_Type}
+  | STRING {String_Type}
+  | FRAC {Frac_Type}
+  | PITCH {Pitch_Type}
+  | DURATION {Duration_Type}
+  | RHYTHM {Rhythm_Type}
+  | CHORD {Chord_Type}
+  | TRACK {Track_Type}
+  | COMPOSITION {Composition_Type}
+
+
 fdecl:
-   DATATYPE ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
-     { { rtype = $1;
+   types ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+     { { ret_type = $1;
          fname = $2;
 	       formals = $4;
 	       locals = List.rev $7;
@@ -53,14 +66,14 @@ formal_list:
   | formal_list COMMA pdecl { $3 :: $1 }
 
 pdecl:
-  DATATYPE ID { {pname = $2; ptype = $1} }
+  types ID { {pname = $2; ptype = $1} }
 
 vdecl_list:
     /* nothing */    { [] }
   | vdecl_list vdecl { $2 :: $1 }
 
 vdecl:
-   DATATYPE ID SEMI { {vname = $2; vtype = $1} }
+   types ID SEMI { {vname = $2; vtype = $1} }
 
 stmt_list:
     /* nothing */  { [] }
@@ -85,11 +98,7 @@ expr_opt:
   | expr          { $1 }
 
 expr:
-    INT_LIT          { Int_Literal($1) }
-  | BOOLEAN_LIT      { Boolean_Literal($1) }
-  | STRING_LIT       { String_Literal($1) }
-  | FRAC_LIT         { Frac_Literal($1) }
-  | ID               { Id($1) }
+  literal_expr {$1}
   | expr PLUS   expr { Binop($1, Add,   $3) }
   | expr MINUS  expr { Binop($1, Sub,   $3) }
   | expr TIMES  expr { Binop($1, Mult,  $3) }
@@ -105,20 +114,19 @@ expr:
   | LPAREN expr RPAREN { $2 }
 
 literal_expr:
-  LBRACKET literal_list RBRACKET { Array_Literal($1) }
-  | DOLLAR literal DIVIDE literal DOLLAR {Frac_Literal($2, $4)}
+  LBRACKET literal_list RBRACKET { Array_Lit($2) }
+  | DOLLAR INT_LIT DIVIDE INT_LIT DOLLAR {Frac_Lit($2, $4)}
   | literal { $1 }
 
 literal_list:
   /* nothing */ { [] }
-  | literal { $1 }
-  | literal COMMA literal_list {$3 :: $1}
+  | literal { [$1] }
+  | literal COMMA literal_list {$1 :: $3}
 
 literal:
-    BOOL_LIT   { Bool_Literal($1) }
-  | INT_LIT    { Int_Literal($1) }
-  | STRING_LIT { String_Literal($1) }
-
+    BOOL_LIT   { Bool_Lit($1) }
+  | INT_LIT    { Int_Lit($1) }
+  | STRING_LIT { String_Lit($1) }
 
 actuals_opt:
     /* nothing */ { [] }
