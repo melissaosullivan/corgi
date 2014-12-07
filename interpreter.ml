@@ -1,7 +1,11 @@
 open Ast
 
 let rec string_of_expr = function
-		Literal(i) -> string_of_int i
+	Bool_Lit(b) -> string_of_bool b
+	| Int_Lit(i) -> string_of_int i
+	| String_Lit(s) -> s
+	| Frac_Lit(n, d) -> "$" ^ string_of_int n ^ "/" ^ string_of_int d ^ "$"
+	| Array_Lit(e) -> String.concat ", " (List.map string_of_expr e) 
 	|  Id(s) -> s 
 	|  Binop(e1, o, e2) -> "Binop here"
 	|  Assign(id, rhs) -> id ^ " = " ^
@@ -16,6 +20,18 @@ let rec string_of_expr = function
  
 let string_of_elseifs elseifs = 
 	String.concat "" (List.map (function(expr, stmt) -> string_of_expr expr ^ string_of_stmt stmt) elseifs) ^ "\n"  *)
+
+let string_of_types = function
+	Bool_Type -> "bool"
+	| Int_Type -> "int"
+	| Pitch_Type -> "pitch"
+	| String_Type -> "string"
+	| Frac_Type -> "frac"
+	| Rhythm_Type -> "rhythm"
+	| Duration_Type -> "duration"
+	| Chord_Type -> "chord"
+	| Track_Type -> "track"
+	| Composition_Type -> "composition"
 
 let rec string_of_stmt = function
 	Block(stmts) ->
@@ -35,11 +51,11 @@ let rec string_of_stmt = function
       string_of_expr e3  ^ ") " ^ string_of_stmt s
 	| While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
 
-let string_of_vdecl vdecl = vdecl.vtype ^ " " ^ vdecl.vname ^ ";\n"	
-let string_of_pdecl pdecl = pdecl.ptype ^ " " ^ pdecl.pname	
+let string_of_vdecl vdecl = string_of_types vdecl.vtype ^ " " ^ vdecl.vname ^ ";\n"	
+let string_of_pdecl pdecl = string_of_types pdecl.ptype ^ " " ^ pdecl.pname	
 
 let string_of_fdecl fdecl =
-	fdecl.rtype ^ " " ^ fdecl.fname ^ "(" ^ String.concat ", " (List.map string_of_pdecl fdecl.formals) ^ ")\n{\n" ^
+	string_of_types fdecl.ret_type ^ " " ^ fdecl.fname ^ "(" ^ String.concat ", " (List.map string_of_pdecl fdecl.formals) ^ ")\n{\n" ^
 	String.concat "" (List.map string_of_vdecl fdecl.locals) ^
 	String.concat "" (List.map string_of_stmt fdecl.body) ^
 	"}\n"
