@@ -68,6 +68,7 @@ formal_list:
 pdecl:
   types ID { {pname = $2; ptype = $1} }
 
+/* Suggested to make vdecls a statement */
 vdecl_list:
     /* nothing */    { [] }
   | vdecl_list vdecl { $2 :: $1 }
@@ -113,7 +114,6 @@ expr:
   | expr LEQ    expr { Binop($1, Leq,   $3) }
   | expr GT     expr { Binop($1, Greater,  $3) }
   | expr GEQ    expr { Binop($1, Geq,   $3) }
-  | types ID ASSIGN expr { Create($1, $2, $4)}
   | ID               { Id($1) }
   | ID ASSIGN expr   { Assign($1, $3) }
   | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
