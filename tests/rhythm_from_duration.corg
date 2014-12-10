@@ -1,2 +1,4 @@
-duration d = <1/4>;
-rhythm r = [d,d,d];
+duration d;
+d = <1/4>;
+rhythm r;
+r = [d,d,d];
