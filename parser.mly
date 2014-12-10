@@ -73,7 +73,8 @@ vdecl_list:
   | vdecl_list vdecl { $2 :: $1 }
 
 vdecl:
-   types ID SEMI { {vname = $2; vtype = $1} }
+   types ID SEMI { {vname = $2; vtype = $1; vexpr = Noexpr} }
+   | types ID ASSIGN expr SEMI { {vname = $2; vtype = $1; vexpr = $4}}
 
 stmt_list:
     /* nothing */  { [] }
@@ -98,7 +99,10 @@ expr_opt:
   | expr          { $1 }
 
 expr:
-  literal_expr {$1}
+  literal {$1}
+  | DOLLAR INT_LIT DIVIDE INT_LIT DOLLAR {Frac_Lit($2, $4)}
+  | LBRACKET expr_list RBRACKET { Array_Lit($2) }
+  | LPAREN expr COMMA expr RPAREN { Tuple($2, $4)}
   | expr PLUS   expr { Binop($1, Add,   $3) }
   | expr MINUS  expr { Binop($1, Sub,   $3) }
   | expr TIMES  expr { Binop($1, Mult,  $3) }
@@ -109,20 +113,21 @@ expr:
   | expr LEQ    expr { Binop($1, Leq,   $3) }
   | expr GT     expr { Binop($1, Greater,  $3) }
   | expr GEQ    expr { Binop($1, Geq,   $3) }
-  /*| types ID ASSIGN expr { Create($1, $2, $4)}*/
+  | types ID ASSIGN expr { Create($1, $2, $4)}
+  | ID               { Id($1) }
   | ID ASSIGN expr   { Assign($1, $3) }
   | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
   | LPAREN expr RPAREN { $2 }
 
-literal_expr:
-  LBRACKET literal_list RBRACKET { Array_Lit($2) }
+/*literal_expr:
+  LBRACKET expr_list RBRACKET { Array_Lit($2) }
   | DOLLAR INT_LIT DIVIDE INT_LIT DOLLAR {Frac_Lit($2, $4)}
-  | literal { $1 }
+  | literal { $1 }*/
 
-literal_list:
+expr_list:
   /* nothing */ { [] }
-  | literal { [$1] }
-  | literal COMMA literal_list {$1 :: $3}
+  | expr { [$1] }
+  | expr COMMA expr_list {$1 :: $3}
 
 literal:
     BOOL_LIT   { Bool_Lit($1) }

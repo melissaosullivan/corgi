@@ -1,27 +1,5 @@
 open Ast
 
-let rec string_of_expr = function
-	Bool_Lit(b) -> string_of_bool b
-	| Int_Lit(i) -> string_of_int i
-	| String_Lit(s) -> s
-	| Frac_Lit(n, d) -> "$" ^ string_of_int n ^ "/" ^ string_of_int d ^ "$"
-	| Array_Lit(e) -> String.concat ", " (List.map string_of_expr e) 
-	|  Id(s) -> s 
-	|  Binop(e1, o, e2) -> "Binop here"
-	(*|  Create(t, id, rhs) -> string_of_types t ^ " " ^ id ^ " = " ^ string_of_expr rhs *)
-	|  Assign(id, rhs) -> id ^ " = " ^
-		string_of_expr rhs
-	| Call(f, e) -> 
-		f ^ "(" ^ String.concat ", " (List.map string_of_expr e) ^ ")"
-	| Noexpr -> ""
-
-(* let string_of_elif (expr, stmt) = 
-	"elif (" ^ string_of_expr expr ^ ") { \n" ^
-	string_of_stmt stmt ^ "\n}\n" 
- 
-let string_of_elseifs elseifs = 
-	String.concat "" (List.map (function(expr, stmt) -> string_of_expr expr ^ string_of_stmt stmt) elseifs) ^ "\n"  *)
-
 let string_of_types = function
 	Bool_Type -> "bool"
 	| Int_Type -> "int"
@@ -33,6 +11,29 @@ let string_of_types = function
 	| Chord_Type -> "chord"
 	| Track_Type -> "track"
 	| Composition_Type -> "composition"
+
+let rec string_of_expr = function
+	Bool_Lit(b) -> string_of_bool b
+	| Int_Lit(i) -> string_of_int i
+	| String_Lit(s) -> s
+	| Frac_Lit(n, d) -> "$" ^ string_of_int n ^ "/" ^ string_of_int d ^ "$"
+	| Array_Lit(e) -> String.concat ", " (List.map string_of_expr e) 
+	|  Id(s) -> s 
+	|  Binop(e1, o, e2) -> "Binop here"
+	|  Create(t, id, rhs) -> string_of_types t ^ " " ^ id ^ " = " ^ string_of_expr rhs 
+	|  Assign(id, rhs) -> id ^ " = " ^
+		string_of_expr rhs
+	| Tuple(e1, e2) -> "(" ^ string_of_expr e1 ^ ", " ^ string_of_expr e2 ^ ")"
+	| Call(f, e) -> 
+		f ^ "(" ^ String.concat ", " (List.map string_of_expr e) ^ ")"
+	| Noexpr -> ""
+
+(* let string_of_elif (expr, stmt) = 
+	"elif (" ^ string_of_expr expr ^ ") { \n" ^
+	string_of_stmt stmt ^ "\n}\n" 
+ 
+let string_of_elseifs elseifs = 
+	String.concat "" (List.map (function(expr, stmt) -> string_of_expr expr ^ string_of_stmt stmt) elseifs) ^ "\n"  *)
 
 let rec string_of_stmt = function
 	Block(stmts) ->
@@ -52,7 +53,8 @@ let rec string_of_stmt = function
       string_of_expr e3  ^ ") " ^ string_of_stmt s
 	| While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
 
-let string_of_vdecl vdecl = string_of_types vdecl.vtype ^ " " ^ vdecl.vname ^ ";\n"	
+let string_of_vdecl vdecl = string_of_types vdecl.vtype ^ " " ^ vdecl.vname ^ 
+							" = " ^ string_of_expr vdecl.vexpr ^ ";\n"	
 let string_of_pdecl pdecl = string_of_types pdecl.ptype ^ " " ^ pdecl.pname	
 
 let string_of_fdecl fdecl =
