@@ -1,7 +1,1 @@
-int main() {
-pitch p1 = 4;
-pitch p2 = 5;
-duration d1 = $1/4$;
-duration d2 = $1/3$;
-chord c = [ (a, b), 2, 3, 4+6, 5, 6];
-}
+
