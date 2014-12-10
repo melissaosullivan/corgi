@@ -15,4 +15,4 @@ parser.mli
 printAst
 printer
 scanner.ml
-
+*.output
