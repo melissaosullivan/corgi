@@ -1,4 +1,6 @@
+int main() {
 duration d;
-d = <1/4>;
 rhythm r;
+d = $1/4$;
 r = [d,d,d];
+}
