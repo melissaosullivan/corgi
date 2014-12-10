@@ -1,18 +1,5 @@
 type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq
 
-type expr =
-    Bool_Lit of bool 
-  | Int_Lit of int 
-  | String_Lit of string
-  | Frac_Lit of int * int 
-  | Id of string
-  | Array_Lit of expr list
-  | Binop of expr * op * expr
-  (*| Create of types * string * expr *)
-  | Assign of string * expr
-  | Call of string * expr list
-  | Noexpr
-
 type types = 
     Bool_Type
   | Int_Type
@@ -25,6 +12,20 @@ type types =
   | Track_Type
   | Composition_Type
 
+type expr =
+    Bool_Lit of bool 
+  | Int_Lit of int 
+  | String_Lit of string
+  | Frac_Lit of int * int 
+  | Id of string
+  | Array_Lit of expr list
+  | Binop of expr * op * expr
+  | Create of types * string * expr 
+  | Assign of string * expr
+  | Call of string * expr list
+  | Tuple of expr * expr
+  | Noexpr
+
 type stmt =
     Block of stmt list
   | Expr of expr
@@ -36,6 +37,7 @@ type stmt =
 type variable = {
   vname : string;
   vtype : types;
+  vexpr : expr;
 }
 
 type parameter = {
