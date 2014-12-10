@@ -1,5 +1,5 @@
 pitch p1 = 4;
 pitch p2 = 5;
-duration d1 = <¼>;
-duration d2 = <⅛>;
+duration d1 = <1/4>;
+duration d2 = <1/8>;
 chord c = [(p1,d1), (p1,d2), (p2, d2)];
