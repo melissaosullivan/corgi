@@ -1,0 +1,3 @@
+duration d = $1/4$;
+frac f = $3/4$;
+duration fd = duration(f);
