@@ -1,22 +1,33 @@
-all:
-	# javac -classpath ./jfugue-4.0.3.jar BytecodeTranslator.java
-	ocamllex scanner.mll;
-	ocamlyacc -v -q parser.mly; 
-	ocamlc -i ast.ml > ast.mli;
-	ocamlc -c ast.mli;
-	ocamlc -c ast.ml; 
-	ocamlc -c parser.mli; 
-	ocamlc -c scanner.ml; 
-	ocamlc -c parser.ml;
-	ocamlc -c interpreter.ml;
-	ocamlc -o interpret ast.cmo parser.cmo scanner.cmo interpreter.cmo;
+OBJS = ast.cmo symtab.cmo parser.cmo scanner.cmo interpreter.cmo 
 
-clean:
-	rm -rf *.cmo
-	rm -rf *.cmi
-	rm -rf *.mli
-	rm -rf interpret
-	rm -rf bytecode
-	rm -rf *.mid
-	rm -rf *.output
-	rm -rf scanner.ml
+interpreter: $(OBJS)
+	ocamlc -o interpreter -g $(OBJS)
+
+scanner.ml: scanner.mll
+	ocamllex scanner.mll
+
+parser.ml parser.mli : parser.mly
+	ocamlyacc parser.mly
+
+%.cmo : %.ml
+	ocamlc -g -c $<
+
+%.cmi : %.mli
+	ocamlc -g -c $<
+
+.PHONY : clean
+clean :
+	rm -rf interpreter parser.ml parser.mli scanner.ml \
+	*.cmo *.cmi
+
+ast.cmo: 
+ast.cmx: 
+symtab.cmo: ast.cmo
+symtab.cmx: ast.cmx
+interpreter.cmo: scanner.cmo parser.cmi ast.cmo symtab.cmo 
+interpreter.cmx: scanner.cmx parser.cmx ast.cmx symtab.cmx
+parser.cmo: ast.cmo parser.cmi 
+parser.cmx: ast.cmx parser.cmi 
+scanner.cmo: parser.cmi 
+scanner.cmx: parser.cmx 
+parser.cmi: ast.cmo 
