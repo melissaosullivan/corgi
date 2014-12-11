@@ -1,3 +1,4 @@
 int main() {
-duration d = $1/4$;
+duration d;
+d = $1/4$;
 }
