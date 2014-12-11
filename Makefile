@@ -1,5 +1,5 @@
-OBJS = ast.cmo symtab.cmo parser.cmo scanner.cmo interpreter.cmo 
-#OBJS = ast.cmo parser.cmo scanner.cmo interpreter.cmo 
+#OBJS = ast.cmo symtab.cmo parser.cmo scanner.cmo interpreter.cmo 
+OBJS = ast.cmo symtab.cmo check.cmo parser.cmo scanner.cmo interpreter.cmo 
 
 interpreter: $(OBJS)
 	ocamlc -o interpreter -g $(OBJS)
@@ -18,14 +18,16 @@ parser.ml parser.mli : parser.mly
 
 .PHONY : clean
 clean :
-	rm -rf interpreter parser.ml parser.mli scanner.ml \
-	*.cmo *.cmi
+	rm -rf interpreter parser.ml parser.mli scanner.ml *.cmo *.cmi
 
 ast.cmo: 
 ast.cmx: 
 
 symtab.cmo: ast.cmo
 symtab.cmx: ast.cmx
+
+check.cmo: symtab.cmo
+check.cmx: symtab.cmx
 
 interpreter.cmo: scanner.cmo parser.cmi ast.cmo symtab.cmo 
 interpreter.cmx: scanner.cmx parser.cmx ast.cmx symtab.cmx
