@@ -88,7 +88,7 @@ vdecl_list:
     /* nothing */    { [] }
   | vdecl_list vdecl SEMI { $2 :: $1 }
 
-/*
+/* Was here before
 vdecl:
    types ID { ({vname = $2; vtype = $1; vexpr = Noexpr}) }
    | types ID ASSIGN expr { {vname = $2; vtype = $1; vexpr = $4}}
