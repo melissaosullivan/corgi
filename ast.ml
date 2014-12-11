@@ -1,5 +1,6 @@
 type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq
 
+(*
 type types = 
     Bool_Type
   | Int_Type
@@ -11,6 +12,24 @@ type types =
   | Chord_Type
   | Track_Type
   | Composition_Type
+*)
+
+type prim_type =
+    Bool_Type
+  | Int_Type
+  | Pitch_Type
+  | String_Type
+  | Frac_Type
+  | Rhythm_Type
+  | Duration_Type
+  | Chord_Type
+  | Track_Type
+  | Composition_Type
+  
+type types = 
+  Corgi_Prim of prim_type
+
+type var = string * types
 
 type expr =
     Bool_Lit of bool 
@@ -27,12 +46,18 @@ type expr =
   | Noexpr
 
 type stmt =
-    Block of stmt list
+    Block of block
   | Expr of expr
   | Return of expr
-  | If of expr * stmt * (expr * stmt) list * stmt
-  | For of expr * expr * expr * stmt
-  | While of expr * stmt
+  | If of expr * block * block
+  | For of expr * expr * expr * block
+  | While of expr * block
+
+and block = {
+    locals : var list;
+    statements: stmt list;
+    block_id: int;
+}
 
 type variable = {
   vname : string;
@@ -48,18 +73,39 @@ type parameter = {
 type func = {
     ret_type : types;
     fname : string;
-    formals : parameter list;
-    locals : variable list;
-    body : stmt list;
+    formals : var list;
+    fblock : block;
   }
   
+type program = var list * func list
+
+(* Added from Lorax *)
+
+type scope_var_decl = string * types * int
+
+type scope_func_decl = string * types * types list * int
+
 type decl = 
     Func_Decl of scope_func_decl
   | Var_Decl of scope_var_decl
 
-type program = variable list * func list
 
+let string_of_prim_type = function
+    Bool_Type -> "bool"
+  | Int_Type -> "int"
+  | Pitch_Type -> "pitch"
+  | String_Type -> "string"
+  | Frac_Type -> "frac"
+  | Rhythm_Type -> "rhythm"
+  | Duration_Type -> "duration"
+  | Chord_Type -> "chord"
+  | Track_Type -> "track"
+  | Composition_Type -> "composition"
 
+let string_of_types = function
+  Corgi_Prim(t) -> string_of_prim_type t
+
+(*
 let string_of_types = function
   Bool_Type -> "bool"
   | Int_Type -> "int"
@@ -71,6 +117,7 @@ let string_of_types = function
   | Chord_Type -> "chord"
   | Track_Type -> "track"
   | Composition_Type -> "composition"
+*)
 
 let string_of_binop = function
     Add -> "+" 
@@ -111,33 +158,50 @@ let rec string_of_expr = function
 let string_of_elseifs elseifs = 
   String.concat "" (List.map (function(expr, stmt) -> string_of_expr expr ^ string_of_stmt stmt) elseifs) ^ "\n"  *)
 
-let rec string_of_stmt = function
-  Block(stmts) ->
-    "{\n" ^ String.concat "" (List.map string_of_stmt stmts) ^ "}\n"
-  | Expr(expr) -> string_of_expr expr ^ ";\n"
-  | Return(expr) -> "return " ^ string_of_expr expr ^ ";\n"
-  | If(e, s, ei, Block([])) -> "if (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s ^
-    String.concat "" (List.map (function(expr, stmt) -> 
-      "elif (" ^ string_of_expr expr ^ ") {\n" ^ string_of_stmt stmt ^ "\n}\n") ei) ^ "\n" 
-  | If(e, s1, ei, s2) -> "if (" ^ string_of_expr e ^ ")\n" ^
-    string_of_stmt s1 ^
-    String.concat "" (List.map (function(expr, stmt) -> 
-      "elif (" ^ string_of_expr expr ^ ") {\n" ^ string_of_stmt stmt ^ "\n}\n") ei) ^ "\n" ^
-    "else\n" ^ string_of_stmt s2
-  | For(e1, e2, e3, s) ->
-      "for (" ^ string_of_expr e1  ^ " ; " ^ string_of_expr e2 ^ " ; " ^
-      string_of_expr e3  ^ ") " ^ string_of_stmt s
-  | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
-
+(*
 let string_of_vdecl vdecl = string_of_types vdecl.vtype ^ " " ^ vdecl.vname ^ 
               " = " ^ string_of_expr vdecl.vexpr ^ ";\n"  
-let string_of_pdecl pdecl = string_of_types pdecl.ptype ^ " " ^ pdecl.pname 
+*)
+let string_of_vdecl v =
+  (match (snd v) with
+      Corgi_Prim(t) -> string_of_prim_type t ^ " " ^ fst v
+  )
 
+
+let rec string_of_stmt = function
+    Block(b) -> string_of_block b
+  | Expr(expr) -> string_of_expr expr ^ ";\n";
+  | Return(expr) -> "return " ^ string_of_expr expr ^ ";\n";
+  | If(e, b1, b2) -> 
+    (match b2.statements with
+        [] -> "if (" ^ string_of_expr e ^ ")\n" ^ string_of_block b1
+      | _  -> "if (" ^ string_of_expr e ^ ")\n" ^
+              string_of_block b1 ^ "else\n" ^ string_of_block b1)
+  | For(e1, e2, e3, b) ->
+      "for (" ^ string_of_expr e1  ^ " ; " ^ string_of_expr e2 ^ " ; " ^
+      string_of_expr e3  ^ ") " ^ string_of_block b
+  | While(e, b) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_block b
+
+and string_of_block (b:block) =
+  "{\n" ^
+  String.concat ";\n" (List.map string_of_vdecl b.locals) ^ (if (List.length b.locals) > 0 then ";\n" else "") ^
+  String.concat "" (List.map string_of_stmt b.statements) ^
+  "}\n"
+
+
+(*
 let string_of_fdecl fdecl =
-  string_of_types fdecl.ret_type ^ " " ^ fdecl.fname ^ "(" ^ String.concat ", " (List.map string_of_pdecl fdecl.formals) ^ ")\n{\n" ^
+  string_of_types fdecl.ret_type ^ " " ^ 
+  fdecl.fname ^ "(" ^ String.concat ", " (List.map string_of_vdecl fdecl.formals) ^ ")\n{\n" ^
   String.concat "" (List.map string_of_vdecl fdecl.locals) ^
   String.concat "" (List.map string_of_stmt fdecl.body) ^
-  "}\n"
+  "}\n" 
+*)
+
+let string_of_fdecl fdecl =
+  (string_of_types fdecl.ret_type) ^ " " ^ 
+  fdecl.fname ^ "(" ^ String.concat ", " (List.map string_of_vdecl fdecl.formals) ^ ")\n" ^
+  string_of_block fdecl.fblock
 
 let string_of_program (vars, funcs) =
   String.concat "" (List.map string_of_vdecl (List.rev vars) ) ^ "\n" ^

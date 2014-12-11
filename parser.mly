@@ -88,23 +88,29 @@ vdecl_list:
     /* nothing */    { [] }
   | vdecl_list vdecl SEMI { $2 :: $1 }
 
+/*
 vdecl:
-   types ID { {vname = $2; vtype = $1; vexpr = Noexpr} }
+   types ID { ({vname = $2; vtype = $1; vexpr = Noexpr}) }
    | types ID ASSIGN expr { {vname = $2; vtype = $1; vexpr = $4}}
+*/
+vdecl:
+  types ID { ($2, $1) }
 
 stmt_list:
     /* nothing */  { [] }
   | stmt_list stmt { $2 :: $1 }
 
 stmt:
-    expr SEMI { Expr($1) }
+    block { Block($1) }
+  | expr SEMI { Expr($1) }
   | RETURN expr SEMI { Return($2) }
-  | LBRACE stmt_list RBRACE { Block(List.rev $2) }
-  | IF LPAREN expr RPAREN stmt elifs %prec NOELSE { If($3, $5, $6, Block([])) }
-  | IF LPAREN expr RPAREN stmt elifs ELSE stmt    { If($3, $5, $6, $8) }
-  | FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN stmt
-     { For($3, $5, $7, $9) }
-  | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
+  | IF LPAREN expr RPAREN block %prec NOELSE { If($3, $5, {locals = []; statements = []; block_id = inc_block_id ()}) }
+  | IF LPAREN expr RPAREN block ELSE block { If($3, $5, $7) }
+  | FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN block { For($3, $5, $7, $9) }
+  | WHILE LPAREN expr RPAREN block { While($3, $5) }
+
+block:
+  LBRACE stmt_list RBRACE { {locals = []; statements = List.rev $2; block_id = inc_block_id ()} }
 
 elifs:
   /* nothing */{ [] }
@@ -119,6 +125,7 @@ expr:
   | DOLLAR INT_LIT DIVIDE INT_LIT DOLLAR {Frac_Lit($2, $4)}
   | LBRACKET expr_list RBRACKET { Array_Lit($2) }
   | LPAREN expr COMMA expr RPAREN { Tuple($2, $4)}
+  | ID               { Id($1) }
   | expr PLUS   expr { Binop($1, Add,   $3) }
   | expr MINUS  expr { Binop($1, Sub,   $3) }
   | expr TIMES  expr { Binop($1, Mult,  $3) }
@@ -129,15 +136,9 @@ expr:
   | expr LEQ    expr { Binop($1, Leq,   $3) }
   | expr GT     expr { Binop($1, Greater,  $3) }
   | expr GEQ    expr { Binop($1, Geq,   $3) }
-  | ID               { Id($1) }
   | ID ASSIGN expr   { Assign($1, $3) }
   | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
   | LPAREN expr RPAREN { $2 }
-
-/*literal_expr:
-  LBRACKET expr_list RBRACKET { Array_Lit($2) }
-  | DOLLAR INT_LIT DIVIDE INT_LIT DOLLAR {Frac_Lit($2, $4)}
-  | literal { $1 }*/
 
 expr_list:
   /* nothing */ { [] }
