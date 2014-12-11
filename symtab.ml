@@ -17,7 +17,6 @@ let rec symtab_add_decl (name:string) (decl:decl) env =
     if SymTable.mem to_find table then raise(Failure("symbol " ^ name ^ " declared twice in same scope"))
     else ((SymTable.add to_find decl table), scope)
 
-
 (* 
  * recursively add list of variables to the symbol table along with the scope of
  * the block in which they were declared
@@ -73,4 +72,3 @@ let symtab_of_program (p:Ast.program) =
     let env = add_builtins (SymTable.empty, 0) in
     let env = symtab_add_vars (fst p) env in
     symtab_add_funcs (snd p) env
-
