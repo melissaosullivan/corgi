@@ -2,7 +2,6 @@
 
 tests=$(find tests -name *\.corg)
 had_failures="0"
-tmp_file=".test_out"
 suffix=".out"
 
 get_test_name () {
@@ -31,11 +30,11 @@ do
         echo
 
         printf "Recieved: {\n"
-        cat "$.test_out"
+        cat ".test_out"
         printf "}\n"
         echo
     fi
 done
 
-rm -f "$tmp_file"
+rm -f ".test_out"
 exit $had_failures
