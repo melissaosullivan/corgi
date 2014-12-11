@@ -1,5 +1,7 @@
 type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq
 
+type uop = Neg | Not | At
+
 (*
 type types = 
     Bool_Type
