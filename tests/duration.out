@@ -1,0 +1,6 @@
+
+int main()
+{
+duration d = $1/4$;
+}
+

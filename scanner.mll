@@ -1,4 +1,5 @@
-{ open Parser }
+{ open Parser 
+  exception ParsingError of string }
 
 
 (* regular definitions *)
@@ -76,4 +77,5 @@ and comment = parse
 
 and comments = parse
   "*/" { token lexbuf }
+| eof { raise (ParsingError("unterminated comment"))}
 | _    { comments lexbuf }
