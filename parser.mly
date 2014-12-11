@@ -62,20 +62,17 @@ formals_opt:
   | formal_list   { List.rev $1 }
 
 formal_list:
-    pdecl                { [$1] }
-  | formal_list COMMA pdecl { $3 :: $1 }
-
-pdecl:
-  types ID { {pname = $2; ptype = $1} }
+    vdecl                { [$1] }
+  | formal_list COMMA vdecl { $3 :: $1 }
 
 /* Suggested to make vdecls a statement */
 vdecl_list:
     /* nothing */    { [] }
-  | vdecl_list vdecl { $2 :: $1 }
+  | vdecl_list vdecl SEMI { $2 :: $1 }
 
 vdecl:
-   types ID SEMI { {vname = $2; vtype = $1; vexpr = Noexpr} }
-   | types ID ASSIGN expr SEMI { {vname = $2; vtype = $1; vexpr = $4}}
+   types ID { {vname = $2; vtype = $1; vexpr = Noexpr} }
+   | types ID ASSIGN expr { {vname = $2; vtype = $1; vexpr = $4}}
 
 stmt_list:
     /* nothing */  { [] }
