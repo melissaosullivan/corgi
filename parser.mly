@@ -1,4 +1,11 @@
-%{ open Ast %}
+%{ open Ast 
+
+let scope_id = ref 1
+
+let inc_block_id (u:unit) =
+    let x = scope_id.contents in
+    scope_id := x + 1; x
+%}
 
 %token SEMI LPAREN RPAREN LBRACE LBRACKET RBRACE RBRACKET COMMA
 %token PLUS MINUS TIMES DIVIDE ASSIGN
@@ -36,8 +43,9 @@ program:
  | program vdecl { ($2 :: fst $1), snd $1 }
  | program fdecl { fst $1, ($2 :: snd $1) }
 
+/*
 types:
-  BOOL {Bool_Type}
+    BOOL {Bool_Type}
   | INT {Int_Type}
   | STRING {String_Type}
   | FRAC {Frac_Type}
@@ -47,35 +55,42 @@ types:
   | CHORD {Chord_Type}
   | TRACK {Track_Type}
   | COMPOSITION {Composition_Type}
-
+*/
+types:
+    BOOL {Corgi_Prim(Bool_Type)}
+  | INT {Corgi_Prim(Int_Type)}
+  | STRING {Corgi_Prim(String_Type)}
+  | FRAC {Corgi_Prim(Frac_Type)}
+  | PITCH {Corgi_Prim(Pitch_Type)}
+  | DURATION {Corgi_Prim(Duration_Type)}
+  | RHYTHM {Corgi_Prim(Rhythm_Type)}
+  | CHORD {Corgi_Prim(Chord_Type)}
+  | TRACK {Corgi_Prim(Track_Type)}
+  | COMPOSITION {Corgi_Prim(Composition_Type)}
 
 fdecl:
    types ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
      { { ret_type = $1;
          fname = $2;
 	       formals = $4;
-	       locals = List.rev $7;
-	       body = List.rev $8 } }
+	       fblock = {locals = List.rev $7; statements = List.rev $8; block_id = inc_block_id ()} } }
 
 formals_opt:
     /* nothing */ { [] }
   | formal_list   { List.rev $1 }
 
 formal_list:
-    pdecl                { [$1] }
-  | formal_list COMMA pdecl { $3 :: $1 }
-
-pdecl:
-  types ID { {pname = $2; ptype = $1} }
+    vdecl                { [$1] }
+  | formal_list COMMA vdecl { $3 :: $1 }
 
 /* Suggested to make vdecls a statement */
 vdecl_list:
     /* nothing */    { [] }
-  | vdecl_list vdecl { $2 :: $1 }
+  | vdecl_list vdecl SEMI { $2 :: $1 }
 
 vdecl:
-   types ID SEMI { {vname = $2; vtype = $1; vexpr = Noexpr} }
-   | types ID ASSIGN expr SEMI { {vname = $2; vtype = $1; vexpr = $4}}
+   types ID { {vname = $2; vtype = $1; vexpr = Noexpr} }
+   | types ID ASSIGN expr { {vname = $2; vtype = $1; vexpr = $4}}
 
 stmt_list:
     /* nothing */  { [] }
