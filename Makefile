@@ -20,6 +20,9 @@ parser.ml parser.mli : parser.mly
 clean :
 	rm -rf interpreter parser.ml parser.mli scanner.ml *.cmo *.cmi
 
+all : clean interpreter
+
+
 ast.cmo: 
 ast.cmx: 
 
@@ -29,8 +32,8 @@ symtab.cmx: ast.cmx
 check.cmo: symtab.cmo
 check.cmx: symtab.cmx
 
-interpreter.cmo: scanner.cmo parser.cmi ast.cmo symtab.cmo 
-interpreter.cmx: scanner.cmx parser.cmx ast.cmx symtab.cmx
+interpreter.cmo: scanner.cmo parser.cmi ast.cmo symtab.cmo check.cmo 
+interpreter.cmx: scanner.cmx parser.cmx ast.cmx symtab.cmx check.cmx
 interpreter.cmo: scanner.cmo parser.cmi ast.cmo
 interpreter.cmx: scanner.cmx parser.cmx ast.cmx
 
