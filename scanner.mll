@@ -34,6 +34,9 @@ rule token = parse
 | '*'      { TIMES }
 | '/'      { DIVIDE }
 | '='      { ASSIGN }
+| "!"      { NOT } 
+| "&&"     { AND }
+| "||"     { OR } 
 | "=="     { EQ }
 | "!="     { NEQ }
 | '<'      { LT }
@@ -41,6 +44,7 @@ rule token = parse
 | '>'      { GT }
 | ">="     { GEQ }
 | '$'      { DOLLAR }
+| "%"      { MOD } 
 
 | "if"     { IF }                       (* Keywords *)
 | "elif"   { ELIF }
@@ -48,6 +52,8 @@ rule token = parse
 | "for"    { FOR }
 | "while"  { WHILE }
 | "return" { RETURN }
+| "null"   { NULL }
+
 
 | "int"    { INT }                      (* Types *)
 (*| "char"   { CHAR }*)

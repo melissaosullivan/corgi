@@ -1,6 +1,6 @@
-type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq
+type op = Add | Sub | Mult | Div | Mod | Equal | Neq | Less | Leq | Greater | Geq | And | Or
 
-type uop = Neg | Not | At
+type uop = Neg | Not
 
 (*
 type types = 
@@ -41,10 +41,12 @@ type expr =
   | Id of string
   | Array_Lit of expr list
   | Binop of expr * op * expr
+  | Unop of expr * uop
   | Create of types * string * expr 
   | Assign of string * expr
   | Call of string * expr list
   | Tuple of expr * expr
+  | Null_Lit
   | Noexpr
 
 type stmt =
@@ -107,31 +109,24 @@ let string_of_prim_type = function
 let string_of_types = function
   Corgi_Prim(t) -> string_of_prim_type t
 
-(*
-let string_of_types = function
-  Bool_Type -> "bool"
-  | Int_Type -> "int"
-  | Pitch_Type -> "pitch"
-  | String_Type -> "string"
-  | Frac_Type -> "frac"
-  | Rhythm_Type -> "rhythm"
-  | Duration_Type -> "duration"
-  | Chord_Type -> "chord"
-  | Track_Type -> "track"
-  | Composition_Type -> "composition"
-*)
+let string_of_unop = function
+    Neg -> "-"
+  | Not -> "!"
 
 let string_of_binop = function
     Add -> "+" 
   | Sub -> "-" 
   | Mult -> "*" 
   | Div -> "/" 
+  | Mod -> "%"
   | Equal -> "==" 
   | Neq -> "!="
   | Less -> "<" 
   | Leq -> "<=" 
   | Greater -> ">" 
   | Geq -> ">="
+  | And -> "&&"
+  | Or -> "||"
 
 
 let rec string_of_expr = function
@@ -140,11 +135,16 @@ let rec string_of_expr = function
   | String_Lit(s) -> s
   | Frac_Lit(n, d) -> "$" ^ string_of_int n ^ "/" ^ string_of_int d ^ "$"
   | Array_Lit(e) -> String.concat ", " (List.map string_of_expr e) 
+  | Null_Lit -> "null"
   | Id(s) -> s 
   | Binop(e1, o, e2) ->
       string_of_expr e1 ^ " " ^
       string_of_binop o ^ " " ^
       string_of_expr e2
+  | Unop(e, o) -> 
+      (match o with 
+          Neg -> "-" ^ string_of_expr e
+        | Not -> "!" ^ string_of_expr e)
   |  Create(t, id, rhs) -> string_of_types t ^ " " ^ id ^ " = " ^ string_of_expr rhs 
   |  Assign(id, rhs) -> id ^ " = " ^
     string_of_expr rhs
@@ -189,16 +189,6 @@ and string_of_block (b:block) =
   String.concat ";\n" (List.map string_of_vdecl b.locals) ^ (if (List.length b.locals) > 0 then ";\n" else "") ^
   String.concat "" (List.map string_of_stmt b.statements) ^
   "}\n"
-
-
-(*
-let string_of_fdecl fdecl =
-  string_of_types fdecl.ret_type ^ " " ^ 
-  fdecl.fname ^ "(" ^ String.concat ", " (List.map string_of_vdecl fdecl.formals) ^ ")\n{\n" ^
-  String.concat "" (List.map string_of_vdecl fdecl.locals) ^
-  String.concat "" (List.map string_of_stmt fdecl.body) ^
-  "}\n" 
-*)
 
 let string_of_fdecl fdecl =
   (string_of_types fdecl.ret_type) ^ " " ^ 

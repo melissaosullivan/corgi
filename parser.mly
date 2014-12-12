@@ -8,9 +8,11 @@ let inc_block_id (u:unit) =
 %}
 
 %token SEMI LPAREN RPAREN LBRACE LBRACKET RBRACE RBRACKET COMMA
-%token PLUS MINUS TIMES DIVIDE ASSIGN
+%token PLUS MINUS TIMES DIVIDE MOD ASSIGN
 %token EQ NEQ LT LEQ GT GEQ DOLLAR
 %token RETURN IF ELIF ELSE FOR WHILE 
+%token TRUE FALSE NULL
+%token AND OR NOT
 
 %token BOOL INT
 %token STRING RHYTHM CHORD TRACK COMPOSITION
@@ -28,10 +30,13 @@ let inc_block_id (u:unit) =
 %nonassoc ELSE ELIF
 %right ASSIGN
 %right DOLLAR
+%left OR
+%left AND
 %left EQ NEQ
 %left LT GT LEQ GEQ
 %left PLUS MINUS
-%left TIMES DIVIDE
+%left TIMES DIVIDE MOD
+%left NEG NOT
 
 %start program
 %type <Ast.program> program
@@ -43,19 +48,6 @@ program:
  | program vdecl { ($2 :: fst $1), snd $1 }
  | program fdecl { fst $1, ($2 :: snd $1) }
 
-/*
-types:
-    BOOL {Bool_Type}
-  | INT {Int_Type}
-  | STRING {String_Type}
-  | FRAC {Frac_Type}
-  | PITCH {Pitch_Type}
-  | DURATION {Duration_Type}
-  | RHYTHM {Rhythm_Type}
-  | CHORD {Chord_Type}
-  | TRACK {Track_Type}
-  | COMPOSITION {Composition_Type}
-*/
 types:
     BOOL {Corgi_Prim(Bool_Type)}
   | INT {Corgi_Prim(Int_Type)}
@@ -112,9 +104,11 @@ stmt:
 block:
   LBRACE stmt_list RBRACE { {locals = []; statements = List.rev $2; block_id = inc_block_id ()} }
 
+/*
 elifs:
-  /* nothing */{ [] }
+  { [] }
   | elifs ELIF LPAREN expr RPAREN stmt { ($4, $6) :: $1 }
+*/
 
 expr_opt:
     /* nothing */ { Noexpr }
@@ -130,12 +124,17 @@ expr:
   | expr MINUS  expr { Binop($1, Sub,   $3) }
   | expr TIMES  expr { Binop($1, Mult,  $3) }
   | expr DIVIDE expr { Binop($1, Div,   $3) }
+  | expr MOD    expr { Binop($1, Mod, $3) }
   | expr EQ     expr { Binop($1, Equal, $3) }
   | expr NEQ    expr { Binop($1, Neq,   $3) }
   | expr LT     expr { Binop($1, Less,  $3) }
   | expr LEQ    expr { Binop($1, Leq,   $3) }
   | expr GT     expr { Binop($1, Greater,  $3) }
   | expr GEQ    expr { Binop($1, Geq,   $3) }
+  | expr AND    expr             { Binop($1, And, $3) }
+  | expr OR     expr             { Binop($1, Or, $3) }
+  | MINUS expr %prec NEG         { Unop($2, Neg) }
+  | NOT expr                     { Unop($2, Not) }
   | ID ASSIGN expr   { Assign($1, $3) }
   | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
   | LPAREN expr RPAREN { $2 }
@@ -149,6 +148,7 @@ literal:
     BOOL_LIT   { Bool_Lit($1) }
   | INT_LIT    { Int_Lit($1) }
   | STRING_LIT { String_Lit($1) }
+  | NULL       { Null_Lit }
 
 actuals_opt:
     /* nothing */ { [] }
