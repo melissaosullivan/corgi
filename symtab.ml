@@ -20,6 +20,27 @@ let string_of_symtab env =
     let sorted = List.sort Pervasives.compare symlist in
     String.concat "\n" sorted
 
+let rec symtab_get_id (name:string) env = 
+    let(table, scope) = env in
+    let to_find = name ^ "_" ^ (string_of_int scope) in
+    if SymTable.mem to_find table then scope
+    else
+        if scope = 0 then raise (Failure("symbol " ^ name ^ " not declared in current scope"))
+        else symtab_get_id name (table, scope_parents.(scope))
+(*
+ * Look for the symbol in the given environment and scope
+ * then recursively check in all ancestor scopes 
+ * SAME AS sym_tab_get_id ?
+ *)
+let rec symtab_find (name:string) env =
+    let(table, scope) = env in
+    let to_find = name ^ "_" ^ (string_of_int scope) in
+    if SymTable.mem to_find table then SymTable.find to_find table 
+    else
+        if scope = 0 then raise (Failure("symbol " ^ name ^ " not declared in current scope"))
+        else symtab_find name (table, scope_parents.(scope))
+        
+
 let rec symtab_add_decl (name:string) (decl:decl) env =
     let (table, scope) = env in (* get current scope and environment *)
     let to_find = name ^ "_" ^ (string_of_int scope) in
