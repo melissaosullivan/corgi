@@ -72,8 +72,8 @@ let type_of_expr = function
 
 
 
-let rec map_to_list_env func mlist env =
-	match mlist with
+let rec map_to_list_env func lst env =
+	match lst with
 		  [] -> []
 		| head :: tail ->
 			let r = func head env in 
@@ -147,9 +147,9 @@ let verify_unop_and_get_type e unop =
 (*let verify_id id*)
 
 
-let verify_binop l r op env =
-	type_of_expr(l)
-
+let verify_binop l r op env = (* need to add checks*)
+	type_of_expr(l)            (* type of l and type of r match*)
+								(* operator is appropriate *)
 
 
 (*let verify_assign id *)
@@ -200,11 +200,12 @@ let verify_id (id:string) env =
 	let decl = Symtab.symtab_find id env in 
 	id
 
-let rec verify_stmt stmt ret_type env = 
+let rec verify_stmt stmt ret_type env = (* make sure to verify return stmt*)
 	match stmt with
 	Return(e) ->
 		let verified_expr = verify_expr e env in
-		D_Return(verified_expr)
+		if ret_type = type_of_expr verified_expr then D_Return(verified_expr) 
+	    else raise(Failure "return type does not match")
 	| Expr(e) -> 
 		let verified_expr = verify_expr e env in
 		D_Expr(verified_expr)
@@ -222,7 +223,7 @@ let rec verify_stmt_list stmt_list ret_type env =
 
 let verify_block block ret_type env =
 	let verified_vars = map_to_list_env verify_var block.locals (fst env, block.block_id) in
-	let verified_stmts = verify_stmt_list block.statements ret_type env in
+	let verified_stmts = verify_stmt_list block.statements ret_type env in 
 	{ d_locals = verified_vars; d_statements = verified_stmts; d_block_id = block.block_id }
 
 
