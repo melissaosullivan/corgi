@@ -1,0 +1,8 @@
+int main() {
+    duration d;
+    frac f;
+
+    d = $1/4$;
+    f = $3/4$;
+    d = f;
+}

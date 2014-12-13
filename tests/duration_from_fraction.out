@@ -1,7 +1,0 @@
-
-int main()
-{
-duration d = $1/4$;
-frac f = $3/4$;
-}
-

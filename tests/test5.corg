@@ -1,0 +1,3 @@
+int main() {
+    frac f = $3/4$;
+}

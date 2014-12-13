@@ -22,7 +22,7 @@ let _ =
       let program = Parser.program Scanner.token lexbuf in
       (match action with
           Ast -> let listing = Ast.string_of_program program
-                 in print_string listing
+                 in prerr_string listing
         | Symtab -> let env = Symtab.symtab_of_program program in
-                    print_string (Symtab.string_of_symtab env)
+                    prerr_string (Symtab.string_of_symtab env)
         | Help -> print_endline (usage Sys.argv.(0)))
