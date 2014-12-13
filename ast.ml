@@ -43,7 +43,6 @@ type expr =
   | Binop of expr * op * expr
   | Unop of expr * uop
   | Create of types * string * expr 
-  | Assign of string * expr
   | Call of string * expr list
   | Tuple of expr * expr
   | Null_Lit
@@ -52,6 +51,7 @@ type expr =
 type stmt =
     Block of block
   | Expr of expr
+  | Assign of string * expr
   | Return of expr
   | If of expr * block * block
   | For of expr * expr * expr * block
@@ -63,11 +63,11 @@ and block = {
     block_id: int;
 }
 
-type variable = {
+(*type variable = {
   vname : string;
   vtype : types;
-  vexpr : expr;
-}
+ vexpr : expr; 
+}*)
 
 type parameter = {
   pname : string;
@@ -146,8 +146,6 @@ let rec string_of_expr = function
           Neg -> "-" ^ string_of_expr e
         | Not -> "!" ^ string_of_expr e)
   |  Create(t, id, rhs) -> string_of_types t ^ " " ^ id ^ " = " ^ string_of_expr rhs 
-  |  Assign(id, rhs) -> id ^ " = " ^
-    string_of_expr rhs
   | Tuple(e1, e2) -> "(" ^ string_of_expr e1 ^ ", " ^ string_of_expr e2 ^ ")"
   | Call(f, e) -> 
     f ^ "(" ^ String.concat ", " (List.map string_of_expr e) ^ ")"
@@ -173,6 +171,7 @@ let string_of_vdecl v =
 let rec string_of_stmt = function
     Block(b) -> string_of_block b
   | Expr(expr) -> string_of_expr expr ^ ";\n";
+  |  Assign(id, rhs) -> id ^ " = " ^ string_of_expr rhs
   | Return(expr) -> "return " ^ string_of_expr expr ^ ";\n";
   | If(e, b1, b2) -> 
     (match b2.statements with

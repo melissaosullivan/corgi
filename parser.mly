@@ -67,9 +67,6 @@ fdecl:
 	       formals = $4;
 	       fblock = {locals = List.rev $7; statements = List.rev $8; block_id = inc_block_id ()} } }
 
-block:
-  LBRACE stmt_list RBRACE { {locals = []; statements = List.rev $2; block_id = inc_block_id ()} }
-  
 formals_opt:
     /* nothing */ { [] }
   | formal_list   { List.rev $1 }
@@ -81,7 +78,7 @@ formal_list:
 /* Suggested to make vdecls a statement */
 vdecl_list:
     /* nothing */    { [] }
-  | vdecl_list vdecl SEMI { $2 :: $1 }
+  | vdecl_list vdecl { $2 :: $1 }
 
 /* Was here before
 vdecl:
@@ -89,7 +86,7 @@ vdecl:
    | types ID ASSIGN expr { {vname = $2; vtype = $1; vexpr = $4}}
 */
 vdecl:
-  types ID { ($2, $1) }
+  types ID SEMI{ ($2, $1) }
 
 stmt_list:
     /* nothing */  { [] }
@@ -103,7 +100,10 @@ stmt:
   | IF LPAREN expr RPAREN block ELSE block { If($3, $5, $7) }
   | FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN block { For($3, $5, $7, $9) }
   | WHILE LPAREN expr RPAREN block { While($3, $5) }
+  | ID ASSIGN expr SEMI{ Assign($1, $3) }
 
+block:
+  LBRACE stmt_list RBRACE { {locals = []; statements = List.rev $2; block_id = inc_block_id ()} }
 
 /*
 elifs:
@@ -136,7 +136,6 @@ expr:
   | expr OR     expr             { Binop($1, Or, $3) }
   | MINUS expr %prec NEG         { Unop($2, Neg) }
   | NOT expr                     { Unop($2, Not) }
-  | ID ASSIGN expr   { Assign($1, $3) }
   | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
   | LPAREN expr RPAREN { $2 }
 

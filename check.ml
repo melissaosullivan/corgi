@@ -12,7 +12,6 @@ type d_expr =
   (*  | D_Array_Lit of d_expr list * prim_type *)
     | D_Binop of d_expr * op * d_expr * prim_type
     | D_Unop of d_expr * uop * prim_type
-    | D_Assign of string * d_expr * prim_type
     | D_Call of string * d_expr list * prim_type
     | D_Tuple of d_expr * d_expr * prim_type
   (*  | D_Null_Lit
@@ -21,6 +20,7 @@ type d_expr =
 type d_stmt = 
 	  D_CodeBlock of d_block
 	| D_Expr of d_expr
+	| D_Assign of string * d_expr * prim_type
 	| D_Return of d_expr
     | D_If of d_expr * d_block * d_block
     | D_For of d_expr * d_expr * d_expr * d_block
@@ -51,8 +51,8 @@ let type_of_expr = function
   | D_Bool_Lit(_,t) -> t
   | D_Frac_Lit(_,_,t) -> t
   | D_Id(_,t) -> t
-(*  | D_Array of d_expr list * prim_type
-  | D_Binop(_,_,_,t) -> t *)
+(*  | D_Array of d_expr list * prim_type *)
+  | D_Binop(_,_,_,t) -> t 
  (* | D_Unop of d_expr * uop * prim_type
   | D_Assign of string * d_expr * prim_type
   | D_Call of string * d_expr list * prim_type
@@ -144,19 +144,23 @@ let verify_unop_and_get_type e unop =
 			else Frac_Type
 		| _ -> raise (Failure "negation operator applied to type that doesn't support negation")
 
+(*let verify_id id*)
 
 
 let verify_binop l r op env =
 	type_of_expr(l)
 
+
+
+(*let verify_assign id *)
 let rec verify_expr expr env =
-	match expr with                                          (* expr evaluates to *)
+	match expr with                                         (* expr evaluates to *)
 		  Bool_Lit(b)     -> D_Bool_Lit(b,Bool_Type)        (* D_Bool_Lit *)
 		| Int_Lit(i)      -> D_Int_Lit(i, Int_Type)		    (* D_Int_Lit *)
 		| String_Lit(s)   -> D_String_Lit(s, String_Type)   (* D_String_Lit*)
 		| Frac_Lit(n,d)   -> D_Frac_Lit(n, d, Frac_Type)    (* D_Frac_Lit *)
 		| Id(s)           -> D_Id(s, String_Type)           (* D_Id_Lit *)
-		(*| Array_Lit of expr list wtf *)
+		(*| Array_Lit of expr list  *)
 	    | Binop(l, op, r) -> 
 	    	let vl = verify_expr l env in
 	    	let vr = verify_expr r env in
@@ -166,13 +170,35 @@ let rec verify_expr expr env =
      		let ve = verify_expr e env in
      		let ve_type = verify_unop_and_get_type ve uop in
      		D_Unop(ve, uop, ve_type)                          
-    (*    | Assign of string * expr
-        | Call of string * expr list
+        	
+        (*		of string * expr *)
+    (*    | Call of string * expr list
    	    | Tuple of expr * expr
         | Null_Lit
         | Noexpr *)
 
+(*
+and get_type_of_rhs_assign = function
+	  Bool_Lit(b)     -> D_Bool_Lit(b,Bool_Type)        (* D_Bool_Lit *)
+		| Int_Lit(i)      -> D_Int_Lit(i, Int_Type)		    (* D_Int_Lit *)
+		| String_Lit(s)   -> D_String_Lit(s, String_Type)   (* D_String_Lit*)
+		| Frac_Lit(n,d)   -> D_Frac_Lit(n, d, Frac_Type)    (* D_Frac_Lit *)
+		| Id(s)           -> D_Id(s, String_Type)           (* D_Id_Lit *)
+		(*| Array_Lit of expr list  *)
+	    | Binop(l, op, r) -> 
+	    	let vl = verify_expr l env in
+	    	let vr = verify_expr r env in
+	    	let vl_type = verify_binop vl vr op env in
+	    	D_Binop(vl, op, vr, vl_type)                      (* D_Binop *)
+     	| Unop(e, uop) -> 
+     		let ve = verify_expr e env in
+     		let ve_type = verify_unop_and_get_type ve uop in
+     		D_Unop(ve, uop, ve_type)        
+     	| _ -> raise (Failure "right hand side of assignment expression is invalid") *)                  
 
+let verify_id (id:string) env = 
+	let decl = Symtab.symtab_find id env in 
+	id
 
 let rec verify_stmt stmt ret_type env = 
 	match stmt with
@@ -182,7 +208,10 @@ let rec verify_stmt stmt ret_type env =
 	| Expr(e) -> 
 		let verified_expr = verify_expr e env in
 		D_Expr(verified_expr)
-	(*| If(e)*)
+	| Assign(id, e) -> 
+        	let ve = verify_expr e env in
+        	let vid = verify_id id env in (* might need to add check that *)
+        	 D_Assign(vid, ve, type_of_expr ve)    (*id is the correct type *)
 
 let rec verify_stmt_list stmt_list ret_type env = 
 	match stmt_list with
@@ -238,7 +267,7 @@ let verify_func func env =
 let verify_semantics program env = 
 	let (gvar_list, func_list) = program in 
 	let () = Printf.printf "after first line" in
-	let verified_gvar_list = map_to_list_env verify_var gvar_list env in  (*we are here*)
+	let verified_gvar_list = map_to_list_env verify_var gvar_list env in 
 	let () = Printf.printf "after first line" in
 	let verified_func_list = map_to_list_env verify_func func_list env in
 		(verified_func_list, verified_gvar_list)
