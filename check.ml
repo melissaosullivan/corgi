@@ -84,9 +84,11 @@ let verify_gvar gvar env =
 	let id = Symtab.symtab_get_id (fst gvar) env in
 	gvar
 
-let verify_var var env =
+let verify_var var env = 
+	let () = Printf.printf "verifyvar" in 
 	let decl = Symtab.symtab_find (fst var) env in
 	let id = Symtab.symtab_get_id (fst var) env in
+	let () = Printf.printf "      " in 
 	match decl with
 		Func_Decl(f) -> raise(Failure("symbol is not a variable"))
 	  | Var_Decl(v) -> (fst_of_three v, snd_of_three v, id)
@@ -190,16 +192,17 @@ let rec verify_stmt_list stmt_list ret_type env =
 
 
 let verify_block block ret_type env =
-	let verified_vars = map_to_list_env verify_var block.locals env in
+	let verified_vars = map_to_list_env verify_var block.locals (fst env, block.block_id) in
 	let verified_stmts = verify_stmt_list block.statements ret_type env in
 	{ d_locals = verified_vars; d_statements = verified_stmts; d_block_id = block.block_id }
 
 
 (*verify formals, get return type, verify function name, verify fblock *)
 let verify_func func env =
-	let verified_formals = map_to_list_env verify_var func.formals env in
-	let verified_func_decl = verify_is_func_decl func.fname env in 
 	let verified_block = verify_block func.fblock func.ret_type env in
+	let () = Printf.printf "func.fname" in 
+	let verified_formals = map_to_list_env verify_var func.formals (fst env, func.fblock.block_id) in
+	let verified_func_decl = verify_is_func_decl func.fname env in 
 	{ d_fname = verified_func_decl; d_ret_type = func.ret_type; d_formals = verified_formals; d_fblock = verified_block }
 
 (*
@@ -234,6 +237,8 @@ let verify_func func env =
 
 let verify_semantics program env = 
 	let (gvar_list, func_list) = program in 
+	let () = Printf.printf "after first line" in
 	let verified_gvar_list = map_to_list_env verify_var gvar_list env in  (*we are here*)
+	let () = Printf.printf "after first line" in
 	let verified_func_list = map_to_list_env verify_func func_list env in
 		(verified_func_list, verified_gvar_list)

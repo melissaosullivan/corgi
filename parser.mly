@@ -67,6 +67,9 @@ fdecl:
 	       formals = $4;
 	       fblock = {locals = List.rev $7; statements = List.rev $8; block_id = inc_block_id ()} } }
 
+block:
+  LBRACE stmt_list RBRACE { {locals = []; statements = List.rev $2; block_id = inc_block_id ()} }
+  
 formals_opt:
     /* nothing */ { [] }
   | formal_list   { List.rev $1 }
@@ -101,8 +104,6 @@ stmt:
   | FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN block { For($3, $5, $7, $9) }
   | WHILE LPAREN expr RPAREN block { While($3, $5) }
 
-block:
-  LBRACE stmt_list RBRACE { {locals = []; statements = List.rev $2; block_id = inc_block_id ()} }
 
 /*
 elifs:
