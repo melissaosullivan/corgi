@@ -20,6 +20,7 @@ let string_of_symtab env =
     let sorted = List.sort Pervasives.compare symlist in
     String.concat "\n" sorted
 
+(* maybe we can combine get id and find? *)
 let rec symtab_get_id (name:string) env = 
     let(table, scope) = env in
     let to_find = name ^ "_" ^ (string_of_int scope) in

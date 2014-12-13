@@ -1,10 +1,11 @@
 
-type action = Ast | Symtab | Help
+type action = Ast | Symtab | Sem | Help
 
 let usage (name:string) =
   "usage:\n" ^ name ^ "\n" ^
-    "        -ast < source.lrx              (Print AST of source)\n" ^
-    "        -sym < source.lrx              (Print Symbol Table of source)\n"
+    "        -ast < source.corg              (Print AST of source)\n" ^
+    "        -sym < source.corg              (Print Symbol Table of source)\n" ^
+    "		 -sem < source.corg				 (Print Semantic Analysis of source)\n"
 
 let _ =
   let action = 
@@ -12,6 +13,7 @@ let _ =
     (match Sys.argv.(1) with
         "-ast" -> Ast
       | "-sym" -> Symtab
+      | "-sem" -> Sem
       | _ -> Help)  
   else Help in   
 
@@ -25,4 +27,7 @@ let _ =
                  in prerr_string listing
         | Symtab -> let env = Symtab.symtab_of_program program in
                     prerr_string (Symtab.string_of_symtab env)
+        | Sem -> let env = Symtab.symtab_of_program program in
+            		let checked = Check.verify_semantics program env in
+    					ignore checked; print_string "Passed Semantic Analysis.\n"
         | Help -> print_endline (usage Sys.argv.(0)))
