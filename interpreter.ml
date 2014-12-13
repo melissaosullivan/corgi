@@ -1,13 +1,10 @@
 
-type action = Ast | Symtab | SAnalysis | Compile | Binary | Help
+type action = Ast | Symtab | Help
 
 let usage (name:string) =
   "usage:\n" ^ name ^ "\n" ^
     "        -ast < source.lrx              (Print AST of source)\n" ^
-    "        -sym < source.lrx              (Print Symbol Table of source)\n" ^
-    "        -sem < source.lrx              (Run Semantic Analysis over source)\n" ^    
-    "        -com < source.lrx [target.c]   (Compile to c. Second argument optional)\n" ^
-    "        -bin < source.lrx [target.out] (Compile to executable)\n"
+    "        -sym < source.lrx              (Print Symbol Table of source)\n"
 
 let _ =
   let action = 
@@ -15,15 +12,12 @@ let _ =
     (match Sys.argv.(1) with
         "-ast" -> Ast
       | "-sym" -> Symtab
-      | "-sem" -> SAnalysis
-      | "-com" -> Compile
-      | "-bin" -> Binary
       | _ -> Help)  
   else Help in   
 
   match action with
       Help -> print_endline (usage Sys.argv.(0)) 
-    | (Ast | Symtab | SAnalysis | Compile | Binary ) ->
+    | _ ->
       let lexbuf = Lexing.from_channel stdin in
       let program = Parser.program Scanner.token lexbuf in
       (match action with
