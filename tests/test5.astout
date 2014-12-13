@@ -1,1 +1,7 @@
-Fatal error: exception Parsing.Parse_error
+
+int main()
+{
+frac f;
+f = $3/4$;
+}
+

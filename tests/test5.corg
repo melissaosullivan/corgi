@@ -1,3 +1,4 @@
 int main() {
-    frac f = $3/4$;
+    frac f;
+    f = $3/4$;
 }
