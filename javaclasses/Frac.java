@@ -2,49 +2,56 @@
 public class Frac implements Comparable<Frac>{
 	public int numerator;
 	public int denominator;
+	public double approxValue;
 	
 	public Frac(int num, int denom){
 		numerator = num;
 		denominator = denom;
 		simplify();
+		approxValue = (double) num / (double) denom;
 	}
 	
 	public Frac(Frac f){
 		this.numerator = f.numerator;
 		this.denominator = f.denominator;
+		this.approxValue = f.approxValue;
 	}
 	
 	public void add(Frac f){
 		int com_dom = lcm(denominator, f.denominator);
 		this.numerator = numerator * (com_dom/denominator) + f.numerator * (com_dom/f.denominator);
 		this.denominator = com_dom;
+		simplify();
+		this.approxValue = (double) this.numerator / (double) this.denominator;
 	}
 	
 	public void subtract(Frac f){
 		int com_dom = lcm(denominator, f.denominator);
 		this.numerator = numerator * (com_dom/denominator) - f.numerator * (com_dom/f.denominator);
 		this.denominator = com_dom;
+		simplify();
+		this.approxValue = (double) this.numerator / (double) this.denominator;
 	}
 	
 	public void multiply(Frac f){
 		this.numerator = numerator * f.numerator;
 		this.denominator = denominator * f.denominator;
 		simplify();
+		this.approxValue = (double) this.numerator / (double) this.denominator;
 	}
 	
 	public void divide(Frac f){
 		this.numerator = numerator * f.denominator;
 		this.denominator = denominator * f.numerator;
 		simplify();
+		this.approxValue = (double) this.numerator / (double) this.denominator;
 	}
 	
 	
 	public void simplify(){
-	
 		int gcom_dom = gcd(numerator, denominator);
 		this.numerator = numerator/gcom_dom;
 		this.denominator = denominator/gcom_dom;
-		
 	}
 	
 	
