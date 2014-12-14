@@ -2,6 +2,6 @@
 int main()
 {
 pitch p;
-p = 5;
+p = 5; 
 }
 

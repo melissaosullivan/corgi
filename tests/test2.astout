@@ -2,6 +2,6 @@
 int main()
 {
 string str;
-str = music;
+str = music; 
 }
 

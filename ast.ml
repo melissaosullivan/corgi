@@ -172,7 +172,7 @@ let string_of_vdecl v =
 let rec string_of_stmt = function
     Block(b) -> string_of_block b
   | Expr(expr) -> string_of_expr expr ^ ";\n";
-  |  Assign(id, rhs) -> id ^ " = " ^ string_of_expr rhs
+  | Assign(id, rhs) -> id ^ " = " ^ string_of_expr rhs ^ "; \n"
   | Return(expr) -> "return " ^ string_of_expr expr ^ ";\n";
   | If(e, b1, b2) -> 
     (match b2.statements with

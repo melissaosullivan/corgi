@@ -7,7 +7,7 @@ print(39 + 3);
 duration getDuration()
 {
 duration d;
-d = 1;
+d = 1; 
 return d;
 }
 
