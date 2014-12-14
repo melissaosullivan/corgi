@@ -44,6 +44,7 @@ rule token = parse
 | '>'      { GT }
 | ">="     { GEQ }
 | '$'      { DOLLAR }
+| '@'      { AT }
 | "%"      { MOD } 
 
 | "if"     { IF }                       (* Keywords *)

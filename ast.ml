@@ -44,6 +44,7 @@ type expr =
   | Unop of expr * uop
   | Create of types * string * expr 
   | Call of string * expr list
+  | Access of string * int 
   | Tuple of expr * expr
   | Null_Lit
   | Noexpr

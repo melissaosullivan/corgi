@@ -8,7 +8,7 @@ let inc_block_id (u:unit) =
 %}
 
 %token SEMI LPAREN RPAREN LBRACE LBRACKET RBRACE RBRACKET COMMA
-%token PLUS MINUS TIMES DIVIDE MOD ASSIGN
+%token PLUS MINUS TIMES DIVIDE MOD ASSIGN AT
 %token EQ NEQ LT LEQ GT GEQ DOLLAR
 %token RETURN IF ELIF ELSE FOR WHILE 
 %token TRUE FALSE NULL
@@ -137,6 +137,7 @@ expr:
   | MINUS expr %prec NEG         { Unop($2, Neg) }
   | NOT expr                     { Unop($2, Not) }
   | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
+  | ID AT INT_LIT { Access($1, $3) }
   | LPAREN expr RPAREN { $2 }
 
 expr_list:
