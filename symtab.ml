@@ -11,8 +11,8 @@ let scope_parents = Array.make 1000 0
 let string_of_decl = function
       Var_Decl(n, t, id)     -> string_of_vdecl (n, t)
     | Func_Decl(n, t, f, id) -> 
-        (string_of_types t) ^ " " ^ n ^ "(" ^ 
-        String.concat ", " (List.map string_of_types f) ^ ")"
+        (string_of_prim_type t) ^ " " ^ n ^ "(" ^ 
+        String.concat ", " (List.map string_of_prim_type f) ^ ")"
 
 let string_of_symtab env =
     let symlist = SymTable.fold
@@ -91,7 +91,7 @@ and symtab_add_funcs (funcs:func list) env =
        symtab_add_funcs tail env
 
 let add_builtins env =
-    symtab_add_decl "print" (Func_Decl("print", Corgi_Prim(Int_Type), [], 0)) env
+    symtab_add_decl "print" (Func_Decl("print", Int_Type, [], 0)) env
 
 
 let symtab_of_program (p:Ast.program) =

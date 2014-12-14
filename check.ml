@@ -9,13 +9,13 @@ type d_expr =
     | D_String_Lit of string * prim_type
     | D_Frac_Lit of int * int  * prim_type
     | D_Id of string * prim_type
-  (*  | D_Array_Lit of d_expr list * prim_type *)
+    | D_Array_Lit of d_expr list * prim_type
     | D_Binop of d_expr * op * d_expr * prim_type
     | D_Unop of d_expr * uop * prim_type
     | D_Call of string * d_expr list * prim_type
     | D_Tuple of d_expr * d_expr * prim_type
-  (*  | D_Null_Lit
-    | D_Noexpr *)
+  (*  | D_Null_Lit *)
+    | D_Noexpr 
 
 type d_stmt = 
 	  D_CodeBlock of d_block
@@ -35,7 +35,7 @@ and d_block = {
 
 type d_func = {
 	d_fname : string;
-	d_ret_type : types;
+	d_ret_type : prim_type; (* Changed from types for comparison error in verify_stmt*)
 	d_formals : scope_var_decl list;
 	d_fblock : d_block;
 }
@@ -51,8 +51,12 @@ let type_of_expr = function
   | D_Bool_Lit(_,t) -> t
   | D_Frac_Lit(_,_,t) -> t
   | D_Id(_,t) -> t
-(*  | D_Array of d_expr list * prim_type *)
   | D_Binop(_,_,_,t) -> t 
+  | D_Array_Lit (_, t) -> t
+  | D_Unop (_, _, t) -> t
+  | D_Call (_, _, t) -> t
+  | D_Tuple (_, _, t) -> t
+  | D_Noexpr -> Null_Type 
  (* | D_Unop of d_expr * uop * prim_type
   | D_Assign of string * d_expr * prim_type
   | D_Call of string * d_expr list * prim_type
@@ -194,7 +198,8 @@ and get_type_of_rhs_assign = function
      		let ve = verify_expr e env in
      		let ve_type = verify_unop_and_get_type ve uop in
      		D_Unop(ve, uop, ve_type)        
-     	| _ -> raise (Failure "right hand side of assignment expression is invalid") *)                  
+     	| _ -> raise (Failure "right hand side of assignment expression is invalid") *) 
+
 
 let verify_id (id:string) env = 
 	let decl = Symtab.symtab_find id env in 

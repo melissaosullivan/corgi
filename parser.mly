@@ -48,20 +48,20 @@ program:
  | program vdecl { ($2 :: fst $1), snd $1 }
  | program fdecl { fst $1, ($2 :: snd $1) }
 
-types:
-    BOOL {Corgi_Prim(Bool_Type)}
-  | INT {Corgi_Prim(Int_Type)}
-  | STRING {Corgi_Prim(String_Type)}
-  | FRAC {Corgi_Prim(Frac_Type)}
-  | PITCH {Corgi_Prim(Pitch_Type)}
-  | DURATION {Corgi_Prim(Duration_Type)}
-  | RHYTHM {Corgi_Prim(Rhythm_Type)}
-  | CHORD {Corgi_Prim(Chord_Type)}
-  | TRACK {Corgi_Prim(Track_Type)}
-  | COMPOSITION {Corgi_Prim(Composition_Type)}
+prim_type:
+    BOOL {Bool_Type}
+  | INT {Int_Type}
+  | STRING {String_Type}
+  | FRAC {Frac_Type}
+  | PITCH {Pitch_Type}
+  | DURATION {Duration_Type}
+  | RHYTHM {Rhythm_Type}
+  | CHORD {Chord_Type}
+  | TRACK {Track_Type}
+  | COMPOSITION {Composition_Type}
 
 fdecl:
-   types ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+   prim_type ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
      { { ret_type = $1;
          fname = $2;
 	       formals = $4;
@@ -82,14 +82,14 @@ vdecl_list:
 
 /* Was here before
 vdecl:
-   types ID { ({vname = $2; vtype = $1; vexpr = Noexpr}) }
-   | types ID ASSIGN expr { {vname = $2; vtype = $1; vexpr = $4}}
+   prim_type ID { ({vname = $2; vtype = $1; vexpr = Noexpr}) }
+   | prim_type ID ASSIGN expr { {vname = $2; vtype = $1; vexpr = $4}}
 */
 vdecl:
-  types ID SEMI{ ($2, $1) }
+  prim_type ID SEMI{ ($2, $1) }
 
 fvdecl:
-  types ID { ($2, $1) }
+  prim_type ID { ($2, $1) }
 
 stmt_list:
     /* nothing */  { [] }

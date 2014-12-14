@@ -27,11 +27,12 @@ type prim_type =
   | Chord_Type
   | Track_Type
   | Composition_Type
+  | Null_Type
   
 type types = 
   Corgi_Prim of prim_type
 
-type var = string * types
+type var = string * prim_type
 
 type expr =
     Bool_Lit of bool 
@@ -42,7 +43,7 @@ type expr =
   | Array_Lit of expr list
   | Binop of expr * op * expr
   | Unop of expr * uop
-  | Create of types * string * expr 
+  (* | Create of types * string * expr  *)
   | Call of string * expr list
   | Access of string * int 
   | Tuple of expr * expr
@@ -72,11 +73,11 @@ and block = {
 
 type parameter = {
   pname : string;
-  ptype : types;
+  ptype : prim_type;
 }
 
 type func = {
-    ret_type : types;
+    ret_type : prim_type;
     fname : string;
     formals : var list;
     fblock : block;
@@ -86,9 +87,9 @@ type program = var list * func list
 
 (* Added from Lorax *)
 
-type scope_var_decl = string * types * int
+type scope_var_decl = string * prim_type * int
 
-type scope_func_decl = string * types * types list * int
+type scope_func_decl = string * prim_type * prim_type list * int
 
 type decl = 
     Func_Decl of scope_func_decl
@@ -137,7 +138,8 @@ let rec string_of_expr = function
   | Frac_Lit(n, d) -> "$" ^ string_of_int n ^ "/" ^ string_of_int d ^ "$"
   | Array_Lit(e) -> String.concat ", " (List.map string_of_expr e) 
   | Null_Lit -> "null"
-  | Id(s) -> s 
+  | Id(s) -> s
+  | Access(ar, i) -> ar ^ "@" ^ string_of_int i 
   | Binop(e1, o, e2) ->
       string_of_expr e1 ^ " " ^
       string_of_binop o ^ " " ^
@@ -146,7 +148,7 @@ let rec string_of_expr = function
       (match o with 
           Neg -> "-" ^ string_of_expr e
         | Not -> "!" ^ string_of_expr e)
-  |  Create(t, id, rhs) -> string_of_types t ^ " " ^ id ^ " = " ^ string_of_expr rhs 
+  (* |  Create(t, id, rhs) -> string_of_types t ^ " " ^ id ^ " = " ^ string_of_expr rhs  *)
   | Tuple(e1, e2) -> "(" ^ string_of_expr e1 ^ ", " ^ string_of_expr e2 ^ ")"
   | Call(f, e) -> 
     f ^ "(" ^ String.concat ", " (List.map string_of_expr e) ^ ")"
@@ -165,7 +167,7 @@ let string_of_vdecl vdecl = string_of_types vdecl.vtype ^ " " ^ vdecl.vname ^
 *)
 let string_of_vdecl v =
   (match (snd v) with
-      Corgi_Prim(t) -> string_of_prim_type t ^ " " ^ fst v
+      t -> string_of_prim_type t ^ " " ^ fst v
   )
 
 
@@ -191,7 +193,7 @@ and string_of_block (b:block) =
   "}\n"
 
 let string_of_fdecl fdecl =
-  (string_of_types fdecl.ret_type) ^ " " ^ 
+  (string_of_prim_type fdecl.ret_type) ^ " " ^ 
   fdecl.fname ^ "(" ^ String.concat ", " (List.map string_of_vdecl fdecl.formals) ^ ")\n" ^
   string_of_block fdecl.fblock
 
