@@ -204,8 +204,9 @@ let rec verify_stmt stmt ret_type env = (* make sure to verify return stmt*)
 	match stmt with
 	Return(e) ->
 		let verified_expr = verify_expr e env in
-		if ret_type = type_of_expr verified_expr then D_Return(verified_expr) 
-	    else raise(Failure "return type does not match")
+		D_Return(verified_expr)
+		(* if ret_type = type_of_expr verified_expr then D_Return(verified_expr) 
+	    else raise(Failure "return type does not match") *)
 	| Expr(e) -> 
 		let verified_expr = verify_expr e env in
 		D_Expr(verified_expr)
