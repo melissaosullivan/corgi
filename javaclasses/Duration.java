@@ -50,4 +50,8 @@ public class Duration implements Comparable<Duration>{
 	public int compareTo(Duration arg0) {
 		return fraction.compareTo(arg0.fraction);
 	}
+	
+	public String toString() {
+		return Integer.toString(fraction.numerator) + "/" + Integer.toString(fraction.denominator);
+	}
 }
