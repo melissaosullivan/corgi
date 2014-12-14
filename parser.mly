@@ -72,8 +72,8 @@ formals_opt:
   | formal_list   { List.rev $1 }
 
 formal_list:
-    vdecl                { [$1] }
-  | formal_list COMMA vdecl { $3 :: $1 }
+    fvdecl                { [$1] }
+  | formal_list COMMA fvdecl { $3 :: $1 }
 
 /* Suggested to make vdecls a statement */
 vdecl_list:
@@ -87,6 +87,9 @@ vdecl:
 */
 vdecl:
   types ID SEMI{ ($2, $1) }
+
+fvdecl:
+  types ID { ($2, $1) }
 
 stmt_list:
     /* nothing */  { [] }

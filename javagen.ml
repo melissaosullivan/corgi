@@ -6,62 +6,6 @@ open Check
 	D_call???
 *)
 
-type d_expr =
-	  D_Bool_Lit of bool * prim_type
-	| D_Int_Lit of int * prim_type
-    | D_String_Lit of string * prim_type
-    | D_Frac_Lit of int * int  * prim_type
-    | D_Id of string * prim_type
-  (*  | D_Array_Lit of d_expr list * prim_type *)
-    | D_Binop of d_expr * op * d_expr * prim_type
-    | D_Unop of d_expr * uop * prim_type
-    | D_Call of string * d_expr list * prim_type
-    | D_Tuple of d_expr * d_expr * prim_type
-  (*  | D_Null_Lit
-    | D_Noexpr *)
-
-type d_stmt = 
-	  D_CodeBlock of d_block
-	| D_Expr of d_expr
-	| D_Assign of string * d_expr * prim_type
-	| D_Return of d_expr
-    | D_If of d_expr * d_block * d_block
-    | D_For of d_expr * d_expr * d_expr * d_block
-    | D_While of d_expr * d_block
-
-and d_block = {
-	d_locals : scope_var_decl list;
-    d_statements: d_stmt list;
-    d_block_id: int;
-}
-
-let write_expr = function
-	  D_Bool_Lit(boolLit, t) -> string_of_bool boolLit 
-	| D_Int_Lit(intLit, t) -> match t with 
-								  Int_Type -> string_of_int intLit
-								  Pitch_Type -> "new Pitch(%d)" intLit
-								  Duration_Type -> "new Duration(%d)" intLit   
-	| D_String_Lit(strLit, t) -> strLit
-	| D_Frac_Lit(num, denom, t) -> match t with 
-									  Frac_Type -> "new Frac(%d, %d)" num denom
-									| Duration_Type -> "new Duration(new Frac(%d, %d))" num denom 
-	| D_Id (str, _) -> str
-	| D_Array_Lit(dexpr_list, t) -> write_array_expr dexpr_list t
-	| D_uop(d_expr, uop, t) -> write_unop_expr d_expr uop t
-	| D_Binop (dexpr1, op, dexpr2, t) -> write_binop_expr dexpr op dexpr2 t
-	| D_Assign (name, dexpr, t) -> write_assign name dexpr t
-	| D_Null_Lit -> "null"
-	| D_Noexpr -> ""
-
-
-let write_array_expr dexpr_list t =
-	"new %s[]" write_type t ^ " {" ^ String.concat "," (List.map write_expr dexpr_list) ^ "}"
-
-let write_assign name dexpr t =
-	match t with
-	  (Bool_Type | Int_Type | String_Lit | Frac_Lit) -> "%s = %s" name write_expr dexpr
-	| (Pitch_Type | Duration_Type | Rhythm_Type | Chord_Type | Track_Type | Composition_Type) ->  "%s = new %s(%s)" name write_type t write_expr dexpr
-
 let write_type = function 
 	  Bool_Type -> "bool"
 	| Int_Type -> "int"
@@ -73,6 +17,9 @@ let write_type = function
 	| Chord_Type -> "Chord"
 	| Track_Type -> "Track"
 	| Composition_Type -> "Composition"
+
+let write_types ts =
+	match ts with Corgi_Prim(t) -> write_type t 
 
 let write_op_primitive = function
 	Add -> " + "
@@ -120,4 +67,49 @@ let write_binop_expr expr1 op expr2 t =
 		in write_binop_expr_help e1 op e2 
 
 
-(*prim binop/less/leq/greater/geq *)
+let write_array_expr dexpr_list t =
+	"new %s[]" write_type t ^ " {" ^ String.concat "," (List.map write_expr dexpr_list) ^ "}"
+
+let write_expr = function
+	  D_Bool_Lit(boolLit, t) -> string_of_bool boolLit 
+	| D_Int_Lit(intLit, t) -> match t with 
+								  Int_Type -> string_of_int intLit
+								  Pitch_Type -> "new Pitch(%d)" intLit
+								  Duration_Type -> "new Duration(%d)" intLit   
+	| D_String_Lit(strLit, t) -> strLit
+	| D_Frac_Lit(num, denom, t) -> match t with 
+									  Frac_Type -> "new Frac(%d, %d)" num denom
+									| Duration_Type -> "new Duration(new Frac(%d, %d))" num denom 
+	| D_Id (str, _) -> str
+	| D_Array_Lit(dexpr_list, t) -> write_array_expr dexpr_list t
+	| D_uop(d_expr, uop, t) -> write_unop_expr d_expr uop t
+	| D_Binop (dexpr1, op, dexpr2, t) -> write_binop_expr dexpr op dexpr2 t
+	| D_Tuple(dexpr1, dexpr2) -> "new Pitch_Duration_Tuple(%s, %s)" write_expr dexpr1 dexpr2
+	| D_Null_Lit -> "null"
+	| D_Noexpr -> ""
+
+let write_assign name dexpr t =
+	match t with
+	  (Bool_Type | Int_Type | String_Lit | Frac_Lit) -> "%s = %s" name write_expr dexpr
+	| (Pitch_Type | Duration_Type | Rhythm_Type | Chord_Type | Track_Type | Composition_Type) ->  "%s = new %s(%s)" name write_type t write_expr dexpr
+
+let write_stmt = function
+	  D_CodeBlock(dblock) -> write_block dblock 
+	| D_Expr(dexpr) -> write_expr dexpr ^ ";"
+	| D_Assign (name, dexpr, t) -> write_assign name dexpr t ^ ";"
+	| D_Return(dexpr) -> "return " ^ write_expr expr ^ ";"
+    | D_If(dexpr, dblock1, dblock2) -> "if(%s)" ^ write_block dblock1 ^ write_block dblock2
+    | D_For(dexpr1, dexpr2, dexpr3, dblock) -> ^ ";"
+    | D_While(dexpr, dblock) -> "while(%s)" write_expr dexpr ^ write_block dblock
+	
+let write_block dblock =
+	"{\n" ^  String.concat "\n" (List.map write_scope_var_decl dblock.d_locals) ^ String.concat "\n" (List.map write_stmt dblock.d_statements) ^ "\n}"
+
+let write_scope_var_decl svd =
+	match svd with scope_var_decl(str,ts,i) -> str ^ write_types t
+ 
+let write_func dfunc =
+	write_types dfunc.d_ret_type ^ " %s(" dfunc.d_fname ^ String.concat "," (List.map write_scope_var_decl dfunc.d_formals) ^ ")" ^ write_block dfunc.d_fblock
+
+let write_pgm pgm =
+	match pgm with dprogram(svdlst, dfunclst) -> String.concat "\n" (List.map write_scope_var_decl svdlst) ^ String.concat "\n" (List.map write_func funclst)
