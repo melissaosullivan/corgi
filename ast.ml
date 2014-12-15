@@ -57,7 +57,7 @@ type stmt =
   | Assign of string * expr
   | Return of expr
   | If of expr * block * block
-  | For of expr * expr * expr * block
+  | For of stmt * stmt * stmt * block
   | While of expr * block
 
 and block = {
@@ -183,9 +183,9 @@ let rec string_of_stmt = function
         [] -> "if (" ^ string_of_expr e ^ ")\n" ^ string_of_block b1
       | _  -> "if (" ^ string_of_expr e ^ ")\n" ^
               string_of_block b1 ^ "else\n" ^ string_of_block b2)
-  | For(e1, e2, e3, b) ->
-      "for (" ^ string_of_expr e1  ^ " ; " ^ string_of_expr e2 ^ " ; " ^
-      string_of_expr e3  ^ ") " ^ string_of_block b
+  | For(a1, c, a2, b) ->
+      "for (" ^ string_of_stmt a1 ^ string_of_stmt c ^
+      string_of_stmt a2  ^ ") " ^ string_of_block b
   | While(e, b) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_block b
 
 and string_of_block (b:block) =

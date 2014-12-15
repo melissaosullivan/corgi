@@ -115,8 +115,9 @@ elifs:
 */
 
 expr_opt:
-    /* nothing */ { Noexpr }
-  | expr          { $1 }
+    /* nothing */ { Expr(Noexpr) }
+  | expr          { Expr($1) }
+  | ID ASSIGN expr{ Assign($1, $3) }
 
 expr:
   literal {$1}

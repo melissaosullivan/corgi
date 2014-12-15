@@ -24,7 +24,7 @@ type d_stmt =
 	| D_Assign of string * d_expr * prim_type
 	| D_Return of d_expr
     | D_If of d_expr * d_stmt * d_stmt (* stmts of type D_CodeBlock *)
-    | D_For of d_expr * d_expr * d_expr * d_block
+    | D_For of d_stmt * d_stmt * d_stmt * d_block (* stmts of type D_Assign | D_Noexpr * D_Expr of type bool * D_Assign | D_Noexpr *)
     | D_While of d_expr * d_block
 
 and d_block = {
@@ -172,7 +172,9 @@ let rec verify_expr expr env =
 		| Int_Lit(i)      -> D_Int_Lit(i, Int_Type)		    (* D_Int_Lit *)
 		| String_Lit(s)   -> D_String_Lit(s, String_Type)   (* D_String_Lit*)
 		| Frac_Lit(n,d)   -> D_Frac_Lit(n, d, Frac_Type)    (* D_Frac_Lit *)
-		| Id(s)           -> D_Id(s, String_Type)           (* D_Id_Lit *)
+		| Id(s)           -> 								(* D_Id_Lit *)
+			let vid_type = verify_id_get_type s env in
+			D_Id(s, vid_type)           
 	    | Binop(l, op, r) -> 
 	    	let vl = verify_expr l env in
 	    	let vr = verify_expr r env in
@@ -269,6 +271,7 @@ let verify_id_is_type (id:string) vt env = (* Add support for assigning compatib
 	else  raise (Failure("Expression of type " ^ string_of_prim_type vt ^ " assigned to variable " ^ id ^ " of type " ^ string_of_prim_type idtype))
 
 let rec verify_stmt stmt ret_type env =
+	let () = print_endline ("verifying statement: " ^ string_of_stmt stmt) in
 	match stmt with
 	Return(e) ->
 		let verified_expr = verify_expr e env in
@@ -287,12 +290,29 @@ let rec verify_stmt stmt ret_type env =
     	D_CodeBlock(verified_block)
     | If(e, b1, b2) ->
     	let verified_expr = verify_expr e env in
-    	let () = print_endline (string_of_prim_type (type_of_expr verified_expr)) in
     	if (type_of_expr verified_expr) = Bool_Type then
 	    	let vb1 = verify_block b1 ret_type (fst env, b1.block_id) in
 	    	let vb2 = verify_block b2 ret_type (fst env, b2.block_id) in
 	    	D_If(verified_expr, D_CodeBlock(vb1), D_CodeBlock(vb2))
     	else raise(Failure("Condition in if statement must be a boolean expression."))
+    | For(assignment1, condition, assignment2, block) ->
+    	let va1 = (match assignment1 with
+    		Assign(_, _) | Expr(_) ->  verify_stmt assignment1 ret_type env 
+    		| _ -> raise(Failure("First term in For statement must be assignment or no expression. (*;;)"))) in
+    	let vc = (match condition with
+    		Expr(e) -> 
+    			let ve = verify_expr e env in
+    			let vt = type_of_expr ve in
+    			if vt = Bool_Type or vt = Null_Type then verify_stmt condition ret_type env 
+    			else raise(Failure("Condition in For statement must be boolean or no expression. (;*;)"))
+    		| _ -> raise(Failure("Condition in For statement must be boolean or no expression. (;*;)"))) in
+		let va2 = (match assignment1 with
+    		Assign(_, _) | Expr(_) ->  verify_stmt assignment2 ret_type env 
+    		| _ -> raise(Failure("Last term in For statement must be assignment or no expression. (;;*)"))) in
+		let vb = verify_block block ret_type (fst env, block.block_id) in
+		D_For(va1, vc, va2, vb)
+
+
 
 and verify_stmt_list stmt_list ret_type env = 
 	match stmt_list with
