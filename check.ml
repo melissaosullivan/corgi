@@ -43,9 +43,6 @@ type d_func = {
 
 type d_program = scope_var_decl list * d_func list
 
-
-
-
 let type_of_expr = function
     D_Int_Lit(_,t) -> t
   | D_Bool_Lit(_,t) -> t
@@ -59,30 +56,12 @@ let type_of_expr = function
   | D_Tuple (_, _, t) -> t (* Come back and fix tuples *)
   | D_Access (_, _, t) -> t
   | D_Noexpr -> Null_Type 
- (* | D_Unop of d_expr * uop * prim_type
-  | D_Assign of string * d_expr * prim_type
-  | D_Call of string * d_expr list * prim_type
-  | D_Tuple of d_expr * d_expr * prim_type
-  | D_Null_Lit
-  | D_Noexpr
-  | C_Binop(t,_,_,_) -> t
-  | C_Unop(t,_,_) -> t 
-  | C_Id(t,_,_) -> t
-  | C_Assign(t,_,_) -> t
-  | C_Tree(t, d, _, _) -> 
-    (match t with
-        Lrx_Atom(t) -> Lrx_Tree({datatype = t; degree = Int_Literal(d)})
-      | _ -> raise (Failure "Tree type must be Lrx_atom"))
-  | C_Call(f,_) -> let (_,r,_,_) = f in r
-  | (C_Noexpr | C_Null_Literal) -> raise (Failure("Type of expression called on Null_Literal or Noexpr")) *)
 
 (* let rec compare_list lst1 lst2 =
 	match (lst1, lst2) with
 	([], []) -> true
 	| (h1::t1, h2::t2) -> (h1 = h2) && compare_list t1 t2
 	| _ -> false *)
-
-
 
 let rec map_to_list_env func lst env =
 	match lst with
@@ -103,8 +82,11 @@ let verify_var var env =
 		Func_Decl(f) -> raise(Failure("symbol is not a variable"))
 	  | Var_Decl(v) -> (fst_of_three v, snd_of_three v, id)
 
-let verify_is_func_decl fdecl env =
-	fdecl
+let verify_is_func_decl name env =
+	let decl = Symtab.symtab_find name env in
+	match decl with 
+		Func_Decl(f) -> name
+		| _ -> raise(Failure("id " ^ name ^ " not a function"))
 
 (*
 let rec check_statement stmt ret_type env in_loop = 
@@ -154,8 +136,11 @@ let verify_unop_and_get_type e unop =
 			else Frac_Type
 		| _ -> raise (Failure "negation operator applied to type that doesn't support negation")
 
-(*let verify_id id*)
-
+let verify_id_get_type id env = 
+	let decl = Symtab.symtab_find id env in
+	match decl with
+		Var_Decl(v) -> snd_of_three v
+		| _ -> raise(Failure("id " ^ id ^ " not a variable."))
 
 let verify_binop l r op =
 	(* match op with
