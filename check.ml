@@ -153,7 +153,6 @@ let verify_binop l r op =
 			| Int_Type, Duration_Type -> Duration_Type
 			| Pitch_Type, Int_Type -> Pitch_Type
 			| Pitch_Type, Pitch_Type -> Pitch_Type
-			(* | Pitch_Type, Frac_Type ->  Failure*)
 			| Frac_Type, Int_Type -> Frac_Type
 			| Frac_Type, Frac_Type -> Frac_Type
 			| Frac_Type, Duration_Type -> Duration_Type
@@ -175,7 +174,34 @@ let verify_binop l r op =
 			| Duration_Type, Int_Type -> Duration_Type
 			| Duration_Type, Frac_Type -> Duration_Type
 			| _, _ -> raise(Failure("Cannot apply */% op to types " ^ string_of_prim_type tl ^ " + " ^ string_of_prim_type tr)))
-		| Equal | Neq | Less | Greater | Geq | And | Or -> Bool_Type
+		| Equal | Neq -> if tl = tr then Bool_Type else (match(tl, tr) with
+			| Int_Type, Pitch_Type -> Bool_Type	
+			| Int_Type, Frac_Type -> Bool_Type
+			| Int_Type, Duration_Type -> Bool_Type
+			| Pitch_Type, Int_Type -> Bool_Type
+			| Frac_Type, Int_Type -> Bool_Type
+			| Frac_Type, Duration_Type -> Bool_Type
+			| Duration_Type, Int_Type -> Bool_Type
+			| Duration_Type, Frac_Type -> Bool_Type
+			| _, _ -> raise(Failure("Cannot apply == !=  op to types " ^ string_of_prim_type tl ^ " + " ^ string_of_prim_type tr)))
+		| Less | Greater | Leq | Geq-> (match (tl, tr) with
+			Int_Type, Int_Type -> Bool_Type
+			| Int_Type, Pitch_Type -> Bool_Type	
+			| Int_Type, Frac_Type -> Bool_Type
+			| Int_Type, Duration_Type -> Bool_Type
+			| Pitch_Type, Int_Type -> Bool_Type
+			| Pitch_Type, Pitch_Type -> Bool_Type
+			| Frac_Type, Int_Type -> Bool_Type
+			| Frac_Type, Frac_Type -> Bool_Type
+			| Frac_Type, Duration_Type -> Bool_Type
+			| Duration_Type, Int_Type -> Bool_Type
+			| Duration_Type, Frac_Type -> Bool_Type
+			| Duration_Type, Duration_Type -> Bool_Type
+			| String_Type, String_Type -> Bool_Type
+			| _, _ -> raise(Failure("Cannot apply < > <= >=  op to types " ^ string_of_prim_type tl ^ " + " ^ string_of_prim_type tr)))
+		| And | Or -> (match (tl, tr) with
+			Bool_Type, Bool_Type -> Bool_Type
+			| _, _ -> raise(Failure("Cannot apply && ||  op to types " ^ string_of_prim_type tl ^ " + " ^ string_of_prim_type tr)))
  
 (*let verify_assign id *)
 let rec verify_expr expr env =
