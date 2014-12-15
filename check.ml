@@ -23,7 +23,7 @@ type d_stmt =
 	| D_Expr of d_expr
 	| D_Assign of string * d_expr * prim_type
 	| D_Return of d_expr
-    | D_If of d_expr * d_block * d_block
+    | D_If of d_expr * d_stmt * d_stmt (* stmts of type D_CodeBlock *)
     | D_For of d_expr * d_expr * d_expr * d_block
     | D_While of d_expr * d_block
 
@@ -48,8 +48,8 @@ type d_program = scope_var_decl list * d_func list
 
 let type_of_expr = function
     D_Int_Lit(_,t) -> t
-  | D_String_Lit(_,t) -> t
   | D_Bool_Lit(_,t) -> t
+  | D_String_Lit(_,t) -> t
   | D_Frac_Lit(_,_,t) -> t
   | D_Id(_,t) -> t
   | D_Binop(_,_,_,t) -> t 
@@ -157,25 +157,27 @@ let verify_unop_and_get_type e unop =
 (*let verify_id id*)
 
 
-let verify_binop l r op env = (* need to add checks*)
+let verify_binop l r op =
+	(* match op with
+		Add ->  *)
 	type_of_expr(l)            (* type of l and type of r match*)
 								(* operator is appropriate *)
 
  
 (*let verify_assign id *)
 let rec verify_expr expr env =
+	let () = print_endline ("verifying expr: " ^ string_of_expr expr) in
 	match expr with                                         (* expr evaluates to *)
 		  Bool_Lit(b)     -> D_Bool_Lit(b,Bool_Type)        (* D_Bool_Lit *)
 		| Int_Lit(i)      -> D_Int_Lit(i, Int_Type)		    (* D_Int_Lit *)
 		| String_Lit(s)   -> D_String_Lit(s, String_Type)   (* D_String_Lit*)
 		| Frac_Lit(n,d)   -> D_Frac_Lit(n, d, Frac_Type)    (* D_Frac_Lit *)
 		| Id(s)           -> D_Id(s, String_Type)           (* D_Id_Lit *)
-		(*| Array_Lit of expr list  *)
 	    | Binop(l, op, r) -> 
 	    	let vl = verify_expr l env in
 	    	let vr = verify_expr r env in
-	    	let vl_type = verify_binop vl vr op env in
-	    	D_Binop(vl, op, vr, vl_type)                    (* D_Binop *)
+	    	let vtype = verify_binop vl vr op in
+	    	D_Binop(vl, op, vr, vtype)                    (* D_Binop *)
      	| Unop(e, uop) -> 
      		let ve = verify_expr e env in
      		let ve_type = verify_unop_and_get_type ve uop in
@@ -276,25 +278,38 @@ let rec verify_stmt stmt ret_type env =
 		let verified_expr = verify_expr e env in
 		D_Expr(verified_expr)
 	| Assign(id, e) -> 
-        	let ve = verify_expr e env in
-        	let vt = type_of_expr ve in
-        	let vid = verify_id_is_type id vt env in 
-        	D_Assign(vid, ve, vt) 
+    	let ve = verify_expr e env in
+    	let vt = type_of_expr ve in
+    	let vid = verify_id_is_type id vt env in 
+    	D_Assign(vid, ve, vt) 
+    | Block(b) -> 
+    	let verified_block = verify_block b ret_type (fst env, b.block_id) in
+    	D_CodeBlock(verified_block)
+    | If(e, b1, b2) ->
+    	let verified_expr = verify_expr e env in
+    	let () = print_endline (string_of_prim_type (type_of_expr verified_expr)) in
+    	if (type_of_expr verified_expr) = Bool_Type then
+	    	let vb1 = verify_block b1 ret_type (fst env, b1.block_id) in
+	    	let vb2 = verify_block b2 ret_type (fst env, b2.block_id) in
+	    	D_If(verified_expr, D_CodeBlock(vb1), D_CodeBlock(vb2))
+    	else raise(Failure("Condition in if statement must be a boolean expression."))
 
-    
-
-let rec verify_stmt_list stmt_list ret_type env = 
+and verify_stmt_list stmt_list ret_type env = 
 	match stmt_list with
 		  [] -> []
 		| head :: tail -> (verify_stmt head ret_type env) :: (verify_stmt_list tail ret_type env)
 
-
-
-let verify_block block ret_type env =
+and verify_block block ret_type env =
 	let verified_vars = map_to_list_env verify_var block.locals (fst env, block.block_id) in
 	let verified_stmts = verify_stmt_list block.statements ret_type env in 
-	(* THE BUG IS IN THE PREVIOUS LINE *)
 	{ d_locals = verified_vars; d_statements = verified_stmts; d_block_id = block.block_id }
+
+    
+
+
+
+
+
 
 
 (*verify formals, get return type, verify function name, verify fblock *)

@@ -58,6 +58,7 @@ rule token = parse
 
 | "int"    { INT }                      (* Types *)
 (*| "char"   { CHAR }*)
+| "bool"   { BOOL }
 | "string" { STRING }
 | "frac"   { FRAC }
 | "pitch"  { PITCH }
@@ -68,7 +69,7 @@ rule token = parse
 | "composition" { COMPOSITION }
 
 
-| "true|false" as lit { BOOL_LIT(bool_of_string lit) }
+| ("true"|"false") as lit { BOOL_LIT(bool_of_string lit) }
 | int_lit as lit { INT_LIT(int_of_string lit) }
 | '\"' ([^'\"']* as lit) '\"' { STRING_LIT(lit) }
 (*| frac_lit as lit { FRAC_LIT(lit) }*)

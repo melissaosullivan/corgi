@@ -182,7 +182,7 @@ let rec string_of_stmt = function
     (match b2.statements with
         [] -> "if (" ^ string_of_expr e ^ ")\n" ^ string_of_block b1
       | _  -> "if (" ^ string_of_expr e ^ ")\n" ^
-              string_of_block b1 ^ "else\n" ^ string_of_block b1)
+              string_of_block b1 ^ "else\n" ^ string_of_block b2)
   | For(e1, e2, e3, b) ->
       "for (" ^ string_of_expr e1  ^ " ; " ^ string_of_expr e2 ^ " ; " ^
       string_of_expr e3  ^ ") " ^ string_of_block b
