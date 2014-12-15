@@ -16,9 +16,16 @@ public class Track {
 		}
 	}
 	
+	public Track() {
+		chords = new ArrayList<Chord>();
+		totalDuration = new Duration(0);
+	}
+	
 	public void add(Track t) {
 		chords.addAll(t.chords);
 	}
+	
+	
 	
 	public void divide(int i) {
 		Frac f = new Frac(totalDuration.fraction);
@@ -37,12 +44,24 @@ public class Track {
 		chords = newChords;
 	}
 	
+	public void addNoteString(String note, long duration) {
+		chords.add(new Chord(Integer.parseInt(note), duration));
+	}
+	
 	public int getLength() {
 		return chords.size();
 	}
 	
 	public Chord getChord(int index) {
 		return chords.get(index);
+	}
+	
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		for (Chord c : chords) {
+			sb.append(c.toString());
+		}
+		return sb.toString();
 	}
 
 }
