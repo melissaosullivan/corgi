@@ -39,7 +39,7 @@ type expr =
     Bool_Lit of bool 
   | Int_Lit of int 
   | String_Lit of string
-  | Frac_Lit of int * int 
+  | Frac_Lit of expr * expr (* int * int or Id's of type int *)
   | Id of string
   | Array_Lit of expr list
   | Binop of expr * op * expr
@@ -137,7 +137,7 @@ let rec string_of_expr = function
   Bool_Lit(b) -> string_of_bool b
   | Int_Lit(i) -> string_of_int i
   | String_Lit(s) -> s
-  | Frac_Lit(n, d) -> "$" ^ string_of_int n ^ "/" ^ string_of_int d ^ "$"
+  | Frac_Lit(n, d) -> "$" ^ string_of_expr n ^ "/" ^ string_of_expr d ^ "$"
   | Array_Lit(e) -> String.concat ", " (List.map string_of_expr e) 
   | Null_Lit -> "null"
   | Id(s) -> s

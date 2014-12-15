@@ -11,6 +11,7 @@ let inc_block_id (u:unit) =
 %token PLUS MINUS TIMES DIVIDE MOD ASSIGN AT
 %token EQ NEQ LT LEQ GT GEQ DOLLAR
 %token RETURN IF ELIF ELSE FOR WHILE 
+/* %token BREAK CONTINUE */
 %token TRUE FALSE NULL
 %token AND OR NOT
 
@@ -121,7 +122,7 @@ expr_opt:
 
 expr:
   literal {$1}
-  | DOLLAR INT_LIT DIVIDE INT_LIT DOLLAR {Frac_Lit($2, $4)}
+  | DOLLAR int_expr DIVIDE int_expr DOLLAR {Frac_Lit($2, $4)}
   | LBRACKET expr_list RBRACKET { Array_Lit($2) }
   | LPAREN expr COMMA expr RPAREN { Tuple($2, $4)}
   | ID               { Id($1) }
@@ -141,10 +142,10 @@ expr:
   | MINUS expr %prec NEG         { Unop($2, Neg) }
   | NOT expr                     { Unop($2, Not) }
   | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
-  | ID AT at_expr{ Access($1, $3) }
+  | ID AT int_expr{ Access($1, $3) }
   | LPAREN expr RPAREN { $2 }
 
-at_expr:
+int_expr:
   ID               { Id($1) }
   | INT_LIT        { Int_Lit($1) } 
 

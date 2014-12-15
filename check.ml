@@ -7,7 +7,7 @@ type d_expr =
 	  D_Bool_Lit of bool * prim_type
 	| D_Int_Lit of int * prim_type
     | D_String_Lit of string * prim_type
-    | D_Frac_Lit of int * int  * prim_type
+    | D_Frac_Lit of d_expr * d_expr  * prim_type (* Expressions of type int *)
     | D_Id of string * prim_type
     | D_Array_Lit of d_expr list * prim_type
     | D_Binop of d_expr * op * d_expr * prim_type
@@ -73,7 +73,9 @@ let rec map_to_list_env func lst env =
 let verify_gvar gvar env = 
 	let decl = Symtab.symtab_find (fst gvar) env in 
 	let id = Symtab.symtab_get_id (fst gvar) env in
-	gvar
+	match decl with 
+		Var_Decl(v) -> (fst_of_three v, snd_of_three v, id)
+		| _ -> raise(Failure("global" ^ (fst gvar) ^ " not a variable"))
 
 let verify_var var env = 
 	let decl = Symtab.symtab_find (fst var) env in
@@ -210,7 +212,12 @@ let rec verify_expr expr env =
 		  Bool_Lit(b)     -> D_Bool_Lit(b,Bool_Type)        (* D_Bool_Lit *)
 		| Int_Lit(i)      -> D_Int_Lit(i, Int_Type)		    (* D_Int_Lit *)
 		| String_Lit(s)   -> D_String_Lit(s, String_Type)   (* D_String_Lit*)
-		| Frac_Lit(n,d)   -> D_Frac_Lit(n, d, Frac_Type)    (* D_Frac_Lit *)
+		| Frac_Lit(n,d)   ->                                (* D_Frac_Lit *)
+			let vn = verify_expr n env in 
+			let vd = verify_expr d env in
+			if type_of_expr vn <> Int_Type or type_of_expr vd <> Int_Type then (* Come back and also accept Frac as n and d *)
+				raise(Failure("Fraction literal must have integer numerator and denominator."))
+			else D_Frac_Lit(vn, vd, Frac_Type)
 		| Id(s)           -> 								(* D_Id_Lit *)
 			let vid_type = verify_id_get_type s env in
 			D_Id(s, vid_type)           
@@ -350,6 +357,13 @@ let rec verify_stmt stmt ret_type env =
     		| _ -> raise(Failure("Last term in For statement must be assignment or no expression. (;;*)"))) in
 		let vb = verify_block block ret_type (fst env, block.block_id) in
 		D_For(va1, vc, va2, vb)
+	| While(condition, block) ->
+		let vc = verify_expr condition env in
+		let vt = type_of_expr vc in 
+		if vt = Bool_Type then 
+			let vb = verify_block block ret_type (fst env, block.block_id) in
+			D_While(vc, vb)
+		else raise(Failure("Condition in While statement must be boolean."))
 
 
 
@@ -363,14 +377,6 @@ and verify_block block ret_type env =
 	let verified_stmts = verify_stmt_list block.statements ret_type env in 
 	{ d_locals = verified_vars; d_statements = verified_stmts; d_block_id = block.block_id }
 
-    
-
-
-
-
-
-
-
 (*verify formals, get return type, verify function name, verify fblock *)
 let verify_func func env =
 	(* let () = Printf.printf "verifying function \n" in *)
@@ -379,36 +385,6 @@ let verify_func func env =
 	let verified_formals = map_to_list_env verify_var func.formals (fst env, func.fblock.block_id) in
 	let verified_func_decl = verify_is_func_decl func.fname env in 
 	{ d_fname = verified_func_decl; d_ret_type = func.ret_type; d_formals = verified_formals; d_fblock = verified_block }
-
-(*
--       let verified_formals = map_to_list_env verify_var func.formals env in
--       let return = verify_block func.fblock env in
--       let *)
-(* type func = { ret_type : types; 
-				 fname : string; 
-				 formals: var list; 
-				 fblock: block; }
-   to verify a function we check:
-   	1.) block returns return type
-   	2.) check formals
-   	3.) check fname
-   	4.) 
-	
-	*)
-(*let verify_binop l op r = 
-	let *)
-
-
-
-
-
-(*	match var with
-		  Func_Decl(f) -> raise(Failure "symbol is function not a variable")
-		| Var_Decl(v) -> gvar 
-
-	this may or may not happen ever ? *)
-
-
 
 let verify_semantics program env = 
 	let (gvar_list, func_list) = program in 
