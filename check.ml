@@ -143,11 +143,39 @@ let verify_id_get_type id env =
 		| _ -> raise(Failure("id " ^ id ^ " not a variable."))
 
 let verify_binop l r op =
-	(* match op with
-		Add ->  *)
-	type_of_expr(l)            (* type of l and type of r match*)
-								(* operator is appropriate *)
-
+	let tl = type_of_expr l in
+	let tr = type_of_expr r in
+	match op with 
+		Add | Sub  -> (match (tl, tr) with
+			Int_Type, Int_Type -> Int_Type
+			| Int_Type, Pitch_Type -> Pitch_Type	
+			| Int_Type, Frac_Type -> Frac_Type
+			| Int_Type, Duration_Type -> Duration_Type
+			| Pitch_Type, Int_Type -> Pitch_Type
+			| Pitch_Type, Pitch_Type -> Pitch_Type
+			(* | Pitch_Type, Frac_Type ->  Failure*)
+			| Frac_Type, Int_Type -> Frac_Type
+			| Frac_Type, Frac_Type -> Frac_Type
+			| Frac_Type, Duration_Type -> Duration_Type
+			| Duration_Type, Int_Type -> Duration_Type
+			| Duration_Type, Frac_Type -> Duration_Type
+			| Duration_Type, Duration_Type -> Duration_Type
+			| _, _ -> raise(Failure("Cannot apply + - op to types " ^ string_of_prim_type tl ^ " + " ^ string_of_prim_type tr)))
+		| Mult | Div | Mod -> (match (tl, tr) with
+			(* I removed duration * duration operations, otherwise we can merge both sets *)
+			Int_Type, Int_Type -> Int_Type
+			| Int_Type, Pitch_Type -> Pitch_Type	
+			| Int_Type, Frac_Type -> Frac_Type
+			| Int_Type, Duration_Type -> Duration_Type
+			| Pitch_Type, Int_Type -> Pitch_Type
+			| Pitch_Type, Pitch_Type -> Pitch_Type
+			| Frac_Type, Int_Type -> Frac_Type
+			| Frac_Type, Frac_Type -> Frac_Type
+			| Frac_Type, Duration_Type -> Duration_Type
+			| Duration_Type, Int_Type -> Duration_Type
+			| Duration_Type, Frac_Type -> Duration_Type
+			| _, _ -> raise(Failure("Cannot apply */% op to types " ^ string_of_prim_type tl ^ " + " ^ string_of_prim_type tr)))
+		| Equal | Neq | Less | Greater | Geq | And | Or -> Bool_Type
  
 (*let verify_assign id *)
 let rec verify_expr expr env =
@@ -253,7 +281,7 @@ let verify_id_is_type (id:string) vt env = (* Add support for assigning compatib
 	| _ -> raise(Failure (id ^ " is not a variable")) in
 	let (_, idtype, _) = vdecl in
 	if idtype = vt then id (* id is of type vt *)
-	else  raise (Failure("Expression of type " ^ string_of_prim_type vt ^ " assigned to variable " ^ id ^ " of type " ^ string_of_prim_type idtype))
+	else  raise (Failure("Expected " ^ string_of_prim_type vt ^ " got:  " ^ id ^ " of type " ^ string_of_prim_type idtype))
 
 let rec verify_stmt stmt ret_type env =
 	let () = print_endline ("verifying statement: " ^ string_of_stmt stmt) in
