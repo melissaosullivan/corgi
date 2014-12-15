@@ -1,0 +1,5 @@
+int a
+int add(int, int)
+int b
+int main()
+int print()

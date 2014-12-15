@@ -13,7 +13,8 @@ type d_expr =
     | D_Binop of d_expr * op * d_expr * prim_type
     | D_Unop of d_expr * uop * prim_type
     | D_Call of string * d_expr list * prim_type
-    | D_Tuple of d_expr * d_expr * prim_type
+    | D_Tuple of d_expr * d_expr * prim_type  (* Come back and fix tuples *)
+    | D_Access of string * d_expr * prim_type
   (*  | D_Null_Lit *)
     | D_Noexpr 
 
@@ -55,7 +56,8 @@ let type_of_expr = function
   | D_Array_Lit (_, t) -> t
   | D_Unop (_, _, t) -> t
   | D_Call (_, _, t) -> t
-  | D_Tuple (_, _, t) -> t
+  | D_Tuple (_, _, t) -> t (* Come back and fix tuples *)
+  | D_Access (_, _, t) -> t
   | D_Noexpr -> Null_Type 
  (* | D_Unop of d_expr * uop * prim_type
   | D_Assign of string * d_expr * prim_type
@@ -74,6 +76,12 @@ let type_of_expr = function
   | C_Call(f,_) -> let (_,r,_,_) = f in r
   | (C_Noexpr | C_Null_Literal) -> raise (Failure("Type of expression called on Null_Literal or Noexpr")) *)
 
+(* let rec compare_list lst1 lst2 =
+	match (lst1, lst2) with
+	([], []) -> true
+	| (h1::t1, h2::t2) -> (h1 = h2) && compare_list t1 t2
+	| _ -> false *)
+
 
 
 let rec map_to_list_env func lst env =
@@ -89,10 +97,8 @@ let verify_gvar gvar env =
 	gvar
 
 let verify_var var env = 
-	let () = Printf.printf "verifyvar" in 
 	let decl = Symtab.symtab_find (fst var) env in
 	let id = Symtab.symtab_get_id (fst var) env in
-	let () = Printf.printf "      " in 
 	match decl with
 		Func_Decl(f) -> raise(Failure("symbol is not a variable"))
 	  | Var_Decl(v) -> (fst_of_three v, snd_of_three v, id)
@@ -155,7 +161,7 @@ let verify_binop l r op env = (* need to add checks*)
 	type_of_expr(l)            (* type of l and type of r match*)
 								(* operator is appropriate *)
 
-
+ 
 (*let verify_assign id *)
 let rec verify_expr expr env =
 	match expr with                                         (* expr evaluates to *)
@@ -169,17 +175,67 @@ let rec verify_expr expr env =
 	    	let vl = verify_expr l env in
 	    	let vr = verify_expr r env in
 	    	let vl_type = verify_binop vl vr op env in
-	    	D_Binop(vl, op, vr, vl_type)                      (* D_Binop *)
+	    	D_Binop(vl, op, vr, vl_type)                    (* D_Binop *)
      	| Unop(e, uop) -> 
      		let ve = verify_expr e env in
      		let ve_type = verify_unop_and_get_type ve uop in
-     		D_Unop(ve, uop, ve_type)                          
-        	
-        (*		of string * expr *)
-    (*    | Call of string * expr list
-   	    | Tuple of expr * expr
-        | Null_Lit
-        | Noexpr *)
+     		D_Unop(ve, uop, ve_type)                        (* D_Unop *)
+     	| Array_Lit (ar) -> 
+     		let (va, va_type) = verify_array ar env in
+     		D_Array_Lit(va, va_type)                        (* D_Array_Lit *)
+     	| Call (name, args) -> 
+     		let va = verify_expr_list args env in 
+     		let vt = verify_call_and_get_type name va env in
+     		D_Call(name, va, vt)                             (* D_Call *)
+     	| Tuple(e1, e2) ->                                   (* D_Tuple *)
+     		let ve1 = verify_expr e1 env in
+     		let ve2 = verify_expr e2 env in
+     		D_Tuple(ve1, ve2, PD_Type)  (* Come back and fix tuples *)
+     	| Access(ar, i) -> (* Not implemented yet *)
+     		(* Check that ar is in symtab, ar can only be of type chord? *) 
+     		(* Check that i is a lit or id of type int *)
+     		D_Access(ar, verify_expr (*change to verify_int_expr *) i env, Chord_Type)
+     	| Noexpr -> D_Noexpr
+
+
+and verify_array arr env = 
+	match arr with
+	[] -> ([], Null_Type) (* Empty *)
+	| head :: tail ->
+		let verified_head = verify_expr head env in
+		let head_type = type_of_expr verified_head in
+		(* Verify that other elements are valid expressions with consistent types *)
+		(* Decision time: Only use pd_type ? *)
+			let rec verify_list_and_type l t e =       
+				match l with
+					[] -> ([], t)
+					| hd :: tl -> 
+						let ve = verify_expr hd e in
+						let te = type_of_expr ve in
+						if t = te then (ve :: (fst (verify_list_and_type tl te e)), t) 
+						else raise (Failure "Elements of inconsistent types in Array_Lit")
+			in
+		(verified_head :: (fst (verify_list_and_type tail head_type env)), head_type) 
+
+and verify_expr_list lst env =
+	match lst with
+	[] -> []
+	| head :: tail -> verify_expr head env :: verify_expr_list tail env
+
+and verify_call_and_get_type name vargs env =
+	let decl = Symtab.symtab_find name env in (* function name in symbol table *)
+	let fdecl = match decl with
+		Func_Decl(f) -> f                     (* check if it is a function *)
+		| _ -> raise(Failure (name ^ " is not a function")) in
+	if name = "print" then Int_Type           (* Add more builtins when we have more builtins *)
+	else 
+		let (_,rtype,params,_) = fdecl in
+		if (List.length params) = (List.length vargs) then
+			let arg_types = List.map type_of_expr vargs in
+			if (* compare_list_types *) params = arg_types then rtype
+			else raise(Failure("Argument types in " ^ name ^ " call do not match formal parameters."))
+		else raise(Failure("Function " ^ name ^ " takes " ^ string_of_int (List.length params) ^
+						   " arguments, called with " ^ string_of_int (List.length vargs)))
 
 (*
 and get_type_of_rhs_assign = function
@@ -201,42 +257,51 @@ and get_type_of_rhs_assign = function
      	| _ -> raise (Failure "right hand side of assignment expression is invalid") *) 
 
 
-let verify_id (id:string) env = 
+let verify_id_is_type (id:string) vt env = (* Add support for assigning compatible types *)
 	let decl = Symtab.symtab_find id env in 
-	id
+	let vdecl = match decl with (* check that id refers to a variable *)
+	Var_Decl(v) -> v
+	| _ -> raise(Failure (id ^ " is not a variable")) in
+	let (_, idtype, _) = vdecl in
+	if idtype = vt then id (* id is of type vt *)
+	else  raise (Failure("Expression of type " ^ string_of_prim_type vt ^ " assigned to variable " ^ id ^ " of type " ^ string_of_prim_type idtype))
 
-let rec verify_stmt stmt ret_type env = (* make sure to verify return stmt*)
+let rec verify_stmt stmt ret_type env =
 	match stmt with
 	Return(e) ->
 		let verified_expr = verify_expr e env in
-		D_Return(verified_expr)
-		(* if ret_type = type_of_expr verified_expr then D_Return(verified_expr) 
-	    else raise(Failure "return type does not match") *)
+		if ret_type = type_of_expr verified_expr then D_Return(verified_expr) 
+	    else raise(Failure "return type does not match") 
 	| Expr(e) -> 
 		let verified_expr = verify_expr e env in
 		D_Expr(verified_expr)
 	| Assign(id, e) -> 
         	let ve = verify_expr e env in
-        	let vid = verify_id id env in (* might need to add check that *)
-        	 D_Assign(vid, ve, type_of_expr ve)    (*id is the correct type *)
+        	let vt = type_of_expr ve in
+        	let vid = verify_id_is_type id vt env in 
+        	D_Assign(vid, ve, vt) 
+
+    
 
 let rec verify_stmt_list stmt_list ret_type env = 
 	match stmt_list with
 		  [] -> []
-		| head :: tail -> verify_stmt head ret_type env :: verify_stmt_list tail ret_type env
+		| head :: tail -> (verify_stmt head ret_type env) :: (verify_stmt_list tail ret_type env)
 
 
 
 let verify_block block ret_type env =
 	let verified_vars = map_to_list_env verify_var block.locals (fst env, block.block_id) in
 	let verified_stmts = verify_stmt_list block.statements ret_type env in 
+	(* THE BUG IS IN THE PREVIOUS LINE *)
 	{ d_locals = verified_vars; d_statements = verified_stmts; d_block_id = block.block_id }
 
 
 (*verify formals, get return type, verify function name, verify fblock *)
 let verify_func func env =
-	let verified_block = verify_block func.fblock func.ret_type env in
-	let () = Printf.printf "func.fname" in 
+	(* let () = Printf.printf "verifying function \n" in *)
+	let verified_block = verify_block func.fblock func.ret_type (fst env, func.fblock.block_id) in
+	(* let () = Printf.printf "func.fname" in *) 
 	let verified_formals = map_to_list_env verify_var func.formals (fst env, func.fblock.block_id) in
 	let verified_func_decl = verify_is_func_decl func.fname env in 
 	{ d_fname = verified_func_decl; d_ret_type = func.ret_type; d_formals = verified_formals; d_fblock = verified_block }
@@ -273,8 +338,8 @@ let verify_func func env =
 
 let verify_semantics program env = 
 	let (gvar_list, func_list) = program in 
-	let () = Printf.printf "after first line" in
 	let verified_gvar_list = map_to_list_env verify_var gvar_list env in 
-	let () = Printf.printf "after first line" in
+	let () = Printf.printf "after verifying gvars \n" in
 	let verified_func_list = map_to_list_env verify_func func_list env in
+	let () = Printf.printf "after verifying functions \n" in
 		(verified_func_list, verified_gvar_list)

@@ -140,8 +140,12 @@ expr:
   | MINUS expr %prec NEG         { Unop($2, Neg) }
   | NOT expr                     { Unop($2, Not) }
   | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
-  | ID AT INT_LIT { Access($1, $3) }
+  | ID AT at_expr{ Access($1, $3) }
   | LPAREN expr RPAREN { $2 }
+
+at_expr:
+  ID               { Id($1) }
+  | INT_LIT        { Int_Lit($1) } 
 
 expr_list:
   /* nothing */ { [] }

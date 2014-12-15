@@ -24,6 +24,7 @@ type prim_type =
   | Frac_Type
   | Rhythm_Type
   | Duration_Type
+  | PD_Type
   | Chord_Type
   | Track_Type
   | Composition_Type
@@ -45,7 +46,7 @@ type expr =
   | Unop of expr * uop
   (* | Create of types * string * expr  *)
   | Call of string * expr list
-  | Access of string * int 
+  | Access of string * expr 
   | Tuple of expr * expr
   | Null_Lit
   | Noexpr
@@ -107,6 +108,7 @@ let string_of_prim_type = function
   | Chord_Type -> "chord"
   | Track_Type -> "track"
   | Composition_Type -> "composition"
+  | PD_Type -> "(pitch, duration)"
 
 let string_of_types = function
   Corgi_Prim(t) -> string_of_prim_type t
@@ -139,7 +141,7 @@ let rec string_of_expr = function
   | Array_Lit(e) -> String.concat ", " (List.map string_of_expr e) 
   | Null_Lit -> "null"
   | Id(s) -> s
-  | Access(ar, i) -> ar ^ "@" ^ string_of_int i 
+  | Access(ar, i) -> ar ^ "@" ^ string_of_expr i 
   | Binop(e1, o, e2) ->
       string_of_expr e1 ^ " " ^
       string_of_binop o ^ " " ^
