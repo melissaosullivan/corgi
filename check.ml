@@ -255,14 +255,24 @@ and verify_call_and_get_type name vargs env =
 		else raise(Failure("Function " ^ name ^ " takes " ^ string_of_int (List.length params) ^
 						   " arguments, called with " ^ string_of_int (List.length vargs)))
 
-let verify_id_is_type (id:string) vt env = (* Add support for assigning compatible types *)
+let verify_id_match_type (id:string) vt env = (* Add support for assigning compatible types *)
 	let decl = Symtab.symtab_find id env in 
 	let vdecl = match decl with (* check that id refers to a variable *)
 	Var_Decl(v) -> v
 	| _ -> raise(Failure (id ^ " is not a variable")) in
 	let (_, idtype, _) = vdecl in
 	if idtype = vt then id (* id is of type vt *)
-	else  raise (Failure("Expected " ^ string_of_prim_type vt ^ " got:  " ^ id ^ " of type " ^ string_of_prim_type idtype))
+	else (match (idtype, vt) with 
+		Frac_Type, Int_Type  
+		| Duration_Type, Int_Type 
+		| Duration_Type, Frac_Type
+		| Pitch_Type, Int_Type 
+		| Rhythm_Type, Duration_Type (* Make sure the ones after this are arrays *)
+		| Chord_Type, PD_Type
+		| Composition_Type, Track_Type
+		| Track_Type, Chord_Type -> id
+		| _, _ -> raise(Failure("Cannot assign " ^ string_of_prim_type vt ^ " to " ^ id ^ " of type " ^ string_of_prim_type idtype )))
+
 
 let rec verify_stmt stmt ret_type env =
 	let () = print_endline ("verifying statement: " ^ string_of_stmt stmt) in
@@ -274,10 +284,10 @@ let rec verify_stmt stmt ret_type env =
 	| Expr(e) -> 
 		let verified_expr = verify_expr e env in
 		D_Expr(verified_expr)
-	| Assign(id, e) -> 
+	| Assign(id, e) -> (* Verify that id is compatible type to e *)
 		let ve = verify_expr e env in
 		let vt = type_of_expr ve in
-		let vid = verify_id_is_type id vt env in 
+		let vid = verify_id_match_type id vt env in 
 		D_Assign(vid, ve, vt) 
 	| Block(b) -> 
 		let verified_block = verify_block b ret_type (fst env, b.block_id) in
