@@ -1,0 +1,15 @@
+
+int main()
+{
+bool condition;
+condition = false; 
+if (false)
+{
+print(3 + 5);
+}
+else
+{
+print(false);
+}
+}
+
