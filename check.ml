@@ -90,42 +90,6 @@ let verify_is_func_decl name env =
 		Func_Decl(f) -> name
 		| _ -> raise(Failure("id " ^ name ^ " not a function"))
 
-(*
-let rec check_statement stmt ret_type env in_loop = 
-	match stmt with
-		CodeBlock(b) ->
-       		let checked_block = check_block b ret_type env in_loop in
-       		C_CodeBlock(checked_block)
-    | 	Return(e) -> 
-       		let verified_expr = verify_expr e env in
-       		let t = type_of_expr checked in
-       		if t = ret_type then C_Return(checked) else
-       		raise (Failure("function return type " ^ string_of_var_type t ^ "; type " ^ string_of_var_type ret_type ^ "expected"))
-     | Expr(e) -> C_Expr(check_expr e env) 
-     | If(e, b1, b2) -> 
-        let c = check_expr e env in
-        let t = type_of_expr c in
-        (match t with
-          Lrx_Atom(Lrx_Bool) -> C_If(c, check_block b1 ret_type env in_loop, check_block b2 ret_type env in_loop)
-        | _ -> raise (Failure "If statement must evaluate on boolean expression"))
-     | For(e1, e2, e3, b) -> 
-       let (c1, c2, c3) = (check_expr e1 env, check_expr e2 env, check_expr e3 env) in
-       if(type_of_expr c2 = Lrx_Atom(Lrx_Bool)) then
-       C_For(c1, c2, c3, check_block b ret_type env (in_loop + 1))
-		   else raise(Failure("for loop condition must evaluate on boolean expressions"))
-	   | While(e, b) -> 
-       let c = check_expr e env in
-		   if type_of_expr c = Lrx_Atom(Lrx_Bool) then 
-       C_While(c, check_block b ret_type env (in_loop + 1))
-		   else raise(Failure("while loop must evaluate on boolean expression"))
-    | Continue ->
-       if in_loop = 0 then raise (Failure "continue statement not within for or while loop")
-       else C_Continue
-    | Break ->
-       if in_loop = 0 then raise (Failure "break statement not within for or while loop")
-       else C_Break
-*)
-
 let verify_unop_and_get_type e unop =
 	let e_type = type_of_expr e in
 	match e_type with 
@@ -240,11 +204,17 @@ let rec verify_expr expr env =
      	| Tuple(e1, e2) ->                                   (* D_Tuple *)
      		let ve1 = verify_expr e1 env in
      		let ve2 = verify_expr e2 env in
-     		D_Tuple(ve1, ve2, PD_Type)  (* Come back and fix tuples *)
+     		if type_of_expr ve1 = Pitch_Type && type_of_expr ve2 = Duration_Type then 
+     			D_Tuple(ve1, ve2, PD_Type)  (* Come back and fix tuples *)
+     		else raise(Failure("Tuples must be of type (Pitch, Duration)"))
      	| Access(ar, i) -> (* Not implemented yet *)
      		(* Check that ar is in symtab, ar can only be of type chord? *) 
      		(* Check that i is a lit or id of type int *)
-     		D_Access(ar, verify_expr (*change to verify_int_expr *) i env, Chord_Type)
+     		let ar_type = verify_id_get_type ar env in
+     		let vi = verify_expr i env in
+     		let vit = type_of_expr vi in 
+     		if vit = Int_Type && ar_type = Chord_Type then D_Access(ar, vi, Chord_Type)
+     		else raise(Failure("symbol " ^ ar ^ " must be of type chord, index must be of type int")) 
      	| Noexpr -> D_Noexpr
 
 
