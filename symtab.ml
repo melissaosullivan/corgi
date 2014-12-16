@@ -48,6 +48,14 @@ let rec symtab_add_decl (name:string) (decl:decl) env =
     if SymTable.mem to_find table then raise(Failure("symbol " ^ name ^ " declared twice in same scope"))
     else ((SymTable.add to_find decl table), scope)
 
+(* New add_decl           ------------------------------------------------------------------------------*)
+let rec add_symbol name decl env =
+    let scoped_name = name ^ "_" ^ string_of_int (snd env) in
+    if SymTable.mem scoped_name (fst env) then 
+        raise(Failure("symbol " ^ name ^ " declared twice in scope." ))
+    else (SymTable.add scoped_name decl (fst env), snd env)
+(* ---------------------------------------------------------------------------------------------------- *)
+
 (* 
  * recursively add list of variables to the symbol table along with the scope of
  * the block in which they were declared
@@ -57,6 +65,15 @@ let rec symtab_add_vars (vars:var list) env =
       [] -> env
     | (vname, vtype) :: tail -> let env = symtab_add_decl vname (Var_Decl(vname, vtype, snd env)) env in (* name, type, scope *)
         symtab_add_vars tail env 
+
+(* New add_vars           ------------------------------------------------------------------------------*)
+let rec add_var_list lst env = match lst with
+    [] -> env
+    | head :: tail -> 
+        let (variable_name, variable_type) = head in 
+        let env = add_symbol variable_name (Var_Decl(variable_name, variable_type, snd env)) env in
+        add_var_list tail env
+(* ---------------------------------------------------------------------------------------------------- *)
 
 (* add declarations inside statements to the symbol table *)
 let rec symtab_add_stmts (stmts:stmt list) env =

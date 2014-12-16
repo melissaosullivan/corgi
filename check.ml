@@ -6,31 +6,30 @@ let snd_of_three (_, t, _) = t
 type d_expr =
 	  D_Bool_Lit of bool * prim_type
 	| D_Int_Lit of int * prim_type
-    | D_String_Lit of string * prim_type
-    | D_Frac_Lit of d_expr * d_expr  * prim_type (* Expressions of type int *)
-    | D_Id of string * prim_type
-    | D_Array_Lit of d_expr list * prim_type
-    | D_Binop of d_expr * op * d_expr * prim_type
-    | D_Unop of d_expr * uop * prim_type
-    | D_Call of string * d_expr list * prim_type
-    | D_Tuple of d_expr * d_expr * prim_type  (* Come back and fix tuples *)
-    | D_Access of string * d_expr * prim_type
-  (*  | D_Null_Lit *)
-    | D_Noexpr 
+	| D_String_Lit of string * prim_type
+	| D_Frac_Lit of d_expr * d_expr  * prim_type (* Expressions of type int *)
+	| D_Id of string * prim_type
+	| D_Array_Lit of d_expr list * prim_type
+	| D_Binop of d_expr * op * d_expr * prim_type
+	| D_Unop of d_expr * uop * prim_type
+	| D_Call of string * d_expr list * prim_type
+	| D_Tuple of d_expr * d_expr * prim_type  (* Come back and fix tuples *)
+	| D_Access of string * d_expr * prim_type
+	| D_Noexpr 
 
 type d_stmt = 
 	  D_CodeBlock of d_block
 	| D_Expr of d_expr
 	| D_Assign of string * d_expr * prim_type
 	| D_Return of d_expr
-    | D_If of d_expr * d_stmt * d_stmt (* stmts of type D_CodeBlock *)
-    | D_For of d_stmt * d_stmt * d_stmt * d_block (* stmts of type D_Assign | D_Noexpr * D_Expr of type bool * D_Assign | D_Noexpr *)
-    | D_While of d_expr * d_block
+	| D_If of d_expr * d_stmt * d_stmt (* stmts of type D_CodeBlock *)
+	| D_For of d_stmt * d_stmt * d_stmt * d_block (* stmts of type D_Assign | D_Noexpr * D_Expr of type bool * D_Assign | D_Noexpr *)
+	| D_While of d_expr * d_block
 
 and d_block = {
 	d_locals : scope_var_decl list;
-    d_statements: d_stmt list;
-    d_block_id: int;
+	d_statements: d_stmt list;
+	d_block_id: int;
 }
 
 
@@ -44,7 +43,7 @@ type d_func = {
 type d_program = scope_var_decl list * d_func list
 
 let type_of_expr = function
-    D_Int_Lit(_,t) -> t
+	D_Int_Lit(_,t) -> t
   | D_Bool_Lit(_,t) -> t
   | D_String_Lit(_,t) -> t
   | D_Frac_Lit(_,_,t) -> t
@@ -185,37 +184,37 @@ let rec verify_expr expr env =
 		| Id(s)           -> 								(* D_Id_Lit *)
 			let vid_type = verify_id_get_type s env in
 			D_Id(s, vid_type)           
-	    | Binop(l, op, r) -> 
-	    	let vl = verify_expr l env in
-	    	let vr = verify_expr r env in
-	    	let vtype = verify_binop vl vr op in
-	    	D_Binop(vl, op, vr, vtype)                    (* D_Binop *)
-     	| Unop(e, uop) -> 
-     		let ve = verify_expr e env in
-     		let ve_type = verify_unop_and_get_type ve uop in
-     		D_Unop(ve, uop, ve_type)                        (* D_Unop *)
-     	| Array_Lit (ar) -> 
-     		let (va, va_type) = verify_array ar env in
-     		D_Array_Lit(va, va_type)                        (* D_Array_Lit *)
-     	| Call (name, args) -> 
-     		let va = verify_expr_list args env in 
-     		let vt = verify_call_and_get_type name va env in
-     		D_Call(name, va, vt)                             (* D_Call *)
-     	| Tuple(e1, e2) ->                                   (* D_Tuple *)
-     		let ve1 = verify_expr e1 env in
-     		let ve2 = verify_expr e2 env in
-     		if type_of_expr ve1 = Pitch_Type && type_of_expr ve2 = Duration_Type then 
-     			D_Tuple(ve1, ve2, PD_Type)  (* Come back and fix tuples *)
-     		else raise(Failure("Tuples must be of type (Pitch, Duration)"))
-     	| Access(ar, i) -> (* Not implemented yet *)
-     		(* Check that ar is in symtab, ar can only be of type chord? *) 
-     		(* Check that i is a lit or id of type int *)
-     		let ar_type = verify_id_get_type ar env in
-     		let vi = verify_expr i env in
-     		let vit = type_of_expr vi in 
-     		if vit = Int_Type && ar_type = Chord_Type then D_Access(ar, vi, Chord_Type)
-     		else raise(Failure("symbol " ^ ar ^ " must be of type chord, index must be of type int")) 
-     	| Noexpr -> D_Noexpr
+		| Binop(l, op, r) -> 
+			let vl = verify_expr l env in
+			let vr = verify_expr r env in
+			let vtype = verify_binop vl vr op in
+			D_Binop(vl, op, vr, vtype)                    (* D_Binop *)
+		| Unop(e, uop) -> 
+			let ve = verify_expr e env in
+			let ve_type = verify_unop_and_get_type ve uop in
+			D_Unop(ve, uop, ve_type)                        (* D_Unop *)
+		| Array_Lit (ar) -> 
+			let (va, va_type) = verify_array ar env in
+			D_Array_Lit(va, va_type)                        (* D_Array_Lit *)
+		| Call (name, args) -> 
+			let va = verify_expr_list args env in 
+			let vt = verify_call_and_get_type name va env in
+			D_Call(name, va, vt)                             (* D_Call *)
+		| Tuple(e1, e2) ->                                   (* D_Tuple *)
+			let ve1 = verify_expr e1 env in
+			let ve2 = verify_expr e2 env in
+			if type_of_expr ve1 = Pitch_Type && type_of_expr ve2 = Duration_Type then 
+				D_Tuple(ve1, ve2, PD_Type)  (* Come back and fix tuples *)
+			else raise(Failure("Tuples must be of type (Pitch, Duration)"))
+		| Access(ar, i) -> (* Not implemented yet *)
+			(* Check that ar is in symtab, ar can only be of type chord? *) 
+			(* Check that i is a lit or id of type int *)
+			let ar_type = verify_id_get_type ar env in
+			let vi = verify_expr i env in
+			let vit = type_of_expr vi in 
+			if vit = Int_Type && ar_type = Chord_Type then D_Access(ar, vi, Chord_Type)
+			else raise(Failure("symbol " ^ ar ^ " must be of type chord, index must be of type int")) 
+		| Noexpr -> D_Noexpr
 
 
 and verify_array arr env = 
@@ -271,39 +270,39 @@ let rec verify_stmt stmt ret_type env =
 	Return(e) ->
 		let verified_expr = verify_expr e env in
 		if ret_type = type_of_expr verified_expr then D_Return(verified_expr) 
-	    else raise(Failure "return type does not match") 
+		else raise(Failure "return type does not match") 
 	| Expr(e) -> 
 		let verified_expr = verify_expr e env in
 		D_Expr(verified_expr)
 	| Assign(id, e) -> 
-    	let ve = verify_expr e env in
-    	let vt = type_of_expr ve in
-    	let vid = verify_id_is_type id vt env in 
-    	D_Assign(vid, ve, vt) 
-    | Block(b) -> 
-    	let verified_block = verify_block b ret_type (fst env, b.block_id) in
-    	D_CodeBlock(verified_block)
-    | If(e, b1, b2) ->
-    	let verified_expr = verify_expr e env in
-    	if (type_of_expr verified_expr) = Bool_Type then
-	    	let vb1 = verify_block b1 ret_type (fst env, b1.block_id) in
-	    	let vb2 = verify_block b2 ret_type (fst env, b2.block_id) in
-	    	D_If(verified_expr, D_CodeBlock(vb1), D_CodeBlock(vb2))
-    	else raise(Failure("Condition in if statement must be a boolean expression."))
-    | For(assignment1, condition, assignment2, block) ->
-    	let va1 = (match assignment1 with
-    		Assign(_, _) | Expr(_) ->  verify_stmt assignment1 ret_type env 
-    		| _ -> raise(Failure("First term in For statement must be assignment or no expression. (*;;)"))) in
-    	let vc = (match condition with
-    		Expr(e) -> 
-    			let ve = verify_expr e env in
-    			let vt = type_of_expr ve in
-    			if vt = Bool_Type or vt = Null_Type then verify_stmt condition ret_type env 
-    			else raise(Failure("Condition in For statement must be boolean or no expression. (;*;)"))
-    		| _ -> raise(Failure("Condition in For statement must be boolean or no expression. (;*;)"))) in
+		let ve = verify_expr e env in
+		let vt = type_of_expr ve in
+		let vid = verify_id_is_type id vt env in 
+		D_Assign(vid, ve, vt) 
+	| Block(b) -> 
+		let verified_block = verify_block b ret_type (fst env, b.block_id) in
+		D_CodeBlock(verified_block)
+	| If(e, b1, b2) ->
+		let verified_expr = verify_expr e env in
+		if (type_of_expr verified_expr) = Bool_Type then
+			let vb1 = verify_block b1 ret_type (fst env, b1.block_id) in
+			let vb2 = verify_block b2 ret_type (fst env, b2.block_id) in
+			D_If(verified_expr, D_CodeBlock(vb1), D_CodeBlock(vb2))
+		else raise(Failure("Condition in if statement must be a boolean expression."))
+	| For(assignment1, condition, assignment2, block) ->
+		let va1 = (match assignment1 with
+			Assign(_, _) | Expr(_) ->  verify_stmt assignment1 ret_type env 
+			| _ -> raise(Failure("First term in For statement must be assignment or no expression. (*;;)"))) in
+		let vc = (match condition with
+			Expr(e) -> 
+				let ve = verify_expr e env in
+				let vt = type_of_expr ve in
+				if vt = Bool_Type or vt = Null_Type then verify_stmt condition ret_type env 
+				else raise(Failure("Condition in For statement must be boolean or no expression. (;*;)"))
+			| _ -> raise(Failure("Condition in For statement must be boolean or no expression. (;*;)"))) in
 		let va2 = (match assignment1 with
-    		Assign(_, _) | Expr(_) ->  verify_stmt assignment2 ret_type env 
-    		| _ -> raise(Failure("Last term in For statement must be assignment or no expression. (;;*)"))) in
+			Assign(_, _) | Expr(_) ->  verify_stmt assignment2 ret_type env 
+			| _ -> raise(Failure("Last term in For statement must be assignment or no expression. (;;*)"))) in
 		let vb = verify_block block ret_type (fst env, block.block_id) in
 		D_For(va1, vc, va2, vb)
 	| While(condition, block) ->
