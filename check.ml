@@ -226,14 +226,13 @@ and verify_array arr env =
 		let head_type = type_of_expr verified_head in
 		(* Verify that other elements are valid expressions with consistent types *)
 		(* Decision time: Only use pd_type ? *)
-			let rec verify_list_and_type l t e =       
-				match l with
-					[] -> ([], t)
-					| hd :: tl -> 
-						let ve = verify_expr hd e in
-						let te = type_of_expr ve in
-						if t = te then (ve :: (fst (verify_list_and_type tl te e)), t) 
-						else raise (Failure "Elements of inconsistent types in Array_Lit")
+			let rec verify_list_and_type l t e = match l with
+				[] -> ([], t)
+				| hd :: tl -> 
+					let ve = verify_expr hd e in
+					let te = type_of_expr ve in
+					if t = te then (ve :: (fst (verify_list_and_type tl te e)), t) 
+					else raise (Failure "Elements of inconsistent types in Array_Lit")
 			in
 		(verified_head :: (fst (verify_list_and_type tail head_type env)), head_type) 
 
@@ -256,26 +255,6 @@ and verify_call_and_get_type name vargs env =
 			else raise(Failure("Argument types in " ^ name ^ " call do not match formal parameters."))
 		else raise(Failure("Function " ^ name ^ " takes " ^ string_of_int (List.length params) ^
 						   " arguments, called with " ^ string_of_int (List.length vargs)))
-
-(*
-and get_type_of_rhs_assign = function
-	  Bool_Lit(b)     -> D_Bool_Lit(b,Bool_Type)        (* D_Bool_Lit *)
-		| Int_Lit(i)      -> D_Int_Lit(i, Int_Type)		    (* D_Int_Lit *)
-		| String_Lit(s)   -> D_String_Lit(s, String_Type)   (* D_String_Lit*)
-		| Frac_Lit(n,d)   -> D_Frac_Lit(n, d, Frac_Type)    (* D_Frac_Lit *)
-		| Id(s)           -> D_Id(s, String_Type)           (* D_Id_Lit *)
-		(*| Array_Lit of expr list  *)
-	    | Binop(l, op, r) -> 
-	    	let vl = verify_expr l env in
-	    	let vr = verify_expr r env in
-	    	let vl_type = verify_binop vl vr op env in
-	    	D_Binop(vl, op, vr, vl_type)                      (* D_Binop *)
-     	| Unop(e, uop) -> 
-     		let ve = verify_expr e env in
-     		let ve_type = verify_unop_and_get_type ve uop in
-     		D_Unop(ve, uop, ve_type)        
-     	| _ -> raise (Failure "right hand side of assignment expression is invalid") *) 
-
 
 let verify_id_is_type (id:string) vt env = (* Add support for assigning compatible types *)
 	let decl = Symtab.symtab_find id env in 
