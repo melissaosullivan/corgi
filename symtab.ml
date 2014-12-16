@@ -7,6 +7,7 @@ open Ast
 module SymTable = Map.Make(String)
 
 let scope_parents = Array.make 1000 0
+let parents = Array.make 1000 0
 
 let string_of_decl = function
       Var_Decl(n, t, id)     -> string_of_vdecl (n, t)
@@ -28,6 +29,16 @@ let rec symtab_get_id (name:string) env =
     else
         if scope = 0 then raise (Failure("symbol " ^ name ^ " not declared in current scope"))
         else symtab_get_id name (table, scope_parents.(scope))
+
+
+(* New symtab_get_id      ------------------------------------------------------------------------------*)
+let rec get_id name env =
+    let scoped_name = name ^ "_" ^ (string_of_int (snd env)) in
+    if SymTable.mem scoped_name (fst env) then (snd env)
+    else if (snd env) = 0 then raise(Failure("symbol " ^ name ^ " not declared."))
+    else get_id name (fst env, parents.(snd env))
+(* ---------------------------------------------------------------------------------------------------- *)
+
 (*
  * Look for the symbol in the given environment and scope
  * then recursively check in all ancestor scopes 
