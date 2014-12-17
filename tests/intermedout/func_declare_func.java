@@ -1,3 +1,5 @@
+// Passed semantic checking 
+
 public class Intermediate {
 static Duration getDuration(){
 Duration d;
