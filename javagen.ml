@@ -87,7 +87,11 @@ let rec write_expr = function
 	| D_Call(str,dexpr_list,t) -> (match str with 
 								  "print" -> "System.out.println("  ^ String.concat "+" (List.map tostring_str dexpr_list) ^ ")"
 								  | _ -> str ^ "(" ^ String.concat "," (List.map write_expr dexpr_list) ^ ")")
-	| D_Access(str,dexpr,t) -> str ^ "["  ^ write_expr dexpr ^ "]"
+	| D_Access(str,dexpr,t) -> (match t with 
+								 (Bool_Type | Int_Type | Frac_Type | Duration_Type | String_Type | Pitch_Type) ->  str ^ "["  ^ write_expr dexpr ^ "]"
+								 | _ -> str ^ ".get(" ^ write_expr dexpr ^ ")")
+
+	
 
 
 and write_binop_expr expr1 op expr2 t =
