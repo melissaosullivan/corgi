@@ -209,17 +209,17 @@ let rec verify_expr expr env =
 			let vl = verify_expr l env in
 			let vr = verify_expr r env in
 			let vtype = verify_binop vl vr op in
-			if vtype = Bool_Type && (op <> And || op <> Or) then
-				let vtl = type_of_expr vl in 
-				let vtr = type_of_expr vr in
-				if vtl = vtr then D_Binop(vl, op, vr, Bool_Type) 
-				else (match (vtl, vtr) with
-					Int_Type, Frac_Type | Frac_Type, Int_Type -> D_Binop(set_dexpr_type vl Frac_Type, op, set_dexpr_type vr Frac_Type, vtype)
-					| Int_Type, Pitch_Type | Pitch_Type, Int_Type ->  D_Binop(set_dexpr_type vl Pitch_Type, op, set_dexpr_type vr Pitch_Type, vtype)
-					| Int_Type, Duration_Type | Duration_Type, Int_Type ->  D_Binop(set_dexpr_type vl Duration_Type, op, set_dexpr_type vr Duration_Type, vtype)
-					| Frac_Type, Duration_Type | Duration_Type, Frac_Type->  D_Binop(set_dexpr_type vl Duration_Type, op, set_dexpr_type vr Duration_Type, vtype)
-					| _, _ -> raise(Failure("Congratulations on raising the impossible failure.")))
-			else D_Binop(vl, op, vr, vtype)                    (* D_Binop *)
+			(* if vtype = Bool_Type && (op <> And || op <> Or) then *)
+			let vtl = type_of_expr vl in 
+			let vtr = type_of_expr vr in
+			if vtl = vtr then D_Binop(vl, op, vr, vtype) 
+			else (match (vtl, vtr) with
+				Int_Type, Frac_Type | Frac_Type, Int_Type -> D_Binop(set_dexpr_type vl Frac_Type, op, set_dexpr_type vr Frac_Type, vtype)
+				| Int_Type, Pitch_Type | Pitch_Type, Int_Type ->  D_Binop(set_dexpr_type vl Pitch_Type, op, set_dexpr_type vr Pitch_Type, vtype)
+				| Int_Type, Duration_Type | Duration_Type, Int_Type ->  D_Binop(set_dexpr_type vl Duration_Type, op, set_dexpr_type vr Duration_Type, vtype)
+				| Frac_Type, Duration_Type | Duration_Type, Frac_Type->  D_Binop(set_dexpr_type vl Duration_Type, op, set_dexpr_type vr Duration_Type, vtype)
+				| _, _ -> raise(Failure("Congratulations on raising the impossible failure.")))
+			(* else D_Binop(vl, op, vr, vtype) *)                    (* D_Binop *)
 		| Unop(e, uop) -> 
 			let ve = verify_expr e env in
 			let ve_type = verify_unop_and_get_type ve uop in

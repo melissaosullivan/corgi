@@ -8,7 +8,7 @@ let inc_block_id (u:unit) =
 %}
 
 %token SEMI LPAREN RPAREN LBRACE LBRACKET RBRACE RBRACKET COMMA
-%token PLUS MINUS TIMES DIVIDE MOD ASSIGN AT
+%token PLUS MINUS TIMES DIVIDE MOD ASSIGN ARRAY_ASSIGN AT
 %token EQ NEQ LT LEQ GT GEQ DOLLAR
 %token RETURN IF ELIF ELSE FOR WHILE 
 /* %token BREAK CONTINUE */
@@ -107,7 +107,8 @@ stmt:
   | FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN block { For($3, $5, $7, $9) }
   | WHILE LPAREN expr RPAREN block { While($3, $5) }
   | ID ASSIGN expr SEMI{ Assign($1, $3) }
-  | ID ASSIGN expr AT int_expr SEMI { Array_Assign($1, $3, $5)}
+  | ID ASSIGN AT int_expr expr SEMI { Array_Assign($1, $4, $5)}
+  /* array_variable = @ 2 4; */
 
 block:
   LBRACE stmt_list RBRACE { {locals = []; statements = List.rev $2; block_id = inc_block_id ()} }
