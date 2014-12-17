@@ -69,7 +69,6 @@ let rec map_to_list_env func lst env =
 
 let verify_gvar gvar env = 
 	let decl = Table.get_decl (fst_of_three gvar) env in 
-	let id = Table.get_scope (fst_of_three gvar) env in
 	match decl with 
 		Var_Decl(v) -> let (vname, varray, vtype, id) = v in
 			(vname, varray, vtype, id)
@@ -77,7 +76,6 @@ let verify_gvar gvar env =
 
 let verify_var var env = 
 	let decl = Table.get_decl (fst_of_three var) env in
-	let id = Table.get_scope (fst_of_three var) env in
 	match decl with
 		Func_Decl(f) -> raise(Failure("symbol is not a variable"))
 	  | Var_Decl(v) -> let (vname, varray, vtype, id) = v in
@@ -286,8 +284,8 @@ and verify_call_and_get_type name vargs env =
 		Func_Decl(f) -> f                     (* check if it is a function *)
 		| _ -> raise(Failure (name ^ " is not a function")) in
 	if name = "print" then Int_Type           (* Add more builtins when we have more builtins *)
-	else if name = "import" then Composition_Type
-	else if name = "export" then Int_Type
+	(* else if name = "import" then Composition_Type
+	else if name = "export" then Int_Type *)
 	else if name = "length" then Int_Type 
 	else 
 		let (_,rtype,params,_) = fdecl in
@@ -305,9 +303,7 @@ let verify_id_match_type (id:string) ve env =
 	| _ -> raise(Failure (id ^ " is not a variable")) in
 	let (_,is_array, id_type, _) = vdecl in
 	let vt = type_of_expr ve in
-
 	let id_is_array = verify_id_is_array id env in
-
 	if id_is_array then
 		(match ve with
 		D_Array_Lit(_, _) -> if id_type = vt then id_type(* Check that it goes into id's type *)
