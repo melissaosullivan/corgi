@@ -1,5 +1,5 @@
 
-public class Tester {
+public class FractionTester {
 
 	/**
 	 * @param args

@@ -32,5 +32,4 @@ public class Composition {
 		}
 		return sb.toString();
 	}
-
 }
