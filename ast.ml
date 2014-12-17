@@ -168,11 +168,11 @@ let string_of_vdecl vdecl = string_of_types vdecl.vtype ^ " " ^ vdecl.vname ^
               " = " ^ string_of_expr vdecl.vexpr ^ ";\n"  
 *)
 let string_of_array_bool a = 
-  if a then "[]" else "" 
+  if a then "[] " else "" 
 
 let string_of_vdecl v =
   let (n, a, t) = v in 
-    string_of_prim_type t ^ " " ^ string_of_array_bool a ^ " " ^ n
+    string_of_prim_type t ^ " " ^ string_of_array_bool a ^ n
 
 let rec string_of_stmt = function
     Block(b) -> string_of_block b
