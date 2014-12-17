@@ -18,7 +18,7 @@ public class UtilsTester {
 		System.out.println(c);
 		
 		Utils.play(c);
-		Utils.exportMidi(c);
+		Utils.exportMidi(c, "result.mid");
 		
 	}
 }
