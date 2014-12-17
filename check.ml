@@ -60,12 +60,6 @@ let type_of_expr = function
   | D_Access (_, _, t) -> t
   | D_Noexpr -> Null_Type 
 
-(* let rec compare_list lst1 lst2 =
-	match (lst1, lst2) with
-	([], []) -> true
-	| (h1::t1, h2::t2) -> (h1 = h2) && compare_list t1 t2
-	| _ -> false *)
-
 let rec map_to_list_env func lst env =
 	match lst with
 		  [] -> []
@@ -140,20 +134,6 @@ let verify_binop l r op =
 		| Mod -> (match (tl, tr) with
 			Int_Type, Int_Type -> Int_Type
 			| _, _ -> raise(Failure("Can only apply % to int operands."))) 
-		(* | Mult | Div | Mod -> (match (tl, tr) with
-			(* I removed duration * duration operations, otherwise we can merge both sets *)
-			Int_Type, Int_Type -> Int_Type
-			| Int_Type, Pitch_Type -> Pitch_Type	
-			| Int_Type, Frac_Type -> Frac_Type
-			| Int_Type, Duration_Type -> Duration_Type
-			| Pitch_Type, Int_Type -> Pitch_Type
-			| Pitch_Type, Pitch_Type -> Pitch_Type
-			| Frac_Type, Int_Type -> Frac_Type
-			| Frac_Type, Frac_Type -> Frac_Type
-			| Frac_Type, Duration_Type -> Duration_Type
-			| Duration_Type, Int_Type -> Duration_Type
-			| Duration_Type, Frac_Type -> Duration_Type
-			| _, _ -> raise(Failure("Cannot apply */% op to types " ^ string_of_prim_type tl ^ " + " ^ string_of_prim_type tr))) *)
 		| Equal | Neq -> if tl = tr then Bool_Type else (match(tl, tr) with
 			| Int_Type, Pitch_Type -> Bool_Type	
 			| Int_Type, Frac_Type -> Bool_Type
@@ -211,9 +191,8 @@ let set_dexpr_type e t = match e with
 	  | D_Tuple (p, d, _) -> D_Tuple (p, d, t)
 	  | D_Access (a, i, _) -> D_Access (a, i, t)
  
-(*let verify_assign id *)
+
 let rec verify_expr expr env =
-	(* let () = print_endline ("verifying expr: " ^ string_of_expr expr) in *)
 	match expr with                                         (* expr evaluates to *)
 		  Bool_Lit(b)     -> D_Bool_Lit(b,Bool_Type)        (* D_Bool_Lit *)
 		| Int_Lit(i)      -> D_Int_Lit(i, Int_Type)		    (* D_Int_Lit *)
@@ -221,7 +200,7 @@ let rec verify_expr expr env =
 		| Frac_Lit(n,d)   ->                                (* D_Frac_Lit *)
 			let vn = verify_expr n env in 
 			let vd = verify_expr d env in
-			if type_of_expr vn <> Int_Type or type_of_expr vd <> Int_Type then (* Come back and also accept Frac as n and d *)
+			if type_of_expr vn <> Int_Type or type_of_expr vd <> Int_Type then 
 				raise(Failure("Fraction literal must have integer numerator and denominator."))
 			else D_Frac_Lit(vn, vd, Frac_Type)
 		| Id(s)           -> 								(* D_Id_Lit *)
@@ -286,8 +265,6 @@ and verify_array arr env =
 	| head :: tail ->
 		let verified_head = verify_expr head env in
 		let head_type = type_of_expr verified_head in
-		(* Verify that other elements are valid expressions with consistent types *)
-		(* Decision time: Only use pd_type ? *)
 			let rec verify_list_and_type l t e = match l with
 				[] -> ([], t)
 				| hd :: tl -> 
@@ -313,12 +290,12 @@ and verify_call_and_get_type name vargs env =
 		let (_,rtype,params,_) = fdecl in
 		if (List.length params) = (List.length vargs) then
 			let arg_types = List.map type_of_expr vargs in
-			if (* compare_list_types *) params = arg_types then rtype
+			if params = arg_types then rtype
 			else raise(Failure("Argument types in " ^ name ^ " call do not match formal parameters."))
 		else raise(Failure("Function " ^ name ^ " takes " ^ string_of_int (List.length params) ^
 						   " arguments, called with " ^ string_of_int (List.length vargs)))
 
-let verify_id_match_type (id:string) ve env = (* Add support for assigning compatible types *)
+let verify_id_match_type (id:string) ve env = 
 	let decl = Table.get_decl id env in 
 	let vdecl = match decl with (* check that id refers to a variable *)
 	Var_Decl(v) -> v
@@ -338,7 +315,7 @@ let verify_id_match_type (id:string) ve env = (* Add support for assigning compa
 				| Composition_Type, Track_Type
 				| Track_Type, Chord_Type -> id_type
 				| _, _ -> raise(Failure("Cannot assign " ^ string_of_prim_type vt ^ " to " ^ id ^ " of type " ^ string_of_prim_type id_type)))
-		| D_Id(s, _) -> if verify_id_is_array s env then (
+				| D_Id(s, _) -> if verify_id_is_array s env then (
 						if id_type = vt then id_type
 						else (match(id_type, vt) with (* Compatible simple types *)
 							Frac_Type, Int_Type  
@@ -359,7 +336,6 @@ let verify_id_match_type (id:string) ve env = (* Add support for assigning compa
 			| _, _ -> raise(Failure("Cannot assign " ^ string_of_prim_type vt ^ " to " ^ id ^ " of type " ^ string_of_prim_type id_type )))
 
 let rec verify_stmt stmt ret_type env =
-	(* let () = print_endline ("verifying statement: " ^ string_of_stmt stmt) in *)
 	match stmt with
 	Return(e) ->
 		let verified_expr = verify_expr e env in
@@ -391,7 +367,8 @@ let rec verify_stmt stmt ret_type env =
 				let ve = verify_expr e env in
 				let vt = type_of_expr ve in
 				if vt = Bool_Type or vt = Null_Type then verify_stmt condition ret_type env 
-				else let () = print_endline ("vt = " ^ string_of_prim_type vt) in raise(Failure("Condition in For statement must be boolean or no expression. (;*;)"))
+				else let () = print_endline ("vt = " ^ string_of_prim_type vt) in 
+					raise(Failure("Condition in For statement must be boolean or no expression. (;*;)"))
 			| _ -> raise(Failure("Condition in For statement must be boolean or no expression. (;*;)"))) in
 		let va2 = (match assignment1 with
 			Assign(_, _) | Expr(_) ->  verify_stmt assignment2 ret_type env 
