@@ -406,4 +406,5 @@ let verify_semantics program env =
 	let () = Printf.printf "after verifying gvars \n" in
 	let verified_func_list = map_to_list_env verify_func func_list env in
 	let () = Printf.printf "after verifying functions \n" in
+	let () = prerr_endline "Passed semantic checking \n" in
 		{ d_pfuncs = verified_func_list; d_gvars = verified_gvar_list}
