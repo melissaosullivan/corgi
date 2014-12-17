@@ -22,6 +22,33 @@ public class Duration implements Comparable<Duration>{
 	public void divide(Duration d){
 		this.fraction.divide(d.fraction);
 	}
+
+	public void add(Frac f){
+		this.fraction.add(f);
+	}
+	public void subtract(Frac f){
+		this.fraction.subtract(f);
+	}
+	public void multiply(Frac f){
+		this.fraction.multiply(f);
+	}
+	public void divide(Frac f){
+		this.fraction.divide(f);
+	}
+
+	public void add(int i){
+		this.fraction.add(new Frac(i, 1));
+	}
+	public void subtract(int i){
+		this.fraction.subtract(new Frac(i, 1));
+	}
+	public void multiply(int i){
+		this.fraction.multiply(new Frac(i, 1));
+	}
+	public void divide(int i){
+		this.fraction.divide(new Frac(i, 1));
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
