@@ -1,1 +1,1 @@
-Fatal error: exception Match_failure("javagen.ml", 46, 21)
+Fatal error: exception Match_failure("javagen.ml", 91, 20)

@@ -2,4 +2,5 @@
 int main() {
     pitch p;
     p = 5;
+    print(p);
 }

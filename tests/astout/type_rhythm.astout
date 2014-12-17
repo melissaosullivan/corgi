@@ -3,5 +3,6 @@ int main()
 {
 rhythm r;
 r = $1/4$, $1/4$, $1/4$, $1/4$; 
+print(r);
 }
 

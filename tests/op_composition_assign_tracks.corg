@@ -20,4 +20,6 @@ int main() {
     t1 = [c1, c2, c2];
     t2 = [c1, c1];
     comp = [t1, t2, t1];
+
+    print(comp);
 }

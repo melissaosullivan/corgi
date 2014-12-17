@@ -19,5 +19,6 @@ c2 = (p1, d1), (p1, d2), (p2, d2), (p2, d1);
 t1 = c1, c2, c2; 
 t2 = c1, c1; 
 comp = t1, t2, t1; 
+print(comp);
 }
 

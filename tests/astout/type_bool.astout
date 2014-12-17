@@ -4,5 +4,6 @@ int main()
 bool b;
 b = true; 
 b = false; 
+print(b);
 }
 

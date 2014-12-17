@@ -1,1 +1,1 @@
-Fatal error: exception Failure("Cannot assign (pitch, duration) to c2 of type chord")
+Fatal error: exception Match_failure("javagen.ml", 9, 17)

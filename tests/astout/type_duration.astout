@@ -3,5 +3,6 @@ int main()
 {
 duration d;
 d = $1/4$; 
+print(d);
 }
 

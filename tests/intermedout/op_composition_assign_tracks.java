@@ -1,1 +1,1 @@
-Fatal error: exception Failure("Cannot assign track to comp of type composition")
+Fatal error: exception Match_failure("javagen.ml", 9, 17)

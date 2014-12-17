@@ -17,5 +17,4 @@ int main() {
     print(r1 <= r2);
 
     r1 = r2;
-    print(r1 @ 1);
 }
