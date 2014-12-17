@@ -6,8 +6,11 @@ open Check
 	D_call???
 *)
 
-let remove_last_character s = 
-	String.sub s 0 (String.length s - 1)
+let remove_semi s = 
+	if String.contains s ';' then
+  	let i = String.index s ';' in
+  	String.sub s 0 i 
+  	else s
 
 let write_type = function 
 	  Bool_Type -> "Boolean"
@@ -156,7 +159,7 @@ let rec write_stmt = function
 	| D_Assign (name, dexpr, t) -> write_assign name dexpr t ^ ";\n"
 	| D_Return(dexpr) -> "return " ^ write_expr dexpr ^ ";\n"
     | D_If(dexpr, dstmt1, dstmt2) -> "if(" ^ write_expr dexpr ^  ")" ^  write_stmt dstmt1 ^ "else"  ^ write_stmt dstmt2
-    | D_For(dstmt1, dstmt2, dstmt3, dblock) -> "for(" ^ write_stmt dstmt1  ^ write_stmt dstmt2 ^ (remove_last_character (write_stmt dstmt3)) ^ ")" 
+    | D_For(dstmt1, dstmt2, dstmt3, dblock) -> "for(" ^ write_stmt dstmt1  ^ write_stmt dstmt2 ^ (remove_semi (write_stmt dstmt3)) ^ ")" 
     | D_While(dexpr, dblock) -> "while(" ^ write_expr dexpr ^ ")"  ^ write_block dblock
 	
 and write_block dblock =
