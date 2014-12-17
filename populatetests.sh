@@ -9,6 +9,9 @@ had_failures="0"
 ast_suffix=".astout"
 sym_suffix=".symout"
 
+ast_outdir="astout"
+sym_outdir="symout"
+
 get_test_name () {
     local fullpath=$1
     testpath="${fullpath%.*}"
@@ -19,8 +22,8 @@ get_test_name () {
 for file in $tests
 do
     get_test_name "$file"
-    ./interpreter -ast < "$file" 2> "$testpath$ast_suffix"
-    ./interpreter -sym < "$file" 2> "$testpath$sym_suffix"
+    ./interpreter -ast < "$file" 2> "tests/$ast_outdir/$test_name$ast_suffix"
+    ./interpreter -sym < "$file" 2> "tests/$sym_outdir/$test_name$sym_suffix"
 done
 
 echo "Tests are populated"
