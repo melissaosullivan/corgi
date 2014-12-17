@@ -8,7 +8,7 @@ public class Chord {
 	public HashSet<Integer> usedPitches;
 	public Frac globalDurationLength;
 
-	public Chord(Pitch_Duration_Tuple[] ts) throws Exception {
+	public Chord(Pitch_Duration_Tuple[] ts){
 		usedPitches = new HashSet<Integer>();
 		tuples = new ArrayList<Pitch_Duration_Tuple>();
 		
@@ -18,7 +18,8 @@ public class Chord {
 		// exists in the chord before adding the tuple.
 		for (Pitch_Duration_Tuple pd : ts) {
 			if (!(pd.duration.fraction.approxValue - globalDurationLength.approxValue < 0.00001)) {
-				throw new Exception("Durations for tuples in chord are mismatched!");
+				System.out.println("Durations for tuples in chord are mismatched!");
+				System.exit(1);
 			}
 			if (usedPitches.contains(pd.pitch.pitch)) {
 				continue;
