@@ -7,10 +7,12 @@ tests=$(find tests -name *\.corg)
 had_failures="0"
 ast_suffix=".astout"
 sym_suffix=".symout"
+sem_suffix=".semout"
 intermed_suffix=".java"
 
 ast_outdir="astout"
 sym_outdir="symout"
+sem_outdir="semout"
 intermed_outdir="intermedout"
 
 get_test_name () {
@@ -75,6 +77,34 @@ do
 done
 
 
+# Testing Symbol Tables
+echo ""
+echo "----------------Testing Semantic Checking Output----------------"
+echo ""
+for file in $tests
+do
+    get_test_name "$file"
+    ./interpreter -sym < "$file" 2> ".test_out"
+    if [[ ! $(diff ".test_out" "tests/$sem_outdir/$test_name$sem_suffix") ]]
+    then
+        echo "success: $test_name"
+    else
+        echo "FAIL:    $test_name"
+        had_failures="1"
+
+        printf "Expected: {\n"
+        cat "$testpath$sem_suffix"
+        printf "}\n"
+        echo
+
+        printf "Recieved: {\n"
+        cat ".test_out"
+        printf "}\n"
+        echo
+    fi
+done
+
+
 # Testing Java Output
 : ' Skip the Java tests for now.
 echo ""
@@ -92,7 +122,7 @@ do
         had_failures="1"
 
         printf "Expected: {\n"
-        cat "$testpath$sym_suffix"
+        cat "$testpath$intermed_suffix"
         printf "}\n"
         echo
 
