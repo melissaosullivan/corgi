@@ -1,7 +1,0 @@
-// Testing rhythm construction from an array of durations
-int main() {
-    duration d;
-    rhythm r;
-    d = $1/4$;
-    r = [d,d,d];
-}
