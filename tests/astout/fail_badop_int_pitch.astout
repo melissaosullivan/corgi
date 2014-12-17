@@ -1,0 +1,9 @@
+
+int main()
+{
+int i;
+pitch p;
+p = 5; 
+i = p; 
+}
+

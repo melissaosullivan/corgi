@@ -32,7 +32,7 @@ corgi
 
 All test cases need a main() function.
 
-To do: elif, arrayops
+To do: elif, arrayops, array length, array access
 
 Saturday
 Melissa explains CHECK to Phillippe

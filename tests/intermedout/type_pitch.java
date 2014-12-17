@@ -1,4 +1,4 @@
 int main(){
-pPitchp = 5;
+pPitchp = new Pitch(5);
 
 }
