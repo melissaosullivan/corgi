@@ -74,7 +74,9 @@ do
     fi
 done
 
+
 # Testing Java Output
+: ' Skip the Java tests for now.
 echo ""
 echo "----------------Testing Intermediate Output----------------"
 echo ""
@@ -100,6 +102,7 @@ do
         echo
     fi
 done
+'
 
 
 echo ""
