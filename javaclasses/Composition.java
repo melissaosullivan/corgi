@@ -43,4 +43,8 @@ public class Composition {
 		}
 		return sb.toString();
 	}
+	
+	public int length() {
+		return tracks.size();
+	}
 }

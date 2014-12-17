@@ -26,6 +26,10 @@ public class Rhythm {
 		}
 	}
 	
+	public int length() {
+		return durations.size();
+	}
+	
 	public String toString() {
 		return "This is a rhythm";
 	}
