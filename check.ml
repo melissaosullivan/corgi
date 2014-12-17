@@ -129,6 +129,7 @@ let verify_binop l r op =
 			| Duration_Type, Int_Type -> Duration_Type
 			| Duration_Type, Frac_Type -> Duration_Type
 			| Duration_Type, Duration_Type -> Duration_Type
+			| Track_Type, Track_Type -> Track_Type
 			| _, _ -> raise(Failure("Cannot apply + - * / op to types " ^ string_of_prim_type tl ^ " + " ^ string_of_prim_type tr)))
 		| Mod -> (match (tl, tr) with
 			Int_Type, Int_Type -> Int_Type

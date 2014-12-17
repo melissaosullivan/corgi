@@ -1,0 +1,27 @@
+int main() {
+    
+    composition compositionAnalysis;
+    int index;
+    chord interestingChord;
+    pitch p1;
+    pitch p2;
+    duration d1;
+    duration d2;
+    chord c1;
+    chord c2;
+    
+    p1 = 63;
+    p2 = 65;
+    d1 = $1/4$;
+    d2 = $1/4$;
+    
+    c1 = [(p1,d1), (p1,d2), (p2, d2)];
+    c2 = [(p1,d1), (p1,d2), (p2, d2), (p2, d1)];
+
+    compositionAnalysis = import("example.midi");
+
+
+    for (index = 0; index < length(c); index = index+1) {
+
+    }
+}
