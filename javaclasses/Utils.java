@@ -63,22 +63,51 @@ public class Utils {
 
 	public static void play(Composition c) {
 		
-		/*
-		 * byte[] noteValues = new byte[] { 64, 69, 72, 71, 64, 71, 74, 72, 76,
-		 * 68, 76 };
-		 * 
-		 * double[] durations = new double[] { 0.0625, 0.0625, 0.0625, 0.0625,
-		 * 0.0625, 0.0625, 0.0625, 0.125, 0.125, 0.125, 0.125 };
-		 * 
-		 * Pattern pattern = new Pattern(); for (int i = 0; i <
-		 * noteValues.length; i++) { Note n = new Note(noteValues[i],
-		 * durations[i]); pattern.addElement(n); }
-		 * 
-		 * player.saveMidi(pattern, new File("test.mid")); player.play(pattern);
-		 */
+		Pattern pattern = new Pattern();
+		// ArrayList<Double> durations = new ArrayList<Double>();
+		
+		for (Chord chord : c.tracks.get(0).chords) {
+			
+			StringBuffer sb = new StringBuffer();
+			// durations.add(chord.globalDurationLength.approxValue);
+			
+			for (Pitch_Duration_Tuple pdt : chord.tuples) {
+				sb.append(pdt.pitch.toString() + "+");
+			}
+			// Chomp off the last plus
+			sb.deleteCharAt(sb.length()-1);
+			
+			pattern.add(sb.toString());
+		}
+		
+		Player p = new Player();
+		p.play(pattern);
 	}
 
-	public static void exportMidi(Composition c) {
+	public static void exportMidi(Composition c, String outfilename) {
+		Pattern pattern = new Pattern();
+		// ArrayList<Double> durations = new ArrayList<Double>();
+		
+		for (Chord chord : c.tracks.get(0).chords) {
+			
+			StringBuffer sb = new StringBuffer();
+			// durations.add(chord.globalDurationLength.approxValue);
+			
+			for (Pitch_Duration_Tuple pdt : chord.tuples) {
+				sb.append(pdt.pitch.toString() + "+");
+			}
+			// Chomp off the last plus
+			sb.deleteCharAt(sb.length()-1);
+			
+			pattern.add(sb.toString());
+		}
+		
+		Player p = new Player();
+		try {
+			p.saveMidi(pattern, new File("outfilename"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 	}
 
