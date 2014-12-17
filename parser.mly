@@ -107,7 +107,7 @@ stmt:
   | FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN block { For($3, $5, $7, $9) }
   | WHILE LPAREN expr RPAREN block { While($3, $5) }
   | ID ASSIGN expr SEMI{ Assign($1, $3) }
-  | ID ASSIGN AT int_expr expr SEMI { Array_Assign($1, $4, $5)}
+  | ID ASSIGN AT int_expr expr SEMI { Array_Assign($1, $5, $4)}
   /* array_variable = @ 2 4; */
 
 block:

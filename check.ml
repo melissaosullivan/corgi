@@ -331,8 +331,7 @@ let verify_id_match_type (id:string) ve env =
 			Frac_Type, Int_Type  
 			| Duration_Type, Int_Type 
 			| Duration_Type, Frac_Type
-			| Pitch_Type, Int_Type 
-			| Rhythm_Type, Duration_Type -> id_type
+			| Pitch_Type, Int_Type  -> id_type
 			| _, _ -> raise(Failure("Cannot assign " ^ string_of_prim_type vt ^ " to " ^ id ^ " of type " ^ string_of_prim_type id_type )))
 
 let rec verify_stmt stmt ret_type env =
@@ -347,7 +346,11 @@ let rec verify_stmt stmt ret_type env =
 	| Assign(id, e) -> (* Verify that id is compatible type to e *)
 		let ve = verify_expr e env in
 		let vid_type = verify_id_match_type id ve env in 
-		D_Assign(id, ve, vid_type)
+		let ve_type = type_of_expr ve in
+		if (vid_type = ve_type) && 
+		(match vid_type with Rhythm_Type | Chord_Type | Track_Type | Composition_Type -> false | _ -> true) 
+			then D_Assign(id, ve, vid_type)
+		else D_Assign(id, set_dexpr_type ve vid_type, vid_type)
 	| Array_Assign(id, e, i) ->
 		let ve = verify_expr e env in
 		let vid_type = verify_id_match_type id ve env in
