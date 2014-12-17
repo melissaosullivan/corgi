@@ -41,10 +41,11 @@ public class Chord {
 	/*
 	 * Adds all the notes of one chord to another
 	 */
-	public void add(Chord c) throws Exception {
+	public void add(Chord c) {
 		// Base case - check if the two chords have the same global duration
 		if (c.globalDurationLength.approxValue - this.globalDurationLength.approxValue > 0.00001) {
-			throw new Exception("Durations for Chords are mismatched!");
+			System.out.println("Durations for Chords are mismatched!");
+			System.exit(1);
 		}
 		
 		for (Pitch_Duration_Tuple pd : c.tuples) {
