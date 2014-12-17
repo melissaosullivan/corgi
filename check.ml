@@ -179,6 +179,14 @@ let verify_binop l r op =
 		| And | Or -> (match (tl, tr) with
 			Bool_Type, Bool_Type -> Bool_Type
 			| _, _ -> raise(Failure("Cannot apply && ||  op to types " ^ string_of_prim_type tl ^ " + " ^ string_of_prim_type tr)))
+
+let verify_tuple_types p d =
+	match type_of_expr p with
+		Int_Type | Pitch_Type -> (match type_of_expr d with
+			Int_Type | Frac_Type | Duration_Type -> true
+			| _ -> raise(Failure("Second term in tuple must be of type (*,)"))
+		)
+		| _ -> raise(Failure("First term in tuple must be of type pitch (*,)"))
  
 (*let verify_assign id *)
 let rec verify_expr expr env =
@@ -215,9 +223,8 @@ let rec verify_expr expr env =
 		| Tuple(e1, e2) ->                                   (* D_Tuple *)
 			let ve1 = verify_expr e1 env in
 			let ve2 = verify_expr e2 env in
-			if type_of_expr ve1 = Pitch_Type && type_of_expr ve2 = Duration_Type then 
-				D_Tuple(ve1, ve2, PD_Type)  (* Come back and fix tuples *)
-			else raise(Failure("Tuples must be of type (Pitch, Duration)"))
+			if verify_tuple_types ve1 ve2 then D_Tuple(ve1, ve2, PD_Type)
+			else raise(Failure("Invalid tuple."))
 		| Access(ar, i) ->
 			let is_array = verify_id_is_array ar env in
 			let ar_type = verify_id_get_type ar env in
