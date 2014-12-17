@@ -5,9 +5,9 @@ public static void main(String[] args){
 Duration d1;
 
 Duration d2;
-d1 = new Duration(new Frac(1,4));
+d1 = new Duration(new Duration(new Frac(1,4)));
 
-d2 = new Duration(new Frac(1,5));
+d2 = new Duration(new Duration(new Frac(1,5)));
 
 (d1).subtract(d2);
 System.out.println((d1).toString());

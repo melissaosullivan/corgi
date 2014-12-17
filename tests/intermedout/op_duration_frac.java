@@ -5,7 +5,7 @@ public static void main(String[] args){
 Duration d1;
 
 Frac f1;
-d1 = new Duration(new Frac(1,4));
+d1 = new Duration(new Duration(new Frac(1,4)));
 
 f1 = new Frac(1,5);
 

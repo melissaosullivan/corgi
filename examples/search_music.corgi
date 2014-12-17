@@ -17,8 +17,7 @@ int main() {
     // Import composition analysis
     compositionAnalysis = import("example.midi");
 
-
-    for (index = 0; index < length(c); index = index+1) {
+    for (index = 0; index < length(compositionAnalysis); index = index+1) {
 
     }
 }

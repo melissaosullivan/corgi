@@ -2,7 +2,8 @@ chord [] c1
 chord [] c2
 chord [] c3
 composition import(string)
-int export(composition)
+int export(composition, string)
 int length()
 int main()
+int play(composition)
 int print()

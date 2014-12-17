@@ -1,13 +1,4 @@
-Intermediate.java:8: subtract(Pitch) in Pitch cannot be applied to (int)
-System.out.println(((p1).subtract(2)).toString());
-                        ^
-Intermediate.java:9: add(Pitch) in Pitch cannot be applied to (int)
-System.out.println(((p1).add(2)).toString());
-                        ^
-Intermediate.java:10: divide(Pitch) in Pitch cannot be applied to (int)
-System.out.println(((p1).divide(2)).toString());
-                        ^
-Intermediate.java:11: multiply(Pitch) in Pitch cannot be applied to (int)
-System.out.println(((p1).multiply(2)).toString());
-                        ^
-4 errors
+Intermediate.java:1: error: class, interface, or enum expected
+State 0: shift to state 1
+^
+1 error

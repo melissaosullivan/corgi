@@ -13,8 +13,6 @@ Duration d2;
 Chord c1;
 
 Chord c2;
-
-Track t;
 p1 = new Pitch(new Pitch(4));
 
 p2 = new Pitch(new Pitch(5));
@@ -27,7 +25,10 @@ c1 = new Chord(new Chord[] {new Pitch_Duration_Tuple(p1,d1),new Pitch_Duration_T
 
 c2 = new Chord(new Chord[] {new Pitch_Duration_Tuple(p1,d1),new Pitch_Duration_Tuple(p1,d2),new Pitch_Duration_Tuple(p2,d2),new Pitch_Duration_Tuple(p2,d1)});
 
-t = new Track(new Track[] {c1,c2,c2});
+c1 = new Chord(c2);
 
-System.out.println((t).toString());
+System.out.println((c1.get(1)).toString());
+System.out.println((c1).toString());
+c1.set(1,new Pitch_Duration_Tuple(p2,d2));
+System.out.println((c1).toString());
 }}

@@ -1,13 +1,4 @@
-Intermediate.java:8: subtract(Duration) in Duration cannot be applied to (Frac)
-System.out.println(((d1).subtract(new Frac(1,5))).toString());
-                        ^
-Intermediate.java:9: add(Duration) in Duration cannot be applied to (Frac)
-System.out.println(((d1).add(new Frac(1,5))).toString());
-                        ^
-Intermediate.java:10: divide(Duration) in Duration cannot be applied to (Frac)
-System.out.println(((d1).divide(new Frac(1,5))).toString());
-                        ^
-Intermediate.java:11: multiply(Duration) in Duration cannot be applied to (Frac)
-System.out.println(((d1).multiply(new Frac(1,5))).toString());
-                        ^
-4 errors
+Intermediate.java:1: error: class, interface, or enum expected
+State 0: shift to state 1
+^
+1 error

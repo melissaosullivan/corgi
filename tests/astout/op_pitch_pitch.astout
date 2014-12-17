@@ -5,10 +5,14 @@ pitch p1;
 pitch p2;
 p1 = 5; 
 p2 = 10; 
-print(p1 - p2);
-print(p1 + p2);
-print(p1 / p2);
-print(p1 * p2);
+p1 + p2;
+print(p1);
+p1 - p2;
+print(p1);
+p1 * p2;
+print(p1);
+p1 / p2;
+print(p1);
 print(p1 == p2);
 print(p1 != p2);
 print(p1 < p2);
@@ -16,5 +20,6 @@ print(p1 > p2);
 print(p1 >= p2);
 print(p1 <= p2);
 p1 = p2; 
+print(p1);
 }
 

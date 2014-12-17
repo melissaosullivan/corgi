@@ -3,7 +3,7 @@
 public class Intermediate {
 static Duration getDuration(){
 Duration d;
-d = new Duration(1);
+d = new Duration(new Duration(1)1);
 
 return d;
 

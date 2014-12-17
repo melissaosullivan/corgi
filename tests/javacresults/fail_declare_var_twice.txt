@@ -1,4 +1,4 @@
-Intermediate.java:1: class, interface, or enum expected
-Fatal error: exception Failure("symbol x declared twice in same scope")
+Intermediate.java:1: error: class, interface, or enum expected
+State 0: shift to state 1
 ^
 1 error

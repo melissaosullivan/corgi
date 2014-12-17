@@ -5,9 +5,10 @@ composition [] comp2
 composition import(string)
 duration d1
 duration d2
-int export(composition)
+int export(composition, string)
 int length()
 int main()
+int play(composition)
 int print()
 pitch p1
 pitch p2

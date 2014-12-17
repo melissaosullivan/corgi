@@ -1,7 +1,8 @@
 composition import(string)
-int export(composition)
+int export(composition, string)
 int i1
 int i2
 int length()
 int main()
+int play(composition)
 int print()
