@@ -9,6 +9,10 @@ public class Duration implements Comparable<Duration>{
 	public Duration(int i){
 		fraction = new Frac(i, 1);
 	}
+
+	public Duration(Duration d){
+		fraction = d.fraction;
+	}
 	
 	public void add(Duration d){
 		this.fraction.add(d.fraction);
@@ -73,9 +77,18 @@ public class Duration implements Comparable<Duration>{
 			return false;
 		return true;
 	}
+
 	@Override
 	public int compareTo(Duration arg0) {
 		return fraction.compareTo(arg0.fraction);
+	}
+
+	public int compareTo(Frac arg0) {
+		return fraction.compareTo(arg0);
+	}
+
+	public int compareTo(int arg0) {
+		return fraction.compareTo(new Frac(arg0, 1));
 	}
 	
 	public String toString() {

@@ -23,6 +23,7 @@ let write_type = function
 	| Chord_Type -> "Chord"
 	| Track_Type -> "Track"
 	| Composition_Type -> "Composition"
+	| PD_Type -> "Pitch_Duration_Tuple"
 	| _ -> raise(Failure "Type string of PD_Tuple or Null_Type being generated")
 
 let write_types ts =
