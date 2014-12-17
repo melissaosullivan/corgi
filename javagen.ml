@@ -62,7 +62,7 @@ let rec write_expr = function
 								 | Pitch_Type -> "new Pitch(" ^ string_of_int intLit  ^ ")"
 								 | Duration_Type -> "new Duration(" ^ string_of_int intLit ^ ")" ^ string_of_int intLit
 								 | _ -> raise(Failure(write_type t ^ " is not a integer")))
-	| D_String_Lit(strLit, t) -> strLit
+	| D_String_Lit(strLit, t) -> "\"" ^ strLit ^ "\""
 	| D_Frac_Lit(num_expr, denom_expr, t) -> (match t with 
 									  Frac_Type -> "new Frac(" ^ write_expr num_expr ^ "," ^ write_expr denom_expr ^ ")"
 									| Duration_Type -> "new Duration(new Frac(" ^ write_expr num_expr ^ "," ^ write_expr denom_expr ^ "))")
@@ -75,7 +75,7 @@ let rec write_expr = function
 	| D_Noexpr -> ""
 	| D_Call(str,dexpr_list,t) -> (match str with 
 								  "print" -> "System.out.println(\"\" + "  ^  write_type_tostr t ^ ".toString(" ^ String.concat "," (List.map write_expr dexpr_list) ^ "))"
-								  | _ -> str ^ "(" ^ String.concat "," (List.map write_expr dexpr_list) ^ ")"
+								  | _ -> str ^ "(" ^ String.concat "," (List.map write_expr dexpr_list) ^ ")")
 	| D_Access(_,_,_) -> raise (Failure "no write expr for d_access")
 
 and write_binop_expr expr1 op expr2 t =
@@ -109,6 +109,9 @@ and write_array_expr dexpr_list t =
 let write_scope_var_decl svd =
 	let (n, b, t, _) = svd in write_type t ^ " " ^ n ^ ";\n"
 
+let write_scope_var_decl_func svd =
+	let (n, b, t, _) = svd in write_type t ^ " " ^ n
+
 let write_assign name dexpr t =
 	let () = Printf.printf "got to write assign!" in
 	(match t with
@@ -131,7 +134,7 @@ and write_block dblock =
 let write_func dfunc =
 	match dfunc.d_fname with
 	"main" -> "public static void main(String[] args)" ^ write_block dfunc.d_fblock
-	| _ -> write_type dfunc.d_ret_type ^ " " ^ dfunc.d_fname ^ "("  ^ String.concat "," (List.map write_scope_var_decl dfunc.d_formals) ^ ")" ^ write_block dfunc.d_fblock
+	| _ -> "static " ^ write_type dfunc.d_ret_type ^ " " ^ dfunc.d_fname ^ "("  ^ String.concat "," (List.map write_scope_var_decl_func dfunc.d_formals) ^ ")" ^ write_block dfunc.d_fblock
 
 let write_pgm pgm = 
 	 "public class Intermediate {\n" ^ String.concat "\n" (List.map write_scope_var_decl pgm.d_gvars) ^ String.concat "\n" (List.map write_func pgm.d_pfuncs) ^ "}"
