@@ -200,7 +200,7 @@ let verify_expr_as_pitch p env = match p with
  
 (*let verify_assign id *)
 let rec verify_expr expr env =
-	let () = print_endline ("verifying expr: " ^ string_of_expr expr) in
+	(* let () = print_endline ("verifying expr: " ^ string_of_expr expr) in *)
 	match expr with                                         (* expr evaluates to *)
 		  Bool_Lit(b)     -> D_Bool_Lit(b,Bool_Type)        (* D_Bool_Lit *)
 		| Int_Lit(i)      -> D_Int_Lit(i, Int_Type)		    (* D_Int_Lit *)
@@ -346,7 +346,7 @@ let verify_id_match_type (id:string) ve env = (* Add support for assigning compa
 			| _, _ -> raise(Failure("Cannot assign " ^ string_of_prim_type vt ^ " to " ^ id ^ " of type " ^ string_of_prim_type id_type )))
 
 let rec verify_stmt stmt ret_type env =
-	let () = print_endline ("verifying statement: " ^ string_of_stmt stmt) in
+	(* let () = print_endline ("verifying statement: " ^ string_of_stmt stmt) in *)
 	match stmt with
 	Return(e) ->
 		let verified_expr = verify_expr e env in
