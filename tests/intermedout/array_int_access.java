@@ -1,3 +1,13 @@
 // Passed semantic checking 
 
-Fatal error: exception Failure("no write expr for d_access")
+public class Intermediate {
+int a;
+public static void main(String[] args){
+int b;
+a = new int[] {1,2};
+
+b = a[1];
+
+b = a[b];
+
+}}

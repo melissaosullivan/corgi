@@ -31,7 +31,7 @@ let _ =
                     prerr_string (Table.string_of_table env)
         | Sem -> let env = Table.build_table program in
             		let checked = Check.verify_semantics program env in
-    					ignore checked; print_string "Passed Semantic Analysis.\n"
+    					ignore checked;
         | Javagen -> let env = Table.build_table program in
                 let checked = Check.verify_semantics program env in
                 let outstring = Javagen.write_pgm checked in

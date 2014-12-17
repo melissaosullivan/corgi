@@ -7,9 +7,7 @@ get_test_name () {
     test_name="${testpath##*/}"
 }
 
-# Testing AST
 echo ""
-echo "wow"
 
 for file in $tests
 do
