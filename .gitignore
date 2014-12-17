@@ -4,7 +4,8 @@
 *.a
 *.o
 *.cmx
-*.cmxs
+*.cmx
+*.class
 .DS_Store
 interpreter
 printAst
