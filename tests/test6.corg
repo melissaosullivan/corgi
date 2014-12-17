@@ -1,4 +1,0 @@
-int main() {
-    duration d;
-    d = $1/4$;
-}

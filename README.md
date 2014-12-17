@@ -1,13 +1,38 @@
 corgi
 =====
 
-Check ast with interpreter with : ./interpret < testcase_filename
+##Test Cases Key:
+
+
+### Comments:
+
+    * single line
+    * multiple lines
+
+### Type declarations:
+
+    * string
+    * pitch
+    * int
+    * frac
+    * duration
+
+### Constructions of variables from other variables:
+
+    * duration from fraction
+    * rhythm from array of durations
+    * track from array of chords
+    * composition from array of tracks
+    * chord from array of tuples
+
+### Testing built-in functions
+
+    * print
+
+
 All test cases need a main() function.
 
 To do: elif, arrayops
-
-
-8PM
 
 Saturday
 Melissa explains CHECK to Phillippe

@@ -1,4 +1,4 @@
-// Testing string keyword
+// Testing string type declaration
 int main() {
     string str;
     str = "music";

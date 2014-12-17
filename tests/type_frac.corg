@@ -1,3 +1,4 @@
+// Testing frac type declaration
 int main() {
     frac f;
     f = $3/4$;

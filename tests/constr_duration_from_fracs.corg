@@ -1,3 +1,4 @@
+// Testing duration construction from a frac
 int main() {
     duration d;
     frac f;

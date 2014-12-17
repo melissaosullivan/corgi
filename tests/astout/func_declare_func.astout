@@ -1,7 +1,7 @@
 
 int main()
 {
-print(39 + 3);
+print(39);
 }
 
 duration getDuration()

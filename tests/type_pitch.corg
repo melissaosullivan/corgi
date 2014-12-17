@@ -1,4 +1,4 @@
-// Testing string keyword
+// Testing pitch type declaration
 int main() {
     pitch p;
     p = 5;

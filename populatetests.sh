@@ -13,6 +13,12 @@ ast_outdir="astout"
 sym_outdir="symout"
 intermed_outdir="intermedout"
 
+# Remove all previous test results
+rm -rf tests/$ast_outdir/*
+rm -rf tests/$sym_outdir/*
+rm -rf tests/$intermed_outdir/*
+
+
 get_test_name () {
     local fullpath=$1
     testpath="${fullpath%.*}"
