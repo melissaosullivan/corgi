@@ -2,20 +2,6 @@ type op = Add | Sub | Mult | Div | Mod | Equal | Neq | Less | Leq | Greater | Ge
 
 type uop = Neg | Not
 
-(*
-type types = 
-    Bool_Type
-  | Int_Type
-  | Pitch_Type
-  | String_Type
-  | Frac_Type
-  | Rhythm_Type
-  | Duration_Type
-  | Chord_Type
-  | Track_Type
-  | Composition_Type
-*)
-
 type prim_type =
     Bool_Type
   | Int_Type
@@ -167,9 +153,12 @@ let string_of_elseifs elseifs =
 let string_of_vdecl vdecl = string_of_types vdecl.vtype ^ " " ^ vdecl.vname ^ 
               " = " ^ string_of_expr vdecl.vexpr ^ ";\n"  
 *)
+let string_of_array_bool a = 
+  if a then "[] " else "" 
+
 let string_of_vdecl v =
   let (n, a, t) = v in 
-    string_of_prim_type t ^ " " ^ string_of_bool a ^ " " ^ n
+    string_of_prim_type t ^ " " ^ string_of_array_bool a ^ n
 
 let rec string_of_stmt = function
     Block(b) -> string_of_block b

@@ -17,15 +17,25 @@ public class ImportTester {
 
 	public static void main(String[] args) throws IOException,
 			InvalidMidiDataException {
-
-		System.out.println("OMG");
-
+		
 		Player player = new Player();
-		Pattern pattern = player.loadMidi(new File("scales.mid"));		
-
+		Pattern pattern = player.loadMidi(new File("test.mid"));
+		
 		// Try to convert from pattern to composition
 		Composition c = jFuguePatternToComposition(player, pattern);
 		System.out.println(c);
+		
+	}
+	
+	public static Composition importMidi(String fileName) {
+		Player player = new Player();
+		Pattern pattern = null;
+		try {
+			pattern = player.loadMidi(new File(fileName));
+		} catch (IOException | InvalidMidiDataException e) {
+			e.printStackTrace();
+		}
+		return jFuguePatternToComposition(player, pattern);
 	}
 
 	public static Composition jFuguePatternToComposition(Player player, Pattern pattern) {
@@ -46,7 +56,7 @@ public class ImportTester {
 				}
 			}
 		});
-		player.play(anticipator, pattern, -100);
+		player.play(anticipator, pattern, 400);
 		
 		ArrayList<Track> finalTracks = new ArrayList<Track>();
 		

@@ -15,7 +15,10 @@ get_test_name () {
 }
 
 # Testing AST
-echo "Testing Abstract Syntax Tree"
+echo ""
+echo "----------------Testing Abstract Syntax Tree Output----------------"
+echo ""
+
 for file in $tests
 do
     get_test_name "$file"
@@ -40,7 +43,9 @@ do
 done
 
 # Testing Symbol Tables
-echo "Testing Symbol Tabling"
+echo ""
+echo "----------------Testing Symbol Table Output----------------"
+echo ""
 for file in $tests
 do
     get_test_name "$file"
@@ -63,6 +68,10 @@ do
         echo
     fi
 done
+
+echo ""
+echo "----------------Finished Testing, Running Make Clean----------------"
+echo ""
 
 
 rm -f ".test_out"
