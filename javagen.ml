@@ -22,18 +22,6 @@ let write_type = function
 let write_types ts =
 	match ts with Corgi_Prim(t) -> write_type t 
 
-let write_type_tostr = function 
-	  Bool_Type -> "Boolean"
-	| Int_Type -> "Integer"
-	| String_Type -> "String"
-	| Pitch_Type -> "Pitch"
-	| Frac_Type -> "Frac"
-	| Rhythm_Type -> "Rhythm"
-	| Duration_Type -> "Duration"
-	| Chord_Type -> "Chord"
-	| Track_Type -> "Track"
-	| Composition_Type -> "Composition"
-
 let write_op_primitive = function
 	Add -> " + "
 	| Sub -> " - "
@@ -70,6 +58,7 @@ let rec get_typeof_dexpr = function
 	| D_Noexpr -> Null_Type
 	| D_Call(str,dexpr_list,t) -> t
 	| D_Access(str,dexpr,t) -> t
+	
 
 let rec write_expr = function
 	  D_Bool_Lit(boolLit, t) -> string_of_bool boolLit 
@@ -90,7 +79,7 @@ let rec write_expr = function
 	(* | D_Null_Lit -> "null" *)
 	| D_Noexpr -> ""
 	| D_Call(str,dexpr_list,t) -> (match str with 
-								  "print" -> "System.out.println(\"\" + "  ^ String.concat "+" (List.map tostring_str dexpr_list) ^ ")"
+								  "print" -> "System.out.println("  ^ String.concat "+" (List.map tostring_str dexpr_list) ^ ")"
 								  | _ -> str ^ "(" ^ String.concat "," (List.map write_expr dexpr_list) ^ ")")
 	| D_Access(_,_,_) -> raise (Failure "no write expr for d_access")
 
@@ -125,11 +114,21 @@ and write_array_expr dexpr_list t =
 	  PD_Type -> "new Pitch_Duration_Tuple[]"  ^ " {" ^ String.concat "," (List.map write_expr dexpr_list) ^ "}"
 	| _ -> "new " ^ write_type t ^ "[]"  ^ " {" ^ String.concat "," (List.map write_expr dexpr_list) ^ "}"
 
+and write_tostr_class dexpr =
+	let t = get_typeof_dexpr dexpr in
+	match t with  
+		  Bool_Type -> "Boolean"
+		| Int_Type -> "Integer"
+		| _ -> raise (Failure "toString method should already be in class")
+
 and tostring_str dexpr =
-	 let t = get_typeof_dexpr dexpr in
-	 match t with
-	   String_Type -> write_expr dexpr
-	 | _ -> write_type_tostr t ^ ".toString(" ^ write_expr dexpr ^ ")"
+	let t = get_typeof_dexpr dexpr in
+	match t with  
+		  (Bool_Type | Int_Type) -> write_tostr_class dexpr ^ ".toString(" ^ write_expr dexpr ^ ")"
+		| String_Type -> write_expr dexpr
+		| _ -> write_expr dexpr ^ ".toString()"
+
+	
 
 let write_scope_var_decl svd =
 	let (n, b, t, _) = svd in write_type t ^ " " ^ n ^ ";\n"
