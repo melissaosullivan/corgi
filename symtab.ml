@@ -8,19 +8,19 @@ module SymTable = Map.Make(String)
 
 let scope_parents = Array.make 1000 0
 let parents = Array.make 1000 0
-
+(*
 let string_of_decl = function
       Var_Decl(n, a, t, id)     -> string_of_vdecl (n, a, t)
     | Func_Decl(n, t, f, id) -> 
         (string_of_prim_type t) ^ " " ^ n ^ "(" ^ 
         String.concat ", " (List.map string_of_prim_type f) ^ ")"
-
+*)
 let string_of_symtab env =
     let symlist = SymTable.fold
         (fun s t prefix -> (string_of_decl t) :: prefix) (fst env) [] in
     let sorted = List.sort Pervasives.compare symlist in
     String.concat "\n" sorted
-
+ 
 (* maybe we can combine get id and find? *)
 let rec symtab_get_id (name:string) env = 
     let(table, scope) = env in

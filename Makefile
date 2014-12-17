@@ -1,5 +1,5 @@
 #OBJS = ast.cmo symtab.cmo parser.cmo scanner.cmo interpreter.cmo 
-OBJS = ast.cmo symtab.cmo check.cmo parser.cmo scanner.cmo javagen.cmo interpreter.cmo
+OBJS = ast.cmo table.cmo check.cmo parser.cmo scanner.cmo javagen.cmo interpreter.cmo
 
 interpreter: $(OBJS)
 	ocamlc -o interpreter -g $(OBJS)
@@ -29,8 +29,8 @@ ast.cmx:
 symtab.cmo: ast.cmo
 symtab.cmx: ast.cmx
 
-check.cmo: symtab.cmo
-check.cmx: symtab.cmx
+check.cmo: table.cmo
+check.cmx: table.cmx
 
 javagen.cmo: check.cmo
 javagen.cmx: check.cmx

@@ -27,12 +27,12 @@ let _ =
       (match action with
           Ast -> let listing = Ast.string_of_program program
                  in prerr_string listing
-        | Symtab -> let env = Symtab.symtab_of_program program in
-                    prerr_string (Symtab.string_of_symtab env)
-        | Sem -> let env = Symtab.symtab_of_program program in
+        | Symtab -> let env = Table.build_table program in
+                    prerr_string (Table.string_of_table env)
+        | Sem -> let env = Table.build_table program in
             		let checked = Check.verify_semantics program env in
     					ignore checked; print_string "Passed Semantic Analysis.\n"
-        | Javagen -> let env = Symtab.symtab_of_program program in
+        | Javagen -> let env = Table.build_table program in
                 let checked = Check.verify_semantics program env in
                 let outstring = Javagen.write_pgm checked in
                 prerr_string outstring

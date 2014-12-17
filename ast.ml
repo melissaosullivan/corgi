@@ -186,6 +186,16 @@ let string_of_fdecl fdecl =
   fdecl.fname ^ "(" ^ String.concat ", " (List.map string_of_vdecl fdecl.formals) ^ ")\n" ^
   string_of_block fdecl.fblock
 
+(* need to rewrite *)
+let string_of_decl = function
+	  Var_Decl(n, a, t, id)     -> string_of_vdecl (n, a, t)
+	| Func_Decl(n, t, f, id) -> 
+	  (string_of_prim_type t) ^ " " ^ 
+	  n ^ "(" ^ 
+	  String.concat ", " (List.map string_of_prim_type f) ^ ")"
+
+(* ___________________________________ *)
+
 let string_of_program (vars, funcs) =
   String.concat "" (List.map string_of_vdecl (List.rev vars) ) ^ "\n" ^
   String.concat "\n" (List.map string_of_fdecl (List.rev funcs) ) ^ "\n"

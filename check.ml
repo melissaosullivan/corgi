@@ -74,23 +74,23 @@ let rec map_to_list_env func lst env =
 				r :: map_to_list_env func tail env
 
 let verify_gvar gvar env = 
-	let decl = Symtab.symtab_find (fst_of_three gvar) env in 
-	let id = Symtab.symtab_get_id (fst_of_three gvar) env in
+	let decl = Table.get_decl (fst_of_three gvar) env in 
+	let id = Table.get_scope (fst_of_three gvar) env in
 	match decl with 
 		Var_Decl(v) -> let (vname, varray, vtype, id) = v in
 			(vname, varray, vtype, id)
 		| _ -> raise(Failure("global" ^ (fst_of_three gvar) ^ " not a variable"))
 
 let verify_var var env = 
-	let decl = Symtab.symtab_find (fst_of_three var) env in
-	let id = Symtab.symtab_get_id (fst_of_three var) env in
+	let decl = Table.get_decl (fst_of_three var) env in
+	let id = Table.get_scope (fst_of_three var) env in
 	match decl with
 		Func_Decl(f) -> raise(Failure("symbol is not a variable"))
 	  | Var_Decl(v) -> let (vname, varray, vtype, id) = v in
 			(vname, varray, vtype, id)
 
 let verify_is_func_decl name env =
-	let decl = Symtab.symtab_find name env in
+	let decl = Table.get_decl name env in
 	match decl with 
 		Func_Decl(f) -> name
 		| _ -> raise(Failure("id " ^ name ^ " not a function"))
@@ -108,13 +108,13 @@ let verify_unop_and_get_type e unop =
 		| _ -> raise (Failure "negation operator applied to type that doesn't support negation")
 
 let verify_id_get_type id env = 
-	let decl = Symtab.symtab_find id env in
+	let decl = Table.get_decl id env in
 	match decl with
 		Var_Decl(v) -> let (_, _, t, _) = v in t
 		| _ -> raise(Failure("id " ^ id ^ " not a variable."))
 
 let verify_id_is_array id env = 
-	let decl = Symtab.symtab_find id env in
+	let decl = Table.get_decl id env in
 	match decl with
 		Var_Decl(v) -> let(_, is_array, _, _ ) = v in is_array
 		| _ -> raise(Failure("id " ^ id ^ " not an array.")) 
@@ -252,7 +252,7 @@ and verify_expr_list lst env =
 	| head :: tail -> verify_expr head env :: verify_expr_list tail env
 
 and verify_call_and_get_type name vargs env =
-	let decl = Symtab.symtab_find name env in (* function name in symbol table *)
+	let decl = Table.get_decl name env in (* function name in symbol table *)
 	let fdecl = match decl with
 		Func_Decl(f) -> f                     (* check if it is a function *)
 		| _ -> raise(Failure (name ^ " is not a function")) in
@@ -267,7 +267,7 @@ and verify_call_and_get_type name vargs env =
 						   " arguments, called with " ^ string_of_int (List.length vargs)))
 
 let verify_id_match_type (id:string) ve env = (* Add support for assigning compatible types *)
-	let decl = Symtab.symtab_find id env in 
+	let decl = Table.get_decl id env in 
 	let vdecl = match decl with (* check that id refers to a variable *)
 	Var_Decl(v) -> v
 	| _ -> raise(Failure (id ^ " is not a variable")) in
