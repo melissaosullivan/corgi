@@ -41,7 +41,10 @@ type d_func = {
 	d_fblock : d_block;
 }
 
-type d_program = scope_var_decl list * d_func list
+type d_program = {
+	d_gvars: scope_var_decl list;
+	d_pfuncs: d_func list;
+}
 
 let type_of_expr = function
 	D_Int_Lit(_,t) -> t
@@ -51,7 +54,7 @@ let type_of_expr = function
   | D_Id(_,t) -> t
   | D_Binop(_,_,_,t) -> t 
   | D_Array_Lit (_, t) -> t
-  | D_Unop (_, _, t) -> t
+  | D_Unop (_, _, t) -> t 
   | D_Call (_, _, t) -> t
   | D_Tuple (_, _, t) -> t (* Come back and fix tuples *)
   | D_Access (_, _, t) -> t
@@ -353,4 +356,4 @@ let verify_semantics program env =
 	let () = Printf.printf "after verifying gvars \n" in
 	let verified_func_list = map_to_list_env verify_func func_list env in
 	let () = Printf.printf "after verifying functions \n" in
-		(verified_func_list, verified_gvar_list)
+		{ d_pfuncs = verified_func_list; d_gvars = verified_gvar_list}

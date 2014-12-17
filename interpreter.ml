@@ -1,11 +1,12 @@
 
-type action = Ast | Symtab | Sem | Help
+type action = Ast | Symtab | Sem | Javagen | Help
 
 let usage (name:string) =
   "usage:\n" ^ name ^ "\n" ^
     "        -ast < source.corg              (Print AST of source)\n" ^
     "        -sym < source.corg              (Print Symbol Table of source)\n" ^
-    "		 -sem < source.corg				 (Print Semantic Analysis of source)\n"
+    "		     -sem < source.corg				       (Print Semantic Analysis of source)\n" ^
+    "        -javagen < source.corg          (Print java intermediate code of source)\n"
 
 let _ =
   let action = 
@@ -14,6 +15,7 @@ let _ =
         "-ast" -> Ast
       | "-sym" -> Symtab
       | "-sem" -> Sem
+      | "-javagen" -> Javagen
       | _ -> Help)  
   else Help in   
 
@@ -30,4 +32,8 @@ let _ =
         | Sem -> let env = Symtab.symtab_of_program program in
             		let checked = Check.verify_semantics program env in
     					ignore checked; print_string "Passed Semantic Analysis.\n"
+        | Javagen -> let env = Symtab.symtab_of_program program in
+                let checked = Check.verify_semantics program env in
+                let outstring = Javagen.write_pgm checked in
+                print_string outstring
         | Help -> print_endline (usage Sys.argv.(0)))
