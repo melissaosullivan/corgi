@@ -48,6 +48,11 @@ public class Pitch implements Comparable<Pitch>{
 	public int compareTo(Pitch o) {
 		return pitch - o.pitch;
 	}
+	
+	public String toString() {
+		// TODO: Return the actual name of the pitch
+		return Integer.toString(pitch);
+	}
 
 	
 }

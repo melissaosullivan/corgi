@@ -25,6 +25,9 @@ public class ImportTester {
 		Composition c = jFuguePatternToComposition(player, pattern);
 		System.out.println(c);
 		
+		play(c);
+		exportMidi(c);
+		
 	}
 	
 	public static Composition importMidi(String fileName) {
@@ -36,6 +39,34 @@ public class ImportTester {
 			e.printStackTrace();
 		}
 		return jFuguePatternToComposition(player, pattern);
+	}
+	
+	public static void play(Composition c) {
+		/*
+		byte[] noteValues = new byte[] { 64, 69, 72, 71, 64, 71, 74, 72, 76,
+				68, 76 };
+
+		double[] durations = new double[] { 0.0625, 0.0625, 0.0625, 0.0625,
+				0.0625, 0.0625, 0.0625, 0.125, 0.125, 0.125, 0.125 };
+
+		Pattern pattern = new Pattern();
+		for (int i = 0; i < noteValues.length; i++) {
+			Note n = new Note(noteValues[i], durations[i]);
+			pattern.addElement(n);
+		}
+
+		player.saveMidi(pattern, new File("test.mid"));
+		player.play(pattern);
+		*/
+	}
+	
+	public static void exportMidi(Composition c) {
+		
+	}
+	
+	public static void intToNote(int n) {
+		// 64 = E3
+		
 	}
 
 	public static Composition jFuguePatternToComposition(Player player, Pattern pattern) {
