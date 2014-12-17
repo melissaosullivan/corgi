@@ -12,6 +12,10 @@ public class Composition {
 		}
 	}
 	
+	public Composition(Composition c) {
+		this.tracks = c.tracks;
+	}
+	
 	public Composition(ArrayList<Track> ts) {
 		tracks = new ArrayList<Track>(ts);
 	}

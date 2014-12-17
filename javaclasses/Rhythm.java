@@ -15,6 +15,11 @@ public class Rhythm {
 		}
 	}
 	
+	public Rhythm(Rhythm r) {
+		durations = r.durations;
+		totalLength = r.totalLength;
+	}
+	
 	public void append(Duration[] ds) {
 		for (Duration d : ds) {
 			durations.add(d);

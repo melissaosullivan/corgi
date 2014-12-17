@@ -28,6 +28,12 @@ public class Chord {
 		}
 	}
 	
+	public Chord(Chord c) {
+		this.tuples = c.tuples;
+		this.usedPitches = c.usedPitches;
+		this.globalDurationLength = c.globalDurationLength;
+	}
+	
 	public Chord(int pitch, double duration) {
 		tuples = new ArrayList<Pitch_Duration_Tuple>();
 		Pitch p = new Pitch(pitch);

@@ -16,6 +16,11 @@ public class Track {
 		}
 	}
 	
+	public Track(Track t) {
+		chords = t.chords;
+		totalDuration = t.totalDuration;
+	}
+	
 	public Track() {
 		chords = new ArrayList<Chord>();
 		totalDuration = new Duration(0);
