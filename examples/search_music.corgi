@@ -3,21 +3,38 @@ int main() {
     // Declaring variables
     composition compositionAnalysis;
     int index;
+    int index2;
     chord interestingChord;
+    chord tempChord;
+    track interestingTrack;
     pitch c5;
     pitch g5;
+    track trackHelper;
     duration quarterNote;
+    int count;
     
     // Set constants
     c5 = 60;
     g5 = 67;
     quarterNote = $1/4$;
-    interestingChord = [(c5, quarterNote), (g5, quarterNote)];
+    interestingChord = [(c5, quarterNote)];
+    // interestingTrack = [interestingChord];
 
     // Import composition analysis
     compositionAnalysis = import("example.midi");
 
-    for (index = 0; index < length(compositionAnalysis); index = index+1) {
+    count = 0;
+    // Iterate through the composition and check 
+    for (index = 0; index < length(compositionAnalysis); index=index+1) {
+        trackHelper = compositionAnalysis @ index;
 
+        for (index2 = 0; index2 < length(trackHelper); index2=index2+1) {
+            tempChord = trackHelper @ index2;
+            if (interestingChord == tempChord) {
+                count = count + 1;
+            }
+        }
     }
+
+    print("There are ", count, " interesting chords in this composition!");
 }

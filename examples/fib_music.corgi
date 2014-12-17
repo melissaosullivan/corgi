@@ -39,7 +39,7 @@ int main() {
     // Use a constant quarter note as the 
     d = $1/4$;
 
-    cumulativeTrack = [];
+    cumulativeTrack = [p, d];
 
     for (i=1; i<30; i=i+1) {
         fibNum = fib(i);
