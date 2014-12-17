@@ -49,6 +49,7 @@ let write_op_compares e1 op e2 =
 	| Leq -> "(" ^ e1 ^ ").compareTo(" ^ e2 ^ ")" ^ " <= 0"
 	| Greater -> "(" ^ e1 ^ ").compareTo(" ^ e2 ^ ")" ^ " > 0"
 	| Geq -> "(" ^ e1 ^ ").compareTo(" ^ e2 ^ ")" ^ " >= 0"
+	| Neq -> "(" ^ e1 ^ ").compareTo(" ^ e2 ^ ")" ^ " != 0"
 
 let rec get_typeof_dexpr = function
 	  D_Bool_Lit(boolLit, t) -> t
@@ -112,11 +113,12 @@ and write_binop_expr expr1 op expr2 t =
 			  		 but in the case of comparaters (like i < 10 where i is an int. the return type is boolean even 
 			  		 though dexprs are ints! so fool this method by calling it again with the return type of int!*)
 			  | (Pitch_Type | Frac_Type | Rhythm_Type | Duration_Type | Chord_Type | Track_Type | Composition_Type) -> (match op with
-			  		(Equal | Less | Leq | Greater | Geq) -> write_op_compares e1 op e2 
+			  		(Equal | Less | Leq | Greater | Geq | Neq) -> write_op_compares e1 op e2 
 			  		| Add -> "(" ^ e1 ^ ").add(" ^ e2 ^ ")"
 			  		| Sub -> "(" ^ e1 ^ ").subtract(" ^ e2 ^ ")"
 			  		| Mult -> "(" ^ e1 ^ ").multiply(" ^ e2 ^ ")"
-			  		| Div -> "(" ^ e1 ^ ").divide(" ^ e2 ^ ")")
+			  		| Div -> "(" ^ e1 ^ ").divide(" ^ e2 ^ ")"
+			  		| _ -> raise(Failure(write_op_primitive op ^ " is not a supported operation for" ^ write_type t)))
 		in write_binop_expr_help e1 op e2 
 
 and write_unop_expr dexpr uop t =
@@ -141,7 +143,7 @@ and tostring_str dexpr =
 	match t with  
 		  (Bool_Type | Int_Type) -> write_tostr_class dexpr ^ ".toString(" ^ write_expr dexpr ^ ")"
 		| String_Type -> write_expr dexpr
-		| _ -> write_expr dexpr ^ ".toString()"
+		| _ -> "(" ^ write_expr dexpr ^ ").toString()"
 	
 
 let write_scope_var_decl_func svd =

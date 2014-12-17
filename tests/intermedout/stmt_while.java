@@ -2,8 +2,12 @@
 
 public class Intermediate {
 public static void main(String[] args){
-Pitch p;
-p = new Pitch(5);
+int i;
+i = 0;
 
-System.out.println((p).toString());
+while(i < 10){
+System.out.println(Integer.toString(i));
+i = i + 1;
+
+}
 }}

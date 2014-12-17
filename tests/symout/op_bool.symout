@@ -1,3 +1,6 @@
 bool condition
+composition import(string)
+int export(composition)
+int length()
 int main()
 int print()

@@ -1,4 +1,7 @@
+composition import(string)
 duration d
+int export(composition)
+int length()
 int main()
 int print()
 rhythm [] r

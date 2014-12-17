@@ -1,5 +1,8 @@
+composition import(string)
 int a
 int add(int, int)
 int b
+int export(composition)
+int length()
 int main()
 int print()

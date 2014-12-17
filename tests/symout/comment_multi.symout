@@ -1,1 +1,4 @@
+composition import(string)
+int export(composition)
+int length()
 int print()

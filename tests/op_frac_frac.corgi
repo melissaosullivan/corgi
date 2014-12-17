@@ -4,10 +4,14 @@ int main() {
     f1 = $1/4$;
     f2 = $1/5$;
 
-    print(f1 - f2);
-    print(f1 + f2);
-    print(f1 / f2);
-    print(f1 * f2);
+    f1 - f2;
+    print(f1);
+    f1 + f2;
+    print(f1);
+    f1 * f2;
+    print(f1);
+    f1 / f2;
+    print(f1);
     print(f1 == f2);
     print(f1 != f2);
     print(f1 < f2);
@@ -16,4 +20,5 @@ int main() {
     print(f1 <= f2);
 
     f1 = f2;
+    print(f1);
 }

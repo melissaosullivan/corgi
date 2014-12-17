@@ -9,6 +9,10 @@ public class Duration implements Comparable<Duration>{
 	public Duration(int i){
 		fraction = new Frac(i, 1);
 	}
+
+	public Duration(Duration d){
+		fraction = d.fraction;
+	}
 	
 	public void add(Duration d){
 		this.fraction.add(d.fraction);

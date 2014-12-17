@@ -37,5 +37,5 @@ t2 = new Track(new Chord[] {c1,c1});
 
 comp = new Composition(new Track[] {t1,t2,t1});
 
-System.out.println(comp.toString());
+System.out.println((comp).toString());
 }}

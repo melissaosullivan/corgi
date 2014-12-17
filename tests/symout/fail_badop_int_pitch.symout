@@ -1,4 +1,7 @@
+composition import(string)
+int export(composition)
 int i
+int length()
 int main()
 int print()
 pitch p

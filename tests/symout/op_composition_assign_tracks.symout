@@ -1,8 +1,11 @@
 chord [] c1
 chord [] c2
 composition [] comp
+composition import(string)
 duration d1
 duration d2
+int export(composition)
+int length()
 int main()
 int print()
 pitch p1

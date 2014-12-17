@@ -1,4 +1,13 @@
-Intermediate.java:3: error: class, interface, or enum expected
-Fatal error: exception Match_failure("javagen.ml", 107, 110)
-^
-1 error
+Intermediate.java:8: subtract(Duration) in Duration cannot be applied to (Frac)
+System.out.println(((d1).subtract(new Frac(1,5))).toString());
+                        ^
+Intermediate.java:9: add(Duration) in Duration cannot be applied to (Frac)
+System.out.println(((d1).add(new Frac(1,5))).toString());
+                        ^
+Intermediate.java:10: divide(Duration) in Duration cannot be applied to (Frac)
+System.out.println(((d1).divide(new Frac(1,5))).toString());
+                        ^
+Intermediate.java:11: multiply(Duration) in Duration cannot be applied to (Frac)
+System.out.println(((d1).multiply(new Frac(1,5))).toString());
+                        ^
+4 errors

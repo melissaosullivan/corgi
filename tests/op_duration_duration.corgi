@@ -4,10 +4,13 @@ int main() {
     d1 = $1/4$;
     d2 = $1/5$;
 
-    print(d1 - d2);
-    print(d1 + d2);
-    print(d1 / d2);
-    print(d1 * d2);
+    d1 - d2;
+    print(d1);
+    d1 + d1;
+    print(d1);
+    d1 * d1;
+    print(d1);
+    d1 / d2;
     print(d1 == d2);
     print(d1 != d2);
     print(d1 < d2);
@@ -16,4 +19,5 @@ int main() {
     print(d1 <= d2);
 
     d1 = d2;
+    print(d1);
 }

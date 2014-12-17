@@ -25,5 +25,5 @@ c1 = new Chord(new Pitch_Duration_Tuple[] {new Pitch_Duration_Tuple(p1,d1),new P
 
 c2 = new Chord(new Pitch_Duration_Tuple[] {new Pitch_Duration_Tuple(p1,d1),new Pitch_Duration_Tuple(p1,d2),new Pitch_Duration_Tuple(p2,d2),new Pitch_Duration_Tuple(p2,d1)});
 
-System.out.println(c2.toString());
+System.out.println((c2).toString());
 }}

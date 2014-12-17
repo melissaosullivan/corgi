@@ -1,4 +1,13 @@
-Intermediate.java:3: error: class, interface, or enum expected
-Fatal error: exception Match_failure("javagen.ml", 107, 110)
-^
-1 error
+Intermediate.java:12: void cannot be dereferenced
+System.out.println(((p1).subtract(p2)).toString());
+                                      ^
+Intermediate.java:13: void cannot be dereferenced
+System.out.println(((p1).add(p2)).toString());
+                                 ^
+Intermediate.java:14: void cannot be dereferenced
+System.out.println(((p1).divide(p2)).toString());
+                                    ^
+Intermediate.java:15: void cannot be dereferenced
+System.out.println(((p1).multiply(p2)).toString());
+                                      ^
+4 errors

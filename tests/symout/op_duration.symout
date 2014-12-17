@@ -1,3 +1,6 @@
+composition import(string)
 duration d1
+int export(composition)
+int length()
 int main()
 int print()

@@ -1,4 +1,4 @@
-Intermediate.java:1: error: class, interface, or enum expected
+Intermediate.java:1: class, interface, or enum expected
 Fatal error: exception Failure("Cannot assign composition to c1 of type chord")
 ^
 1 error

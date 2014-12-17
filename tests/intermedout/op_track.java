@@ -33,5 +33,5 @@ t = new Track(new Chord[] {c1,c2,c2});
 
 t2 = new Track(t);
 
-System.out.println(t[1].toString());
+System.out.println((t.get(1)).toString());
 }}

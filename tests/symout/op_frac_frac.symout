@@ -1,4 +1,7 @@
+composition import(string)
 frac f1
 frac f2
+int export(composition)
+int length()
 int main()
 int print()

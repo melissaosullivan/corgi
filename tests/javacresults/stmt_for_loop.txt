@@ -1,7 +1,0 @@
-Intermediate.java:7: error: ')' expected
-i < 10;i = i + 1;)
-                ^
-Intermediate.java:7: error: illegal start of expression
-i < 10;i = i + 1;)
-                 ^
-2 errors
