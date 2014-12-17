@@ -26,6 +26,14 @@ public class Rhythm {
 		}
 	}
 	
+	public Duration get(int index) {
+		return durations.get(index);
+	}
+	
+	public void set(int index, Duration d) {
+		durations.set(index, d);
+	}
+	
 	public int length() {
 		return durations.size();
 	}

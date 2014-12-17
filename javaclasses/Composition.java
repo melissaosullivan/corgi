@@ -28,6 +28,14 @@ public class Composition {
 		this.tracks.add(t);
 	}
 	
+	public Track get(int index) {
+		return tracks.get(index);
+	}
+	
+	public void set(int index, Track t) {
+		tracks.set(index, t);
+	}
+	
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		int trackIndex = 1;

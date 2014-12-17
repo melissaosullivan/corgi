@@ -129,6 +129,14 @@ public class Chord {
 		return true;
 	}
 	
+	public Pitch_Duration_Tuple get(int index) {
+		return tuples.get(index);
+	}
+	
+	public void set(int index, Pitch_Duration_Tuple pd) {
+		tuples.set(index, pd);
+	}
+	
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		for (Pitch_Duration_Tuple pd : tuples) {

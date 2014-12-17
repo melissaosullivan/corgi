@@ -26,6 +26,14 @@ public class Track {
 		totalDuration = new Duration(0);
 	}
 	
+	public Chord get(int index) {
+		return chords.get(index);
+	}
+	
+	public void set(int index, Chord c) {
+		chords.set(index, c);
+	}
+	
 	public void add(Track t) {
 		chords.addAll(t.chords);
 	}
