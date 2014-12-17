@@ -87,10 +87,12 @@ vdecl:
    | prim_type ID ASSIGN expr { {vname = $2; vtype = $1; vexpr = $4}}
 */
 vdecl:
-  prim_type ID SEMI{ ($2, $1) }
+  prim_type ID SEMI{ ($2, false, $1) }
+  | prim_type LBRACKET RBRACKET ID SEMI { ($4, true, $1)}
 
 fvdecl:
-  prim_type ID { ($2, $1) }
+  prim_type ID { ($2, false, $1) }
+  | prim_type LBRACKET RBRACKET ID { ($4, true, $1) }
 
 stmt_list:
     /* nothing */  { [] }

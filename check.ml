@@ -2,6 +2,7 @@ open Ast
 
 let fst_of_three (t, _, _) = t
 let snd_of_three (_, t, _) = t
+let thrd_of_three (_, _, t) = t
 
 type d_expr =
 	  D_Bool_Lit of bool * prim_type
@@ -70,18 +71,20 @@ let rec map_to_list_env func lst env =
 				r :: map_to_list_env func tail env
 
 let verify_gvar gvar env = 
-	let decl = Symtab.symtab_find (fst gvar) env in 
-	let id = Symtab.symtab_get_id (fst gvar) env in
+	let decl = Symtab.symtab_find (fst_of_three gvar) env in 
+	let id = Symtab.symtab_get_id (fst_of_three gvar) env in
 	match decl with 
-		Var_Decl(v) -> (fst_of_three v, snd_of_three v, id)
-		| _ -> raise(Failure("global" ^ (fst gvar) ^ " not a variable"))
+		Var_Decl(v) -> let (vname, varray, vtype, id) = v in
+			(vname, varray, vtype, id)
+		| _ -> raise(Failure("global" ^ (fst_of_three gvar) ^ " not a variable"))
 
 let verify_var var env = 
-	let decl = Symtab.symtab_find (fst var) env in
-	let id = Symtab.symtab_get_id (fst var) env in
+	let decl = Symtab.symtab_find (fst_of_three var) env in
+	let id = Symtab.symtab_get_id (fst_of_three var) env in
 	match decl with
 		Func_Decl(f) -> raise(Failure("symbol is not a variable"))
-	  | Var_Decl(v) -> (fst_of_three v, snd_of_three v, id)
+	  | Var_Decl(v) -> let (vname, varray, vtype, id) = v in
+			(vname, varray, vtype, id)
 
 let verify_is_func_decl name env =
 	let decl = Symtab.symtab_find name env in
@@ -104,7 +107,7 @@ let verify_unop_and_get_type e unop =
 let verify_id_get_type id env = 
 	let decl = Symtab.symtab_find id env in
 	match decl with
-		Var_Decl(v) -> snd_of_three v
+		Var_Decl(v) -> let (_, _, t, _) = v in t
 		| _ -> raise(Failure("id " ^ id ^ " not a variable."))
 
 let verify_binop l r op =
@@ -260,7 +263,7 @@ let verify_id_match_type (id:string) vt env = (* Add support for assigning compa
 	let vdecl = match decl with (* check that id refers to a variable *)
 	Var_Decl(v) -> v
 	| _ -> raise(Failure (id ^ " is not a variable")) in
-	let (_, idtype, _) = vdecl in
+	let (_, _, idtype, _) = vdecl in
 	if idtype = vt then id (* id is of type vt *)
 	else (match (idtype, vt) with 
 		Frac_Type, Int_Type  

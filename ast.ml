@@ -33,7 +33,7 @@ type prim_type =
 type types = 
   Corgi_Prim of prim_type
 
-type var = string * prim_type
+type var = string * bool * prim_type
 
 type expr =
     Bool_Lit of bool 
@@ -88,7 +88,7 @@ type program = var list * func list
 
 (* Added from Lorax *)
 
-type scope_var_decl = string * prim_type * int
+type scope_var_decl = string * bool * prim_type * int
 
 type scope_func_decl = string * prim_type * prim_type list * int
 
@@ -168,10 +168,8 @@ let string_of_vdecl vdecl = string_of_types vdecl.vtype ^ " " ^ vdecl.vname ^
               " = " ^ string_of_expr vdecl.vexpr ^ ";\n"  
 *)
 let string_of_vdecl v =
-  (match (snd v) with
-      t -> string_of_prim_type t ^ " " ^ fst v
-  )
-
+  let (n, a, t) = v in 
+    string_of_prim_type t ^ " " ^ string_of_bool a ^ " " ^ n
 
 let rec string_of_stmt = function
     Block(b) -> string_of_block b

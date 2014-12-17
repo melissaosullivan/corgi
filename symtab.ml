@@ -1,5 +1,5 @@
 open Ast
-
+let thrd_of_three (_, _, t) = t
 (* 
  * SymMap contains string : Ast.decl pairs representing
  * identifiername_scopenumber : decl
@@ -10,7 +10,7 @@ let scope_parents = Array.make 1000 0
 let parents = Array.make 1000 0
 
 let string_of_decl = function
-      Var_Decl(n, t, id)     -> string_of_vdecl (n, t)
+      Var_Decl(n, a, t, id)     -> string_of_vdecl (n, a, t)
     | Func_Decl(n, t, f, id) -> 
         (string_of_prim_type t) ^ " " ^ n ^ "(" ^ 
         String.concat ", " (List.map string_of_prim_type f) ^ ")"
@@ -60,11 +60,11 @@ let rec symtab_add_decl (name:string) (decl:decl) env =
     else ((SymTable.add to_find decl table), scope)
 
 (* New add_decl           ------------------------------------------------------------------------------*)
-let rec add_symbol name decl env =
+(* let rec add_symbol name decl env =
     let scoped_name = name ^ "_" ^ string_of_int (snd env) in
     if SymTable.mem scoped_name (fst env) then 
         raise(Failure("symbol " ^ name ^ " declared twice in scope." ))
-    else (SymTable.add scoped_name decl (fst env), snd env)
+    else (SymTable.add scoped_name decl (fst env), snd env) *)
 (* ---------------------------------------------------------------------------------------------------- *)
 
 (* 
@@ -73,17 +73,17 @@ let rec add_symbol name decl env =
  *) 
 let rec symtab_add_vars (vars:var list) env =
     match vars with
-      [] -> env
-    | (vname, vtype) :: tail -> let env = symtab_add_decl vname (Var_Decl(vname, vtype, snd env)) env in (* name, type, scope *)
+     [] -> env
+    | (vname, isarray, vtype) :: tail -> let env = symtab_add_decl vname (Var_Decl(vname, isarray, vtype, snd env)) env in (* name, type, scope *)
         symtab_add_vars tail env 
 
 (* New add_vars           ------------------------------------------------------------------------------*)
-let rec add_var_list lst env = match lst with
+(* let rec add_var_list lst env = match lst with
     [] -> env
     | head :: tail -> 
         let (variable_name, variable_type) = head in 
         let env = add_symbol variable_name (Var_Decl(variable_name, variable_type, snd env)) env in
-        add_var_list tail env
+        add_var_list tail env *)
 (* ---------------------------------------------------------------------------------------------------- *)
 
 (* add declarations inside statements to the symbol table *)
@@ -106,7 +106,7 @@ and symtab_add_block (b:block) env =
 
 and symtab_add_func (f:func) env =
     let scope = snd env in
-    let args = List.map snd f.formals in (* gets name of every formal *)
+    let args = List.map thrd_of_three f.formals in (* gets name of every formal *)
     let env = symtab_add_decl f.fname (Func_Decl(f.fname, f.ret_type, args, scope)) env in (* add current function to table *)
     let env = symtab_add_vars f.formals ((fst env), f.fblock.block_id) in (* add vars to the next scope in. scope_id is ahead by one *)
     symtab_add_block f.fblock ((fst env), scope) (* add body to symtable given current environment and scope *) 
