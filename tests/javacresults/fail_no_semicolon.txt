@@ -1,0 +1,4 @@
+Intermediate.java:1: error: class, interface, or enum expected
+Fatal error: exception Parsing.Parse_error
+^
+1 error

@@ -1,0 +1,4 @@
+Intermediate.java:3: error: class, interface, or enum expected
+Fatal error: exception Match_failure("javagen.ml", 94, 16)
+^
+1 error

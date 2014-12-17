@@ -1,0 +1,21 @@
+Intermediate.java:7: error: non-static variable a cannot be referenced from a static context
+a = new int[] {1,2};
+^
+Intermediate.java:7: error: incompatible types
+a = new int[] {1,2};
+    ^
+  required: int
+  found:    int[]
+Intermediate.java:9: error: non-static variable a cannot be referenced from a static context
+b = a[1];
+    ^
+Intermediate.java:9: error: array required, but int found
+b = a[1];
+     ^
+Intermediate.java:11: error: non-static variable a cannot be referenced from a static context
+b = a[b];
+    ^
+Intermediate.java:11: error: array required, but int found
+b = a[b];
+     ^
+6 errors

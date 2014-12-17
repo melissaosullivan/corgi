@@ -40,7 +40,7 @@ do
 done
 
 # Populate the java output tests
-./populatejavatests.sh
+# ./populatejavatests.sh
 
 
 echo "Tests are populated"

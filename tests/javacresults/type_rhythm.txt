@@ -1,0 +1,7 @@
+Intermediate.java:6: error: constructor Rhythm in class Rhythm cannot be applied to given types;
+r = new Rhythm(new Frac[] {new Frac(1,4),new Frac(1,4),new Frac(1,4),new Frac(1,4)});
+    ^
+  required: Duration[]
+  found: Frac[]
+  reason: actual argument Frac[] cannot be converted to Duration[] by method invocation conversion
+1 error

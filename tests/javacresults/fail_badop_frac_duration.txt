@@ -1,0 +1,4 @@
+Intermediate.java:1: error: class, interface, or enum expected
+Fatal error: exception Failure("Cannot assign duration to f of type frac")
+^
+1 error

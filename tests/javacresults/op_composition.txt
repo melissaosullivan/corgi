@@ -1,0 +1,11 @@
+Intermediate.java:42: error: no suitable constructor found for Composition(Composition)
+comp2 = new Composition(comp);
+        ^
+    constructor Composition.Composition(ArrayList<Track>) is not applicable
+      (actual argument Composition cannot be converted to ArrayList<Track> by method invocation conversion)
+    constructor Composition.Composition(Track[]) is not applicable
+      (actual argument Composition cannot be converted to Track[] by method invocation conversion)
+Intermediate.java:44: error: array required, but Composition found
+System.out.println(comp2[1].toString());
+                        ^
+2 errors
