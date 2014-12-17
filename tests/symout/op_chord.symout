@@ -1,0 +1,8 @@
+chord c1
+chord c2
+duration d1
+duration d2
+int main()
+int print()
+pitch p1
+pitch p2
