@@ -75,7 +75,7 @@ let rec write_expr = function
 	| D_Noexpr -> ""
 	| D_Call(str,dexpr_list,t) -> (match str with 
 								  "print" -> "System.out.println(\"\" + "  ^  write_type_tostr t ^ ".toString(" ^ String.concat "," (List.map write_expr dexpr_list) ^ "))"
-								  | _ -> str ^ "(" ^ String.concat "," (List.map write_expr dexpr_list) ^ ")"
+								  | _ -> str ^ "(" ^ String.concat "," (List.map write_expr dexpr_list) ^ ")")
 	| D_Access(_,_,_) -> raise (Failure "no write expr for d_access")
 
 and write_binop_expr expr1 op expr2 t =
