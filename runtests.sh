@@ -8,6 +8,9 @@ had_failures="0"
 ast_suffix=".astout"
 sym_suffix=".symout"
 
+ast_outdir="astout"
+sym_outdir="symout"
+
 get_test_name () {
     local fullpath=$1
     testpath="${fullpath%.*}"
@@ -23,7 +26,7 @@ for file in $tests
 do
     get_test_name "$file"
     ./interpreter -ast < "$file" 2> ".test_out"
-    if [[ ! $(diff ".test_out" "$testpath$ast_suffix") ]]
+    if [[ ! $(diff ".test_out" "tests/$ast_outdir/$test_name$ast_suffix") ]]
     then
         echo "success: $test_name"
     else
@@ -50,7 +53,7 @@ for file in $tests
 do
     get_test_name "$file"
     ./interpreter -sym < "$file" 2> ".test_out"
-    if [[ ! $(diff ".test_out" "$testpath$sym_suffix") ]]
+    if [[ ! $(diff ".test_out" "tests/$sym_outdir/$test_name$sym_suffix") ]]
     then
         echo "success: $test_name"
     else

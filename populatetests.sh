@@ -5,7 +5,6 @@ fi
 
 tests=$(find tests -name *\.corg)
 had_failures="0"
-
 ast_suffix=".astout"
 sym_suffix=".symout"
 
