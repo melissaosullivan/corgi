@@ -6,6 +6,9 @@ open Check
 	D_call???
 *)
 
+let remove_last_character s = 
+	String.sub s 0 (String.length s - 1)
+
 let write_type = function 
 	  Bool_Type -> "Boolean"
 	| Int_Type -> "int"
@@ -97,7 +100,10 @@ and write_binop_expr expr1 op expr2 t =
 			  | Bool_Type -> (match op with
 			  		  And -> e1 ^ " && " ^ e2
 			  		| Or -> e1 ^ " || " ^ e2 
-			  		| _ -> write_binop_expr expr1 op expr2 get_typeof_dexpr
+			  		| _ -> write_binop_expr expr1 op expr2 (get_typeof_dexpr expr1)) 
+			  		(* this function assumes that the return type of the binop is the return type of dexpr1 and dexpr2,
+			  		 but in the case of comparaters (like i < 10 where i is an int. the return type is boolean even 
+			  		 though dexprs are ints! so fool this method by calling it again with the return type of int!*)
 			  | (Pitch_Type | Frac_Type | Rhythm_Type | Duration_Type | Chord_Type | Track_Type | Composition_Type) -> (match op with
 			  		(Equal | Less | Leq | Greater | Geq) -> write_op_compares e1 op e2 
 			  		| Add -> "(" ^ e1 ^ ").add(" ^ e2 ^ ")"
@@ -150,7 +156,7 @@ let rec write_stmt = function
 	| D_Assign (name, dexpr, t) -> write_assign name dexpr t ^ ";\n"
 	| D_Return(dexpr) -> "return " ^ write_expr dexpr ^ ";\n"
     | D_If(dexpr, dstmt1, dstmt2) -> "if(" ^ write_expr dexpr ^  ")" ^  write_stmt dstmt1 ^ "else"  ^ write_stmt dstmt2
-    | D_For(dstmt1, dstmt2, dstmt3, dblock) -> "for(" ^ write_stmt dstmt1  ^ " ; " ^ write_stmt dstmt2 ^ " ; " ^ write_stmt dstmt3 ^ ")" 
+    | D_For(dstmt1, dstmt2, dstmt3, dblock) -> "for(" ^ write_stmt dstmt1  ^ write_stmt dstmt2 ^ (remove_last_character (write_stmt dstmt3)) ^ ")" 
     | D_While(dexpr, dblock) -> "while(" ^ write_expr dexpr ^ ")"  ^ write_block dblock
 	
 and write_block dblock =
