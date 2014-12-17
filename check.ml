@@ -113,6 +113,12 @@ let verify_id_get_type id env =
 		Var_Decl(v) -> let (_, _, t, _) = v in t
 		| _ -> raise(Failure("id " ^ id ^ " not a variable."))
 
+let verify_id_is_array id env = 
+	let decl = Symtab.symtab_find id env in
+	match decl with
+		Var_Decl(v) -> let(_, is_array, _, _ ) = v in is_array
+		| _ -> raise(Failure("id " ^ id ^ " not an array.")) 
+
 let verify_binop l r op =
 	let tl = type_of_expr l in
 	let tr = type_of_expr r in
@@ -213,13 +219,13 @@ let rec verify_expr expr env =
 				D_Tuple(ve1, ve2, PD_Type)  (* Come back and fix tuples *)
 			else raise(Failure("Tuples must be of type (Pitch, Duration)"))
 		| Access(ar, i) -> (* Not implemented yet *)
-			(* Check that ar is in symtab, ar can only be of type chord? *) 
-			(* Check that i is a lit or id of type int *)
+			(* Check that ar is in symtab, ar can only be of type chord? *)
+			let is_array = verify_id_is_array ar env in
 			let ar_type = verify_id_get_type ar env in
 			let vi = verify_expr i env in
 			let vit = type_of_expr vi in 
-			if vit = Int_Type && ar_type = Chord_Type then D_Access(ar, vi, Chord_Type)
-			else raise(Failure("symbol " ^ ar ^ " must be of type chord, index must be of type int")) 
+			if vit = Int_Type && is_array then D_Access(ar, vi, ar_type)
+			else raise(Failure("symbol " ^ ar ^ " must be an array, index must be of type int")) 
 		| Noexpr -> D_Noexpr
 
 
