@@ -7,9 +7,11 @@ tests=$(find tests -name *\.corg)
 had_failures="0"
 ast_suffix=".astout"
 sym_suffix=".symout"
+intermed_suffix=".java"
 
 ast_outdir="astout"
 sym_outdir="symout"
+intermed_outdir="intermedout"
 
 get_test_name () {
     local fullpath=$1
@@ -71,6 +73,34 @@ do
         echo
     fi
 done
+
+# Testing Java Output
+echo ""
+echo "----------------Testing Intermediate Output----------------"
+echo ""
+for file in $tests
+do
+    get_test_name "$file"
+    ./interpreter -javagen < "$file" 2> ".test_out"
+    if [[ ! $(diff ".test_out" "tests/$intermed_outdir/$test_name$intermed_suffix") ]]
+    then
+        echo "success: $test_name"
+    else
+        echo "FAIL:    $test_name"
+        had_failures="1"
+
+        printf "Expected: {\n"
+        cat "$testpath$sym_suffix"
+        printf "}\n"
+        echo
+
+        printf "Recieved: {\n"
+        cat ".test_out"
+        printf "}\n"
+        echo
+    fi
+done
+
 
 echo ""
 echo "----------------Finished Testing, Running Make Clean----------------"
