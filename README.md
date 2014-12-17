@@ -1,7 +1,7 @@
 corgi
 =====
 
-##Test Cases Key:
+## Test Cases:
 
 
 ### Comments:

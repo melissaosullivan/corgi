@@ -1,0 +1,9 @@
+
+int main()
+{
+duration d;
+frac f;
+f = $3/4$; 
+d = f; 
+}
+

@@ -1,0 +1,17 @@
+
+int main()
+{
+duration d1;
+d1 = $1/4$; 
+print(d1 - $1/5$);
+print(d1 + $1/5$);
+print(d1 / $1/5$);
+print(d1 * $1/5$);
+print(d1 == $1/5$);
+print(d1 != $1/5$);
+print(d1 < $1/5$);
+print(d1 > $1/5$);
+print(d1 >= $1/5$);
+print(d1 <= $1/5$);
+}
+

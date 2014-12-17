@@ -1,0 +1,5 @@
+// Testing duration type declaration
+int main() {
+    int i;
+    i = 4
+}

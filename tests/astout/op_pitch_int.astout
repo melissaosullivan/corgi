@@ -1,0 +1,17 @@
+
+int main()
+{
+pitch p1;
+p1 = 5; 
+print(p1 - 2);
+print(p1 + 2);
+print(p1 / 2);
+print(p1 * 2);
+print(p1 == 2);
+print(p1 != 2);
+print(p1 < 2);
+print(p1 > 2);
+print(p1 >= 2);
+print(p1 <= 2);
+}
+

@@ -1,0 +1,18 @@
+
+int main()
+{
+frac f1;
+f1 = $1/4$; 
+print(f1 - $1/5$);
+print(f1 + $1/5$);
+print(f1 / $1/5$);
+print(f1 * $1/5$);
+print(f1 == $1/5$);
+print(f1 != $1/5$);
+print(f1 < $1/5$);
+print(f1 > $1/5$);
+print(f1 >= $1/5$);
+print(f1 <= $1/5$);
+f1 = $1/5$; 
+}
+

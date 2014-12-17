@@ -1,0 +1,19 @@
+int main() {
+    frac f1;
+    frac f2;
+    f1 = $1/4$;
+    f2 = $1/5$;
+
+    print(f1 - f2);
+    print(f1 + f2);
+    print(f1 / f2);
+    print(f1 * f2);
+    print(f1 == f2);
+    print(f1 != f2);
+    print(f1 < f2);
+    print(f1 > f2);
+    print(f1 >= f2);
+    print(f1 <= f2);
+
+    f1 = f2;
+}

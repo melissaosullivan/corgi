@@ -1,0 +1,6 @@
+// Testing bool type declaration
+int main() {
+    bool b;
+    b = true;
+    b = false;
+}

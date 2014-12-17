@@ -1,0 +1,6 @@
+// Testing chord construction from an array of pitch duration tuples
+int main() {
+    chord c1;
+    chord c2;
+    chord c3;
+}

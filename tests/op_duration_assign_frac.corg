@@ -1,0 +1,8 @@
+// Testing duration construction from a frac
+int main() {
+    duration d;
+    frac f;
+    
+    f = $3/4$;
+    d = f;
+}
