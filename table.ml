@@ -48,7 +48,12 @@ let add_symbol (name:string) (decl:decl) env =
 
 let add_var var env =
 	let (name, isAr, p_type) = var in
-	add_symbol name (Var_Decl(name, isAr, p_type, (env_scope env))) env
+	let is_implicit_array = 
+		(match p_type with
+		  (Chord_Type | Track_Type | Composition_Type | Rhythm_Type) -> true
+		  | _ -> false) in
+
+	add_symbol name (Var_Decl(name, (isAr || is_implicit_array), p_type, (env_scope env))) env
 
 let rec add_stmt stmt env =
 	match stmt with 
