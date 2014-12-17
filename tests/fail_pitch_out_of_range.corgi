@@ -1,0 +1,4 @@
+int main() {
+    pitch p;
+    p = 120;
+}
