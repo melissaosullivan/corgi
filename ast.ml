@@ -2,20 +2,6 @@ type op = Add | Sub | Mult | Div | Mod | Equal | Neq | Less | Leq | Greater | Ge
 
 type uop = Neg | Not
 
-(*
-type types = 
-    Bool_Type
-  | Int_Type
-  | Pitch_Type
-  | String_Type
-  | Frac_Type
-  | Rhythm_Type
-  | Duration_Type
-  | Chord_Type
-  | Track_Type
-  | Composition_Type
-*)
-
 type prim_type =
     Bool_Type
   | Int_Type
