@@ -42,8 +42,8 @@ public class Track {
 		chords = newChords;
 	}
 	
-	public void addNoteString(String note, long duration) {
-		chords.add(new Chord(Integer.parseInt(note), duration));
+	public void addNoteString(int note, double duration) {
+		chords.add(new Chord(note, duration));
 	}
 	
 	public int getLength() {

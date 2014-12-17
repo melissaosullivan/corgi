@@ -3,7 +3,7 @@ if ! [ -e interpreter ]
     then make all
 fi
 
-tests=$(find tests -name *\.corg)
+tests=$(find tests -name *\.corgi)
 had_failures="0"
 ast_suffix=".astout"
 sym_suffix=".symout"
@@ -14,6 +14,7 @@ ast_outdir="astout"
 sym_outdir="symout"
 sem_outdir="semout"
 intermed_outdir="intermedout"
+final_outdir="finalout"
 
 get_test_name () {
     local fullpath=$1
@@ -105,16 +106,27 @@ do
 done
 
 
-# Testing Java Output
-: ' Skip the Java tests for now.
+# Testing Final Output
 echo ""
-echo "----------------Testing Intermediate Output----------------"
+echo "----------------Testing Final Output----------------"
 echo ""
 for file in $tests
 do
     get_test_name "$file"
     ./interpreter -javagen < "$file" 2> ".test_out"
-    if [[ ! $(diff ".test_out" "tests/$intermed_outdir/$test_name$intermed_suffix") ]]
+
+    cp .test_out javaclasses/Intermediate.java
+
+    cd javaclasses
+    javac Intermediate.java
+    java Intermediate > ../.test_out
+
+    rm Intermediate.java
+    rm Intermediate.class
+
+    cd ..
+
+    if [[ ! $(diff ".test_out" "tests/$final_outdir/$test_name.txt") ]]
     then
         echo "success: $test_name"
     else
@@ -122,7 +134,7 @@ do
         had_failures="1"
 
         printf "Expected: {\n"
-        cat "tests/$intermed_outdir/$test_name$intermed_suffix"
+        cat "tests/$final_outdir/$test_name.txt"
         printf "}\n"
         echo
 
@@ -132,7 +144,7 @@ do
         echo
     fi
 done
-'
+
 
 
 echo ""

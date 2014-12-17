@@ -50,8 +50,7 @@ public class Pitch implements Comparable<Pitch>{
 	}
 	
 	public String toString() {
-		// TODO: Return the actual name of the pitch
-		return Integer.toString(pitch);
+		return Utils.intToNoteString(pitch);
 	}
 
 	

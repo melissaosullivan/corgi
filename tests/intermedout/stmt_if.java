@@ -6,8 +6,8 @@ Boolean condition;
 condition = false;
 
 if(false){
-System.out.println("" + Integer.toString(3 + 5));
+System.out.println(Integer.toString(3 + 5));
 }else{
-System.out.println("" + "false");
+System.out.println("false");
 }
 }}

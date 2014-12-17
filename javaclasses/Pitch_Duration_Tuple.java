@@ -66,7 +66,7 @@ public class Pitch_Duration_Tuple implements Comparable<Pitch_Duration_Tuple>{
 	}
 	
 	public String toString() {
-		return Integer.toString(pitch.pitch) + " " + duration.toString();
+		return pitch.toString() + " " + duration.toString();
 	}
 
 

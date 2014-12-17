@@ -1,10 +1,1 @@
-// Passed semantic checking 
-
-public class Intermediate {
-public static void main(String[] args){
-int i;
-for(i = 0;
- ; ; ; i = i + 1;
-)
-for(; ; true; ; ;)
-}}
+Fatal error: exception Failure("Condition in For statement must be boolean or no expression. (;*;)")

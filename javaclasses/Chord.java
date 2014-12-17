@@ -28,13 +28,18 @@ public class Chord {
 		}
 	}
 	
-	public Chord(int pitch, long duration) {
+	public Chord(int pitch, double duration) {
 		tuples = new ArrayList<Pitch_Duration_Tuple>();
 		Pitch p = new Pitch(pitch);
-		Rational r = new Rational((double) duration);
+		
+		Rational r = new Rational(duration);
+		System.out.println((double) duration);
+		
 		int numer = r.num;
 		int denom = r.denom;
+		
 		Duration d = new Duration(new Frac(numer, denom));
+		
 		Pitch_Duration_Tuple pd = new Pitch_Duration_Tuple(p, d);
 		tuples.add(pd);
 	}
@@ -122,6 +127,7 @@ public class Chord {
 		StringBuffer sb = new StringBuffer();
 		for (Pitch_Duration_Tuple pd : tuples) {
 			sb.append(pd.toString());
+			sb.append("\n");
 		}
 		return sb.toString();
 	}

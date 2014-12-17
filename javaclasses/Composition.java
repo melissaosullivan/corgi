@@ -26,9 +26,16 @@ public class Composition {
 	
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
+		int trackIndex = 1;
 		for (Track t : tracks) {
+			sb.append("Track ");
+			sb.append(Integer.toString(trackIndex));
+			sb.append(":");
+			sb.append("\n");
+			
 			sb.append(t.toString());
 			sb.append("\n");
+			trackIndex++;
 		}
 		return sb.toString();
 	}
