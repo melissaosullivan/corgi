@@ -199,7 +199,7 @@ let rec verify_expr expr env =
 		| Frac_Lit(n,d)   ->                                (* D_Frac_Lit *)
 			let vn = verify_expr n env in 
 			let vd = verify_expr d env in
-			if type_of_expr vn <> Int_Type or type_of_expr vd <> Int_Type then 
+			if type_of_expr vn <> Int_Type || type_of_expr vd <> Int_Type then 
 				raise(Failure("Fraction literal must have integer numerator and denominator."))
 			else D_Frac_Lit(vn, vd, Frac_Type)
 		| Id(s)           -> 								(* D_Id_Lit *)
@@ -378,7 +378,7 @@ let rec verify_stmt stmt ret_type env =
 			Expr(e) -> 
 				let ve = verify_expr e env in
 				let vt = type_of_expr ve in
-				if vt = Bool_Type or vt = Null_Type then verify_stmt condition ret_type env 
+				if vt = Bool_Type || vt = Null_Type then verify_stmt condition ret_type env 
 				else let () = print_endline ("vt = " ^ string_of_prim_type vt) in 
 					raise(Failure("Condition in For statement must be boolean or no expression. (;*;)"))
 			| _ -> raise(Failure("Condition in For statement must be boolean or no expression. (;*;)"))) in
