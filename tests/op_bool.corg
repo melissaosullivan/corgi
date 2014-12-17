@@ -3,5 +3,5 @@ int main() {
     condition = false;
     condition = !condition;
 
-    print(op_bool);
+    print(condition);
 }

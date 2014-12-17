@@ -7,10 +7,12 @@ tests=$(find tests -name *\.corg)
 had_failures="0"
 ast_suffix=".astout"
 sym_suffix=".symout"
+sem_suffix=".semout"
 intermed_suffix=".java"
 
 ast_outdir="astout"
 sym_outdir="symout"
+sem_outdir="semout"
 intermed_outdir="intermedout"
 
 # Remove all previous test results
@@ -31,6 +33,7 @@ do
     get_test_name "$file"
     ./interpreter -ast < "$file" 2> "tests/$ast_outdir/$test_name$ast_suffix"
     ./interpreter -sym < "$file" 2> "tests/$sym_outdir/$test_name$sym_suffix"
+    ./interpreter -sem < "$file" 2> "tests/$sem_outdir/$test_name$sem_suffix"
     ./interpreter -javagen < "$file" 2> "tests/$intermed_outdir/$test_name$intermed_suffix"
 done
 

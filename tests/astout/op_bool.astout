@@ -4,6 +4,6 @@ int main()
 bool condition;
 condition = false; 
 condition = !condition; 
-print(op_bool);
+print(condition);
 }
 
