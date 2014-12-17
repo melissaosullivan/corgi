@@ -38,7 +38,7 @@ do
         had_failures="1"
 
         printf "Expected: {\n"
-        cat "$testpath$ast_suffix"
+        cat "tests/$ast_outdir/$test_name$ast_suffix"
         printf "}\n"
         echo
 
@@ -65,7 +65,7 @@ do
         had_failures="1"
 
         printf "Expected: {\n"
-        cat "$testpath$sym_suffix"
+        cat "tests/$sym_outdir/$test_name$sym_suffix"
         printf "}\n"
         echo
 
@@ -84,7 +84,7 @@ echo ""
 for file in $tests
 do
     get_test_name "$file"
-    ./interpreter -sym < "$file" 2> ".test_out"
+    ./interpreter -sem < "$file" 2> ".test_out"
     if [[ ! $(diff ".test_out" "tests/$sem_outdir/$test_name$sem_suffix") ]]
     then
         echo "success: $test_name"
@@ -93,7 +93,7 @@ do
         had_failures="1"
 
         printf "Expected: {\n"
-        cat "$testpath$sem_suffix"
+        cat "tests/$sem_outdir/$test_name$sem_suffix"
         printf "}\n"
         echo
 
@@ -122,7 +122,7 @@ do
         had_failures="1"
 
         printf "Expected: {\n"
-        cat "$testpath$intermed_suffix"
+        cat "tests/$intermed_outdir/$test_name$intermed_suffix"
         printf "}\n"
         echo
 
