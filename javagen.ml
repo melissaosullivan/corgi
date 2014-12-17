@@ -138,13 +138,14 @@ and tostring_str dexpr =
 		  (Bool_Type | Int_Type) -> write_tostr_class dexpr ^ ".toString(" ^ write_expr dexpr ^ ")"
 		| String_Type -> write_expr dexpr
 		| _ -> write_expr dexpr ^ ".toString()"
-
 	
 
 let write_scope_var_decl_func svd =
 	let (n, b, t, _) = svd in 
 		match b with 
-		  true -> write_type t ^ "[]" ^ n (* true if it is an array *)
+		  true -> (match t with
+		  			 (Bool_Type | Int_Type | Frac_Type | Duration_Type | String_Type | Pitch_Type) -> write_type t ^ "[]" ^ n (* true if it is an array *)
+					| _ -> write_type t ^ " " ^ n)	  
 		| false -> write_type t ^ " " ^ n
 
 let write_scope_var_decl svd =
