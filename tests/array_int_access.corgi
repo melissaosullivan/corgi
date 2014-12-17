@@ -3,6 +3,6 @@ int [] a;
 int main() {
 	int b;
 	a = [1, 2];
-	b = a@1;
+	b = a@0;
 	b = a@b;
 }
