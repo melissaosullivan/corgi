@@ -310,6 +310,7 @@ let verify_id_match_type (id:string) ve env = (* Add support for assigning compa
 		D_Array_Lit(_, _) -> if id_type = vt then id_type(* Check that it goes into id's type *)
 			else (match(id_type, vt) with
 				Rhythm_Type, Duration_Type
+				| Rhythm_Type, Frac_Type
 				| Chord_Type, PD_Type
 				| Composition_Type, Track_Type
 				| Track_Type, Chord_Type -> id_type
