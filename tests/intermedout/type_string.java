@@ -1,4 +1,7 @@
-int main(){
-strStringstr = music;
+public class Intermediate {
+public static void main(String[] args){
+String str;
+str = music;
 
-}
+System.out.println("" + Integer.toString(str));
+}}

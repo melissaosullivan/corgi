@@ -3,5 +3,6 @@ int main()
 {
 string str;
 str = music; 
+print(str);
 }
 

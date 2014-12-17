@@ -3,5 +3,6 @@ int main()
 {
 frac f;
 f = $3/4$; 
+print(f);
 }
 

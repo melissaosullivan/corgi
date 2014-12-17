@@ -1,4 +1,4 @@
 duration d
 int main()
 int print()
-rhythm r
+rhythm [] r

@@ -1,11 +1,11 @@
-chord c1
-chord c2
-composition comp
+chord [] c1
+chord [] c2
+composition [] comp
 duration d1
 duration d2
 int main()
 int print()
 pitch p1
 pitch p2
-track t1
-track t2
+track [] t1
+track [] t2

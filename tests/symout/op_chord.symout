@@ -1,5 +1,5 @@
-chord c1
-chord c2
+chord [] c1
+chord [] c2
 duration d1
 duration d2
 int main()
