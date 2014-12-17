@@ -200,7 +200,7 @@ let verify_expr_as_pitch p env = match p with
  
 (*let verify_assign id *)
 let rec verify_expr expr env =
-	let () = print_endline ("verifying expr: " ^ string_of_expr expr) in
+	(* let () = print_endline ("verifying expr: " ^ string_of_expr expr) in *)
 	match expr with                                         (* expr evaluates to *)
 		  Bool_Lit(b)     -> D_Bool_Lit(b,Bool_Type)        (* D_Bool_Lit *)
 		| Int_Lit(i)      -> D_Int_Lit(i, Int_Type)		    (* D_Int_Lit *)
@@ -218,7 +218,17 @@ let rec verify_expr expr env =
 			let vl = verify_expr l env in
 			let vr = verify_expr r env in
 			let vtype = verify_binop vl vr op in
-			D_Binop(vl, op, vr, vtype)                    (* D_Binop *)
+			if vtype = Bool_Type && (op <> And || op <> Or) then
+				let vtl = type_of_expr vl in 
+				let vtr = type_of_expr vr in
+				if vtl = vtr then D_Binop(vl, op, vr, vtl) 
+				else (match (vtl, vtr) with
+					Int_Type, Frac_Type | Frac_Type, Int_Type -> D_Binop(vl, op, vr, Frac_Type)
+					| Int_Type, Pitch_Type | Pitch_Type, Int_Type ->  D_Binop(vl, op, vr, Pitch_Type)
+					| Int_Type, Duration_Type | Duration_Type, Int_Type ->  D_Binop(vl, op, vr, Duration_Type)
+					| Frac_Type, Duration_Type | Duration_Type, Frac_Type->  D_Binop(vl, op, vr, Duration_Type)
+					| _, _ -> raise(Failure("Congratulations on raising the impossible failure.")))
+			else D_Binop(vl, op, vr, vtype)                    (* D_Binop *)
 		| Unop(e, uop) -> 
 			let ve = verify_expr e env in
 			let ve_type = verify_unop_and_get_type ve uop in
@@ -336,7 +346,7 @@ let verify_id_match_type (id:string) ve env = (* Add support for assigning compa
 			| _, _ -> raise(Failure("Cannot assign " ^ string_of_prim_type vt ^ " to " ^ id ^ " of type " ^ string_of_prim_type id_type )))
 
 let rec verify_stmt stmt ret_type env =
-	let () = print_endline ("verifying statement: " ^ string_of_stmt stmt) in
+	(* let () = print_endline ("verifying statement: " ^ string_of_stmt stmt) in *)
 	match stmt with
 	Return(e) ->
 		let verified_expr = verify_expr e env in
