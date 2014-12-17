@@ -271,39 +271,39 @@ let verify_id_match_type (id:string) ve env = (* Add support for assigning compa
 	let vdecl = match decl with (* check that id refers to a variable *)
 	Var_Decl(v) -> v
 	| _ -> raise(Failure (id ^ " is not a variable")) in
-	let (_,is_array, idtype, _) = vdecl in
+	let (_,is_array, id_type, _) = vdecl in
 	let vt = type_of_expr ve in
 
 	let id_is_array = verify_id_is_array id env in
 
 	if id_is_array then
 		(match ve with
-		D_Array_Lit(_, _) -> if idtype = vt then id(* Check that it goes into id's type *)
-			else (match(idtype, vt) with
+		D_Array_Lit(_, _) -> if id_type = vt then id_type(* Check that it goes into id's type *)
+			else (match(id_type, vt) with
 				Rhythm_Type, Duration_Type
 				| Chord_Type, PD_Type
 				| Composition_Type, Track_Type
-				| Track_Type, Chord_Type -> id
-				| _, _ -> raise(Failure("Cannot assign " ^ string_of_prim_type vt ^ " to " ^ id ^ " of type " ^ string_of_prim_type idtype)))
+				| Track_Type, Chord_Type -> id_type
+				| _, _ -> raise(Failure("Cannot assign " ^ string_of_prim_type vt ^ " to " ^ id ^ " of type " ^ string_of_prim_type id_type)))
 		| D_Id(s, _) -> if verify_id_is_array s env then (
-						if idtype = vt then id 
-						else (match(idtype, vt) with (* Compatible simple types *)
+						if id_type = vt then id_type
+						else (match(id_type, vt) with (* Compatible simple types *)
 							Frac_Type, Int_Type  
 							| Duration_Type, Int_Type 
 							| Duration_Type, Frac_Type
-							| Pitch_Type, Int_Type -> id
-							| _, _ -> raise(Failure("Cannot assign " ^ string_of_prim_type vt ^ " to " ^ id ^ " of type " ^ string_of_prim_type idtype ))
+							| Pitch_Type, Int_Type -> id_type
+							| _, _ -> raise(Failure("Cannot assign " ^ string_of_prim_type vt ^ " to " ^ id ^ " of type " ^ string_of_prim_type id_type ))
 						)
 				   ) else raise(Failure("Cannot assign single element to array."))
-		| _ -> raise(Failure("Cannot assign " ^ string_of_prim_type vt ^ " to " ^ id ^ " of type " ^ string_of_prim_type idtype )))
+		| _ -> raise(Failure("Cannot assign " ^ string_of_prim_type vt ^ " to " ^ id ^ " of type " ^ string_of_prim_type id_type )))
 	else (* id is not an array *)
-		if idtype = vt then id else (match (idtype, vt) with
+		if id_type = vt then id_type else (match (id_type, vt) with
 			Frac_Type, Int_Type  
 			| Duration_Type, Int_Type 
 			| Duration_Type, Frac_Type
 			| Pitch_Type, Int_Type 
-			| Rhythm_Type, Duration_Type -> id
-			| _, _ -> raise(Failure("Cannot assign " ^ string_of_prim_type vt ^ " to " ^ id ^ " of type " ^ string_of_prim_type idtype )))
+			| Rhythm_Type, Duration_Type -> id_type
+			| _, _ -> raise(Failure("Cannot assign " ^ string_of_prim_type vt ^ " to " ^ id ^ " of type " ^ string_of_prim_type id_type )))
 
 let rec verify_stmt stmt ret_type env =
 	let () = print_endline ("verifying statement: " ^ string_of_stmt stmt) in
@@ -317,9 +317,8 @@ let rec verify_stmt stmt ret_type env =
 		D_Expr(verified_expr)
 	| Assign(id, e) -> (* Verify that id is compatible type to e *)
 		let ve = verify_expr e env in
-		let vt = type_of_expr ve in
-		let vid = verify_id_match_type id ve env in 
-		D_Assign(vid, ve, vt) 
+		let vid_type = verify_id_match_type id ve env in 
+		D_Assign(id, ve, vid_type) 
 	| Block(b) -> 
 		let verified_block = verify_block b ret_type (fst env, b.block_id) in
 		D_CodeBlock(verified_block)
