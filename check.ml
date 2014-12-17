@@ -287,7 +287,8 @@ and verify_call_and_get_type name vargs env =
 		| _ -> raise(Failure (name ^ " is not a function")) in
 	if name = "print" then Int_Type           (* Add more builtins when we have more builtins *)
 	else if name = "import" then Composition_Type
-	else if name = "export" then Int_Type 
+	else if name = "export" then Int_Type
+	else if name = "length" then Int_Type 
 	else 
 		let (_,rtype,params,_) = fdecl in
 		if (List.length params) = (List.length vargs) then
