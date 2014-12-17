@@ -107,6 +107,7 @@ stmt:
   | FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN block { For($3, $5, $7, $9) }
   | WHILE LPAREN expr RPAREN block { While($3, $5) }
   | ID ASSIGN expr SEMI{ Assign($1, $3) }
+  | ID ASSIGN expr AT int_expr SEMI { Array_Assign($1, $3, $5)}
 
 block:
   LBRACE stmt_list RBRACE { {locals = []; statements = List.rev $2; block_id = inc_block_id ()} }
