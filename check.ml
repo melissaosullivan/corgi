@@ -311,8 +311,8 @@ let verify_id_match_type (id:string) ve env =
 			else (match(id_type, vt) with
 				Rhythm_Type, Duration_Type
 				| Rhythm_Type, Frac_Type
-				| Chord_Type, PD_Type
 				| Composition_Type, Track_Type
+				| Chord_Type, PD_Type
 				| Track_Type, Chord_Type -> id_type
 				| _, _ -> raise(Failure("Cannot assign " ^ string_of_prim_type vt ^ " to " ^ id ^ " of type " ^ string_of_prim_type id_type)))
 				| D_Id(s, _) -> if verify_id_is_array s env then (
@@ -322,10 +322,13 @@ let verify_id_match_type (id:string) ve env =
 							| Duration_Type, Int_Type 
 							| Duration_Type, Frac_Type
 							| Pitch_Type, Int_Type -> id_type
-							| _, _ -> raise(Failure("Cannot assign " ^ string_of_prim_type vt ^ " to " ^ id ^ " of type " ^ string_of_prim_type id_type ))
+							| _, _ -> raise(Failure("Cannot assign  " ^ string_of_prim_type vt ^ " to " ^ id ^ " of type " ^ string_of_prim_type id_type ))
 						)
 				   ) else raise(Failure("Cannot assign single element to array."))
-		| _ -> raise(Failure("Cannot assign " ^ string_of_prim_type vt ^ " to " ^ id ^ " of type " ^ string_of_prim_type id_type )))
+		| D_Tuple(_, _, _) -> (match (id_type, vt) with
+			Chord_Type, PD_Type -> id_type
+			| _, _ -> raise(Failure("Can only assign (pitch, duration) to rhythms")))
+		| _ -> raise(Failure("Cannot assign ...." ^ string_of_prim_type vt ^ " to " ^ id ^ " of type " ^ string_of_prim_type id_type )))
 	else (* id is not an array *)
 		if id_type = vt then id_type else (match (id_type, vt) with
 			Frac_Type, Int_Type  
@@ -348,7 +351,7 @@ let rec verify_stmt stmt ret_type env =
 		let ve = verify_expr e env in
 		let vid_type = verify_id_match_type id ve env in 
 		D_Assign(id, ve, vid_type)
-	| Array_Assign(id, e, i) ->
+	| Array_Assign(id,e,i) ->
 		let ve = verify_expr e env in
 		let vid_type = verify_id_match_type id ve env in
 		let vi = verify_expr i env in
