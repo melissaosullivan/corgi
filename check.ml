@@ -123,7 +123,7 @@ let verify_binop l r op =
 	let tl = type_of_expr l in
 	let tr = type_of_expr r in
 	match op with 
-		Add | Sub  -> (match (tl, tr) with
+		Add | Sub | Mult | Div  -> (match (tl, tr) with
 			Int_Type, Int_Type -> Int_Type
 			| Int_Type, Pitch_Type -> Pitch_Type	
 			| Int_Type, Frac_Type -> Frac_Type
@@ -136,8 +136,11 @@ let verify_binop l r op =
 			| Duration_Type, Int_Type -> Duration_Type
 			| Duration_Type, Frac_Type -> Duration_Type
 			| Duration_Type, Duration_Type -> Duration_Type
-			| _, _ -> raise(Failure("Cannot apply + - op to types " ^ string_of_prim_type tl ^ " + " ^ string_of_prim_type tr)))
-		| Mult | Div | Mod -> (match (tl, tr) with
+			| _, _ -> raise(Failure("Cannot apply + - * / op to types " ^ string_of_prim_type tl ^ " + " ^ string_of_prim_type tr)))
+		| Mod -> (match (tl, tr) with
+			Int_Type, Int_Type -> Int_Type
+			| _, _ -> raise(Failure("Can only apply % to int operands."))) 
+		(* | Mult | Div | Mod -> (match (tl, tr) with
 			(* I removed duration * duration operations, otherwise we can merge both sets *)
 			Int_Type, Int_Type -> Int_Type
 			| Int_Type, Pitch_Type -> Pitch_Type	
@@ -150,7 +153,7 @@ let verify_binop l r op =
 			| Frac_Type, Duration_Type -> Duration_Type
 			| Duration_Type, Int_Type -> Duration_Type
 			| Duration_Type, Frac_Type -> Duration_Type
-			| _, _ -> raise(Failure("Cannot apply */% op to types " ^ string_of_prim_type tl ^ " + " ^ string_of_prim_type tr)))
+			| _, _ -> raise(Failure("Cannot apply */% op to types " ^ string_of_prim_type tl ^ " + " ^ string_of_prim_type tr))) *)
 		| Equal | Neq -> if tl = tr then Bool_Type else (match(tl, tr) with
 			| Int_Type, Pitch_Type -> Bool_Type	
 			| Int_Type, Frac_Type -> Bool_Type
