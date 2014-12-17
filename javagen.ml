@@ -134,7 +134,7 @@ and write_unop_expr dexpr uop t =
 and write_array_expr dexpr_list t =
 	  match t with 
 	  PD_Type -> "new Pitch_Duration_Tuple[]"  ^ " {" ^ String.concat "," (List.map write_expr dexpr_list) ^ "}"
-	| _ -> "new " ^ write_type t ^ "[]"  ^ " {" ^ String.concat "," (List.map write_expr dexpr_list) ^ "}"
+	| _ -> "new " ^ write_type t ^ " []"  ^ " {" ^ String.concat "," (List.map write_expr dexpr_list) ^ "}"
 
 and write_tostr_class dexpr =
 	let t = get_typeof_dexpr dexpr in
