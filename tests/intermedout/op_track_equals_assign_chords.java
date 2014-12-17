@@ -1,1 +1,1 @@
-Fatal error: exception Match_failure("javagen.ml", 9, 17)
+Fatal error: exception Failure("expected expression of type duration (,*)")
