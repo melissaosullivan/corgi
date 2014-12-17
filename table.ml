@@ -81,6 +81,8 @@ and add_func func env =
 
 let base_env = 
 	let table = StrMap.add "print_0" (Func_Decl("print", Int_Type, [], 0)) StrMap.empty in
+	let table = StrMap.add "import_0" (Func_Decl("import", Composition_Type, [], 0)) table in
+	let table = StrMap.add "export_0" (Func_Decl("export", Int_Type, [], 0)) table in
 	(table, 0)
 
 let build_table p = 
