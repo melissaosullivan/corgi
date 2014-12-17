@@ -34,6 +34,7 @@ rule token = parse
 | '*'      { TIMES }
 | '/'      { DIVIDE }
 | '='      { ASSIGN }
+| "=>"	   { ARRAY_ASSIGN }
 | "!"      { NOT } 
 | "&&"     { AND }
 | "||"     { OR } 
