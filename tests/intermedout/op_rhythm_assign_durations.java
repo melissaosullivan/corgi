@@ -7,5 +7,5 @@ d = new Duration(new Frac(1,4));
 
 r = new Rhythm(new Duration[] {d,d,d});
 
-System.out.println("" + Integer.toString(r));
+System.out.println("" + Rhythm.toString(r));
 }}

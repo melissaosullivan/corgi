@@ -1,5 +1,5 @@
 public class Intermediate {
-Duration getDuration(){
+static Duration getDuration(){
 Duration d;
 d = new Duration(1);
 

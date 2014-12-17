@@ -1,7 +1,7 @@
 public class Intermediate {
 public static void main(String[] args){
 String str;
-str = music;
+str = "music";
 
-System.out.println("" + Integer.toString(str));
+System.out.println("" + str);
 }}

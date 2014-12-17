@@ -5,5 +5,5 @@ condition = false;
 
 condition = !condition;
 
-System.out.println("" + Integer.toString(condition));
+System.out.println("" + Boolean.toString(condition));
 }}

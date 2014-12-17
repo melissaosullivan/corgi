@@ -5,5 +5,5 @@ b = true;
 
 b = false;
 
-System.out.println("" + Integer.toString(b));
+System.out.println("" + Boolean.toString(b));
 }}

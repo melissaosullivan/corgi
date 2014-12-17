@@ -236,7 +236,7 @@ let rec verify_expr expr env =
 			let is_array = verify_id_is_array ar env in
 			let ar_type = verify_id_get_type ar env in
 			let vi = verify_expr i env in
-			let vit = type_of_expr vi in 
+			let vit = type_of_expr vi in
 			if vit = Int_Type && is_array then D_Access(ar, vi, ar_type)
 			else raise(Failure("symbol " ^ ar ^ " must be an array, index must be of type int")) 
 		| Noexpr -> D_Noexpr
