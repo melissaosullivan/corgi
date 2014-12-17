@@ -111,5 +111,9 @@ public class Frac implements Comparable<Frac>{
 		int retval = numerator*arg0.denominator - arg0.numerator*denominator;
 		return retval;
 	}
+	
+	public String toString() {
+		return Integer.toString(numerator) + "/" + Integer.toString(denominator);
+	}
 	 
 }

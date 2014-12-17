@@ -25,8 +25,6 @@ public class Track {
 		chords.addAll(t.chords);
 	}
 	
-	
-	
 	public void divide(int i) {
 		Frac f = new Frac(totalDuration.fraction);
 		
