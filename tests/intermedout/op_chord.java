@@ -1,1 +1,3 @@
-Fatal error: exception Failure("symbol c1 must be an array, index must be of type int")
+// Passed semantic checking 
+
+Fatal error: exception Failure("no write expr for d_access")

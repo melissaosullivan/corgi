@@ -1,5 +1,5 @@
-chord c1
-chord c2
-chord c3
+chord [] c1
+chord [] c2
+chord [] c3
 int main()
 int print()

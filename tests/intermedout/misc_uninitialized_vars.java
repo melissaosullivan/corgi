@@ -1,5 +1,11 @@
-int main(){
-c1Chord
-c2Chord
-c3Chord
-}
+// Passed semantic checking 
+
+public class Intermediate {
+public static void main(String[] args){
+Chord c1;
+
+Chord c2;
+
+Chord c3;
+
+}}

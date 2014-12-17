@@ -1,8 +1,13 @@
-corgi
-=====
+# corgi
+
+## Instructions for Compiling and Running a corgi
+
+    ./corgify.sh examples/hello_world.corg
+
+It's that easy!
+
 
 ## Test Cases:
-
 
 ### Comments:
 
@@ -32,7 +37,7 @@ corgi
 
 All test cases need a main() function.
 
-To do: elif, arrayops
+To do: elif, arrayops, array length, array access
 
 Saturday
 Melissa explains CHECK to Phillippe

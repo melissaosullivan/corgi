@@ -123,7 +123,7 @@ let verify_binop l r op =
 	let tl = type_of_expr l in
 	let tr = type_of_expr r in
 	match op with 
-		Add | Sub  -> (match (tl, tr) with
+		Add | Sub | Mult | Div  -> (match (tl, tr) with
 			Int_Type, Int_Type -> Int_Type
 			| Int_Type, Pitch_Type -> Pitch_Type	
 			| Int_Type, Frac_Type -> Frac_Type
@@ -136,8 +136,11 @@ let verify_binop l r op =
 			| Duration_Type, Int_Type -> Duration_Type
 			| Duration_Type, Frac_Type -> Duration_Type
 			| Duration_Type, Duration_Type -> Duration_Type
-			| _, _ -> raise(Failure("Cannot apply + - op to types " ^ string_of_prim_type tl ^ " + " ^ string_of_prim_type tr)))
-		| Mult | Div | Mod -> (match (tl, tr) with
+			| _, _ -> raise(Failure("Cannot apply + - * / op to types " ^ string_of_prim_type tl ^ " + " ^ string_of_prim_type tr)))
+		| Mod -> (match (tl, tr) with
+			Int_Type, Int_Type -> Int_Type
+			| _, _ -> raise(Failure("Can only apply % to int operands."))) 
+		(* | Mult | Div | Mod -> (match (tl, tr) with
 			(* I removed duration * duration operations, otherwise we can merge both sets *)
 			Int_Type, Int_Type -> Int_Type
 			| Int_Type, Pitch_Type -> Pitch_Type	
@@ -150,7 +153,7 @@ let verify_binop l r op =
 			| Frac_Type, Duration_Type -> Duration_Type
 			| Duration_Type, Int_Type -> Duration_Type
 			| Duration_Type, Frac_Type -> Duration_Type
-			| _, _ -> raise(Failure("Cannot apply */% op to types " ^ string_of_prim_type tl ^ " + " ^ string_of_prim_type tr)))
+			| _, _ -> raise(Failure("Cannot apply */% op to types " ^ string_of_prim_type tl ^ " + " ^ string_of_prim_type tr))) *)
 		| Equal | Neq -> if tl = tr then Bool_Type else (match(tl, tr) with
 			| Int_Type, Pitch_Type -> Bool_Type	
 			| Int_Type, Frac_Type -> Bool_Type
@@ -179,6 +182,21 @@ let verify_binop l r op =
 		| And | Or -> (match (tl, tr) with
 			Bool_Type, Bool_Type -> Bool_Type
 			| _, _ -> raise(Failure("Cannot apply && ||  op to types " ^ string_of_prim_type tl ^ " + " ^ string_of_prim_type tr)))
+
+let verify_tuple_types p d =
+	match type_of_expr p with
+		Int_Type | Pitch_Type -> (match type_of_expr d with
+			Int_Type | Frac_Type | Duration_Type -> true
+			| _ -> raise(Failure("Second term in tuple must be of type duration (,*)"))
+		)
+		| _ -> raise(Failure("First term in tuple must be of type pitch (*,)"))
+
+let verify_expr_as_pitch p env = match p with
+	Int_Lit(i) -> D_Int_Lit(i, Pitch_Type)
+	| Id(s) -> (match (verify_id_get_type s env) with
+		Int_Type | Pitch_Type -> D_Id(s, Pitch_Type)
+		| _ -> raise(Failure("expected expression of type pitch (*,)")))
+	| _ -> raise(Failure("expected expression of type pitch (*,)"))
  
 (*let verify_assign id *)
 let rec verify_expr expr env =
@@ -213,20 +231,31 @@ let rec verify_expr expr env =
 			let vt = verify_call_and_get_type name va env in
 			D_Call(name, va, vt)                             (* D_Call *)
 		| Tuple(e1, e2) ->                                   (* D_Tuple *)
-			let ve1 = verify_expr e1 env in
-			let ve2 = verify_expr e2 env in
-			if type_of_expr ve1 = Pitch_Type && type_of_expr ve2 = Duration_Type then 
-				D_Tuple(ve1, ve2, PD_Type)  (* Come back and fix tuples *)
-			else raise(Failure("Tuples must be of type (Pitch, Duration)"))
+			let ve1 = verify_expr_as_pitch e1 env in
+			let ve2 = verify_expr_as_duration e2 env in
+			if verify_tuple_types ve1 ve2 then D_Tuple(ve1, ve2, PD_Type)
+			else raise(Failure("Invalid tuple."))
 		| Access(ar, i) ->
 			let is_array = verify_id_is_array ar env in
 			let ar_type = verify_id_get_type ar env in
 			let vi = verify_expr i env in
-			let vit = type_of_expr vi in 
+			let vit = type_of_expr vi in
 			if vit = Int_Type && is_array then D_Access(ar, vi, ar_type)
 			else raise(Failure("symbol " ^ ar ^ " must be an array, index must be of type int")) 
 		| Noexpr -> D_Noexpr
 
+and verify_expr_as_duration d env = match d with
+	Int_Lit(i) -> D_Int_Lit(i, Duration_Type)
+	| Frac_Lit(n, d) ->
+		let vn = verify_expr n env in 
+		let vd = verify_expr d env in
+		if type_of_expr vn <> Int_Type || type_of_expr vd <> Int_Type then 
+			raise(Failure("Fraction literal must have integer numerator and denominator."))
+		else D_Frac_Lit(vn, vd, Duration_Type)
+	| Id(s) -> (match (verify_id_get_type s env) with
+		Int_Type | Frac_Type | Duration_Type -> D_Id(s, Duration_Type)
+		| _ -> raise(Failure("expected expression of type duration (,*)")))
+	| _ -> raise(Failure("expected expression of type duration (,*)"))
 
 and verify_array arr env = 
 	match arr with
@@ -281,6 +310,7 @@ let verify_id_match_type (id:string) ve env = (* Add support for assigning compa
 		D_Array_Lit(_, _) -> if id_type = vt then id_type(* Check that it goes into id's type *)
 			else (match(id_type, vt) with
 				Rhythm_Type, Duration_Type
+				| Rhythm_Type, Frac_Type
 				| Chord_Type, PD_Type
 				| Composition_Type, Track_Type
 				| Track_Type, Chord_Type -> id_type
@@ -380,4 +410,5 @@ let verify_semantics program env =
 	let () = Printf.printf "after verifying gvars \n" in
 	let verified_func_list = map_to_list_env verify_func func_list env in
 	let () = Printf.printf "after verifying functions \n" in
+	let () = prerr_endline "// Passed semantic checking \n" in
 		{ d_pfuncs = verified_func_list; d_gvars = verified_gvar_list}

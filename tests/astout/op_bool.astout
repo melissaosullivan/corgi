@@ -1,0 +1,9 @@
+
+int main()
+{
+bool condition;
+condition = false; 
+condition = !condition; 
+print(condition);
+}
+

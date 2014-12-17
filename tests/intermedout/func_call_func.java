@@ -1,1 +1,10 @@
-Fatal error: exception Match_failure("javagen.ml", 46, 21)
+// Passed semantic checking 
+
+public class Intermediate {
+public static void main(String[] args){
+System.out.println("" + Integer.toString(add(1,3)));
+}
+static int add(int a,int b){
+return a + b;
+
+}}

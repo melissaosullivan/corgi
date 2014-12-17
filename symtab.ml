@@ -74,7 +74,11 @@ let rec symtab_add_decl (name:string) (decl:decl) env =
 let rec symtab_add_vars (vars:var list) env =
     match vars with
      [] -> env
-    | (vname, isarray, vtype) :: tail -> let env = symtab_add_decl vname (Var_Decl(vname, isarray, vtype, snd env)) env in (* name, type, scope *)
+    | (vname, isarray, vtype) :: tail -> 
+    let is_implicit_array = match vtype with 
+        Chord_Type | Track_Type | Composition_Type | Rhythm_Type -> true
+        | _ -> false in 
+    let env = symtab_add_decl vname (Var_Decl(vname, (isarray || is_implicit_array), vtype, snd env)) env in (* name, type, scope *)
         symtab_add_vars tail env 
 
 (* New add_vars           ------------------------------------------------------------------------------*)

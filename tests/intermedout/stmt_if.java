@@ -1,1 +1,13 @@
-Fatal error: exception Match_failure("javagen.ml", 46, 21)
+// Passed semantic checking 
+
+public class Intermediate {
+public static void main(String[] args){
+Boolean condition;
+condition = false;
+
+if(false){
+System.out.println("" + Integer.toString(3 + 5));
+}else{
+System.out.println("" + "false");
+}
+}}
