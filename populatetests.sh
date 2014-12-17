@@ -3,7 +3,7 @@ if ! [ -e interpreter ]
     then make all
 fi
 
-tests=$(find tests -name *\.corg)
+tests=$(find tests -name *\.corgi)
 had_failures="0"
 ast_suffix=".astout"
 sym_suffix=".symout"
@@ -14,11 +14,13 @@ ast_outdir="astout"
 sym_outdir="symout"
 sem_outdir="semout"
 intermed_outdir="intermedout"
+final_outdir="finalout"
 
 # Remove all previous test results
 rm -rf tests/$ast_outdir/*
 rm -rf tests/$sym_outdir/*
 rm -rf tests/$intermed_outdir/*
+rm -rf tests/$final_outdir/*
 
 
 get_test_name () {
@@ -36,6 +38,10 @@ do
     ./interpreter -sem < "$file" 2> "tests/$sem_outdir/$test_name$sem_suffix"
     ./interpreter -javagen < "$file" 2> "tests/$intermed_outdir/$test_name$intermed_suffix"
 done
+
+# Populate the java output tests
+./populatejavatests.sh
+
 
 echo "Tests are populated"
 

@@ -7,5 +7,5 @@ condition = false;
 
 condition = !condition;
 
-System.out.println("" + Boolean.toString(condition));
+System.out.println(Boolean.toString(condition));
 }}
