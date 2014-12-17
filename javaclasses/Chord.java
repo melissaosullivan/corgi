@@ -138,4 +138,8 @@ public class Chord {
 		return sb.toString();
 	}
 	
+	public int length() {
+		return tuples.size();
+	}
+	
 }

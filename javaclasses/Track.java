@@ -66,5 +66,9 @@ public class Track {
 		}
 		return sb.toString();
 	}
+	
+	public int length() {
+		return chords.size();
+	}
 
 }
