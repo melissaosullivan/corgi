@@ -20,5 +20,9 @@ public class Rhythm {
 			durations.add(d);
 		}
 	}
+	
+	public String toString() {
+		return "This is a rhythm";
+	}
 
 }

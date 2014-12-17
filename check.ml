@@ -197,6 +197,19 @@ let verify_expr_as_pitch p env = match p with
 		Int_Type | Pitch_Type -> D_Id(s, Pitch_Type)
 		| _ -> raise(Failure("expected expression of type pitch (*,)")))
 	| _ -> raise(Failure("expected expression of type pitch (*,)"))
+
+let set_dexpr_type e t = match e with 
+		D_Int_Lit(i,_) -> D_Int_Lit(i,t)
+	  | D_Bool_Lit(b,_) -> D_Bool_Lit(b,t)
+	  | D_String_Lit(s,_) -> D_String_Lit(s,t)
+	  | D_Frac_Lit(e1,e2,_) -> D_Frac_Lit(e1,e2,t)
+	  | D_Id(s,_) -> D_Id(s,t)
+	  | D_Binop(e1,o,e2,_) -> D_Binop(e1,o,e2,t) 
+	  | D_Array_Lit (l, _) -> D_Array_Lit (l, t)
+	  | D_Unop (e, u, _) -> D_Unop (e, u, t) 
+	  | D_Call (s, a, _) -> D_Call (s, a, t)
+	  | D_Tuple (p, d, _) -> D_Tuple (p, d, t)
+	  | D_Access (a, i, _) -> D_Access (a, i, t)
  
 (*let verify_assign id *)
 let rec verify_expr expr env =
@@ -221,12 +234,12 @@ let rec verify_expr expr env =
 			if vtype = Bool_Type && (op <> And || op <> Or) then
 				let vtl = type_of_expr vl in 
 				let vtr = type_of_expr vr in
-				if vtl = vtr then D_Binop(vl, op, vr, vtl) 
+				if vtl = vtr then D_Binop(vl, op, vr, Bool_Type) 
 				else (match (vtl, vtr) with
-					Int_Type, Frac_Type | Frac_Type, Int_Type -> D_Binop(vl, op, vr, Frac_Type)
-					| Int_Type, Pitch_Type | Pitch_Type, Int_Type ->  D_Binop(vl, op, vr, Pitch_Type)
-					| Int_Type, Duration_Type | Duration_Type, Int_Type ->  D_Binop(vl, op, vr, Duration_Type)
-					| Frac_Type, Duration_Type | Duration_Type, Frac_Type->  D_Binop(vl, op, vr, Duration_Type)
+					Int_Type, Frac_Type | Frac_Type, Int_Type -> D_Binop(set_dexpr_type vl Frac_Type, op, set_dexpr_type vr Frac_Type, vtype)
+					| Int_Type, Pitch_Type | Pitch_Type, Int_Type ->  D_Binop(set_dexpr_type vl Pitch_Type, op, set_dexpr_type vr Pitch_Type, vtype)
+					| Int_Type, Duration_Type | Duration_Type, Int_Type ->  D_Binop(set_dexpr_type vl Duration_Type, op, set_dexpr_type vr Duration_Type, vtype)
+					| Frac_Type, Duration_Type | Duration_Type, Frac_Type->  D_Binop(set_dexpr_type vl Duration_Type, op, set_dexpr_type vr Duration_Type, vtype)
 					| _, _ -> raise(Failure("Congratulations on raising the impossible failure.")))
 			else D_Binop(vl, op, vr, vtype)                    (* D_Binop *)
 		| Unop(e, uop) -> 
@@ -378,7 +391,7 @@ let rec verify_stmt stmt ret_type env =
 				let ve = verify_expr e env in
 				let vt = type_of_expr ve in
 				if vt = Bool_Type or vt = Null_Type then verify_stmt condition ret_type env 
-				else raise(Failure("Condition in For statement must be boolean or no expression. (;*;)"))
+				else let () = print_endline ("vt = " ^ string_of_prim_type vt) in raise(Failure("Condition in For statement must be boolean or no expression. (;*;)"))
 			| _ -> raise(Failure("Condition in For statement must be boolean or no expression. (;*;)"))) in
 		let va2 = (match assignment1 with
 			Assign(_, _) | Expr(_) ->  verify_stmt assignment2 ret_type env 
