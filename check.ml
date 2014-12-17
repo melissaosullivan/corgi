@@ -187,6 +187,13 @@ let verify_tuple_types p d =
 			| _ -> raise(Failure("Second term in tuple must be of type (*,)"))
 		)
 		| _ -> raise(Failure("First term in tuple must be of type pitch (*,)"))
+
+let verify_expr_as_pitch p env = match p with
+	Int_Lit(i) -> D_Int_Lit(i, Pitch_Type)
+	| Id(s) -> (match (verify_id_get_type s env) with
+		Int_Type | Pitch_Type -> D_Id(s, Pitch_Type)
+		| _ -> raise(Failure("expected expression of type pitch (*,)")))
+	| _ -> raise(Failure("expected expression of type pitch (*,)"))
  
 (*let verify_assign id *)
 let rec verify_expr expr env =
@@ -221,8 +228,8 @@ let rec verify_expr expr env =
 			let vt = verify_call_and_get_type name va env in
 			D_Call(name, va, vt)                             (* D_Call *)
 		| Tuple(e1, e2) ->                                   (* D_Tuple *)
-			let ve1 = verify_expr e1 env in
-			let ve2 = verify_expr e2 env in
+			let ve1 = verify_expr_as_pitch e1 env in
+			let ve2 = verify_expr_as_duration e2 env in
 			if verify_tuple_types ve1 ve2 then D_Tuple(ve1, ve2, PD_Type)
 			else raise(Failure("Invalid tuple."))
 		| Access(ar, i) ->
@@ -234,6 +241,18 @@ let rec verify_expr expr env =
 			else raise(Failure("symbol " ^ ar ^ " must be an array, index must be of type int")) 
 		| Noexpr -> D_Noexpr
 
+and verify_expr_as_duration d env = match d with
+	Int_Lit(i) -> D_Int_Lit(i, Duration_Type)
+	| Frac_Lit(n, d) ->
+		let vn = verify_expr n env in 
+		let vd = verify_expr d env in
+		if type_of_expr vn <> Int_Type || type_of_expr vd <> Int_Type then 
+			raise(Failure("Fraction literal must have integer numerator and denominator."))
+		else D_Frac_Lit(vn, vd, Duration_Type)
+	| Id(s) -> (match (verify_id_get_type s env) with
+		Int_Type | Frac_Type | Pitch_Type -> D_Id(s, Pitch_Type)
+		| _ -> raise(Failure("expected expression of type duration (,*)")))
+	| _ -> raise(Failure("expected expression of type duration (,*)"))
 
 and verify_array arr env = 
 	match arr with
