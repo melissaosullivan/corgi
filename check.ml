@@ -22,6 +22,7 @@ type d_stmt =
 	  D_CodeBlock of d_block
 	| D_Expr of d_expr
 	| D_Assign of string * d_expr * prim_type
+	| D_Array_Assign of string * d_expr * d_expr * prim_type
 	| D_Return of d_expr
 	| D_If of d_expr * d_stmt * d_stmt (* stmts of type D_CodeBlock *)
 	| D_For of d_stmt * d_stmt * d_stmt * d_block (* stmts of type D_Assign | D_Noexpr * D_Expr of type bool * D_Assign | D_Noexpr *)
@@ -346,7 +347,13 @@ let rec verify_stmt stmt ret_type env =
 	| Assign(id, e) -> (* Verify that id is compatible type to e *)
 		let ve = verify_expr e env in
 		let vid_type = verify_id_match_type id ve env in 
-		D_Assign(id, ve, vid_type) 
+		D_Assign(id, ve, vid_type)
+	| Array_Assign(id, e, i) ->
+		let ve = verify_expr e env in
+		let vid_type = verify_id_match_type id ve env in
+		let vi = verify_expr i env in
+		if type_of_expr vi = Int_Type then D_Array_Assign(id, ve, vi, vid_type) 
+		else raise(Failure("Array index must be of type int."))
 	| Block(b) -> 
 		let verified_block = verify_block b ret_type (fst env, b.block_id) in
 		D_CodeBlock(verified_block)

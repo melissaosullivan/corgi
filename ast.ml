@@ -41,6 +41,7 @@ type stmt =
     Block of block
   | Expr of expr
   | Assign of string * expr
+  | Array_Assign of string * expr * expr
   | Return of expr
   | If of expr * block * block
   | For of stmt * stmt * stmt * block
