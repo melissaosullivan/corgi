@@ -35,5 +35,5 @@ let _ =
         | Javagen -> let env = Symtab.symtab_of_program program in
                 let checked = Check.verify_semantics program env in
                 let outstring = Javagen.write_pgm checked in
-                print_string outstring
+                prerr_string outstring
         | Help -> print_endline (usage Sys.argv.(0)))
