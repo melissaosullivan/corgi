@@ -23,7 +23,7 @@ let write_type = function
 	| Chord_Type -> "Chord"
 	| Track_Type -> "Track"
 	| Composition_Type -> "Composition"
-	| PD_Type -> "PD_TYPE"
+	| _ -> raise(Failure "Type string of PD_Tuple or Null_Type being generated")
 
 let write_types ts =
 	match ts with Corgi_Prim(t) -> write_type t 
@@ -50,6 +50,7 @@ let write_op_compares e1 op e2 =
 	| Greater -> "(" ^ e1 ^ ").compareTo(" ^ e2 ^ ")" ^ " > 0"
 	| Geq -> "(" ^ e1 ^ ").compareTo(" ^ e2 ^ ")" ^ " >= 0"
 	| Neq -> "(" ^ e1 ^ ").compareTo(" ^ e2 ^ ")" ^ " != 0"
+	| _ -> raise (Failure "not a comparator operation")
 
 let rec get_typeof_dexpr = function
 	  D_Bool_Lit(boolLit, t) -> t
@@ -77,7 +78,8 @@ let rec write_expr = function
 	| D_String_Lit(strLit, t) -> "\"" ^ strLit ^ "\""
 	| D_Frac_Lit(num_expr, denom_expr, t) -> (match t with 
 									  Frac_Type -> "new Frac(" ^ write_expr num_expr ^ "," ^ write_expr denom_expr ^ ")"
-									| Duration_Type -> "new Duration(new Frac(" ^ write_expr num_expr ^ "," ^ write_expr denom_expr ^ "))")
+									| Duration_Type -> "new Duration(new Frac(" ^ write_expr num_expr ^ "," ^ write_expr denom_expr ^ "))"
+									| _ -> raise(Failure(write_type t ^ " is not a fraction")))
 	| D_Id (str, yt) -> str
 	| D_Array_Lit(dexpr_list, t) -> write_array_expr dexpr_list t
 	| D_Unop(d_expr, uop, t) -> write_unop_expr d_expr uop t
@@ -100,11 +102,12 @@ and write_binop_expr expr1 op expr2 t =
 		let write_binop_expr_help e1 op e2 = 
 			match t with
 				Int_Type -> (match op with 
-					(Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Geq | And | Or) ->  
+					(Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Mod | Greater | Geq | And | Or) ->  
 					e1 ^ write_op_primitive op ^ e2)
 			  | String_Type -> (match op with 
 					 Add -> " + "
-					| (Equal | Less | Leq | Greater | Geq) -> write_op_compares e1 op e2)
+					| (Equal | Less | Leq | Greater | Geq) -> write_op_compares e1 op e2
+					| _ -> raise(Failure(write_op_primitive op ^ " is not a supported operation for String_Type")))
 			  | Bool_Type -> (match op with
 			  		  And -> e1 ^ " && " ^ e2
 			  		| Or -> e1 ^ " || " ^ e2 
@@ -119,6 +122,7 @@ and write_binop_expr expr1 op expr2 t =
 			  		| Mult -> "(" ^ e1 ^ ").multiply(" ^ e2 ^ ")"
 			  		| Div -> "(" ^ e1 ^ ").divide(" ^ e2 ^ ")"
 			  		| _ -> raise(Failure(write_op_primitive op ^ " is not a supported operation for" ^ write_type t)))
+			  | _ -> raise(Failure(write_op_primitive op ^ " is not a supported operation for" ^ write_type t))
 		in write_binop_expr_help e1 op e2 
 
 and write_unop_expr dexpr uop t =
@@ -175,6 +179,7 @@ let rec write_stmt = function
     | D_If(dexpr, dstmt1, dstmt2) -> "if(" ^ write_expr dexpr ^  ")" ^  write_stmt dstmt1 ^ "else"  ^ write_stmt dstmt2
     | D_For(dstmt1, dstmt2, dstmt3, dblock) -> "for(" ^ write_stmt dstmt1  ^ write_stmt dstmt2 ^ remove_semi (write_stmt dstmt3) ^ ")" ^ write_block dblock
     | D_While(dexpr, dblock) -> "while(" ^ write_expr dexpr ^ ")"  ^ write_block dblock
+    | D_Array_Assign(str,dexpr_value, dexpr_index, t) -> str ^ ".set(" ^ write_expr dexpr_index ^ "," ^ write_expr dexpr_value ^ ");"
 	
 and write_block dblock =
 	"{\n" ^  String.concat "\n" (List.map write_scope_var_decl dblock.d_locals) ^ String.concat "\n" (List.map write_stmt dblock.d_statements) ^ "\n}"
