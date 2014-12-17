@@ -6,8 +6,11 @@ open Check
 	D_call???
 *)
 
-let remove_last_character s = 
-	String.sub s 0 (String.length s - 1)
+let remove_semi s = 
+	if String.contains s ';' then
+  	let i = String.index s ';' in
+  	String.sub s 0 i 
+  	else s
 
 let write_type = function 
 	  Bool_Type -> "Boolean"
@@ -138,11 +141,18 @@ and tostring_str dexpr =
 
 	
 
-let write_scope_var_decl svd =
-	let (n, b, t, _) = svd in write_type t ^ " " ^ n ^ ";\n"
-
 let write_scope_var_decl_func svd =
-	let (n, b, t, _) = svd in write_type t ^ " " ^ n
+	let (n, b, t, _) = svd in 
+		match b with 
+		  true -> write_type t ^ "[]" ^ n (* true if it is an array *)
+		| false -> write_type t ^ " " ^ n
+
+let write_scope_var_decl svd =
+	write_scope_var_decl_func svd ^ ";\n"
+
+let write_global_scope_var_decl gsvd = 
+	"static " ^ write_scope_var_decl_func gsvd ^ ";\n"
+
 
 let write_assign name dexpr t =
 	(match t with
@@ -156,7 +166,7 @@ let rec write_stmt = function
 	| D_Assign (name, dexpr, t) -> write_assign name dexpr t ^ ";\n"
 	| D_Return(dexpr) -> "return " ^ write_expr dexpr ^ ";\n"
     | D_If(dexpr, dstmt1, dstmt2) -> "if(" ^ write_expr dexpr ^  ")" ^  write_stmt dstmt1 ^ "else"  ^ write_stmt dstmt2
-    | D_For(dstmt1, dstmt2, dstmt3, dblock) -> "for(" ^ write_stmt dstmt1  ^ write_stmt dstmt2 ^ (remove_last_character (write_stmt dstmt3)) ^ ")" 
+    | D_For(dstmt1, dstmt2, dstmt3, dblock) -> "for(" ^ write_stmt dstmt1  ^ write_stmt dstmt2 ^ remove_semi (write_stmt dstmt3) ^ ")" ^ write_block dblock
     | D_While(dexpr, dblock) -> "while(" ^ write_expr dexpr ^ ")"  ^ write_block dblock
 	
 and write_block dblock =
@@ -168,4 +178,4 @@ let write_func dfunc =
 	| _ -> "static " ^ write_type dfunc.d_ret_type ^ " " ^ dfunc.d_fname ^ "("  ^ String.concat "," (List.map write_scope_var_decl_func dfunc.d_formals) ^ ")" ^ write_block dfunc.d_fblock
 
 let write_pgm pgm = 
-	 "public class Intermediate {\n" ^ String.concat "\n" (List.map write_scope_var_decl pgm.d_gvars) ^ String.concat "\n" (List.map write_func pgm.d_pfuncs) ^ "}"
+	 "public class Intermediate {\n" ^ String.concat "\n" (List.map write_global_scope_var_decl pgm.d_gvars) ^ String.concat "\n" (List.map write_func pgm.d_pfuncs) ^ "}"
