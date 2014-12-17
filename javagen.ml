@@ -81,7 +81,7 @@ let rec write_expr = function
 	| D_Call(str,dexpr_list,t) -> (match str with 
 								  "print" -> "System.out.println("  ^ String.concat "+" (List.map tostring_str dexpr_list) ^ ")"
 								  | _ -> str ^ "(" ^ String.concat "," (List.map write_expr dexpr_list) ^ ")")
-	| D_Access(_,_,_) -> raise (Failure "no write expr for d_access")
+	| D_Access(str,dexpr,t) -> str ^ "["  ^ write_expr dexpr ^ "]"
 
 
 and write_binop_expr expr1 op expr2 t =
@@ -95,7 +95,9 @@ and write_binop_expr expr1 op expr2 t =
 					 Add -> " + "
 					| (Equal | Less | Leq | Greater | Geq) -> write_op_compares e1 op e2)
 			  | Bool_Type -> (match op with
-			  		And -> e1 ^ " && " ^ e2)
+			  		  And -> e1 ^ " && " ^ e2
+			  		| Or -> e1 ^ " || " ^ e2 
+			  		| _ -> write_binop_expr expr1 op expr2 get_typeof_dexpr
 			  | (Pitch_Type | Frac_Type | Rhythm_Type | Duration_Type | Chord_Type | Track_Type | Composition_Type) -> (match op with
 			  		(Equal | Less | Leq | Greater | Geq) -> write_op_compares e1 op e2 
 			  		| Add -> "(" ^ e1 ^ ").add(" ^ e2 ^ ")"
@@ -137,7 +139,6 @@ let write_scope_var_decl_func svd =
 	let (n, b, t, _) = svd in write_type t ^ " " ^ n
 
 let write_assign name dexpr t =
-	let () = Printf.printf "got to write assign!" in
 	(match t with
 	  Bool_Type | Int_Type | String_Type | Frac_Type -> name ^ " = " ^ write_expr dexpr
 	| Pitch_Type | Duration_Type | Rhythm_Type | Chord_Type | Track_Type | Composition_Type -> name ^ " = new " ^ write_type t ^ "(" ^ write_expr dexpr ^ ")"
