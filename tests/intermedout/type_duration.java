@@ -1,4 +1,4 @@
 int main(){
-dDurationd = new Frac(1,4);
+dDurationd = new Duration(new Frac(1,4));
 
 }

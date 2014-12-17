@@ -1,7 +1,7 @@
 int main(){
 dDuration
-rRhythmd = new Frac(1,4);
+rRhythmd = new Duration(new Frac(1,4));
 
-r = new Duration(new Duration[] {d,d,d});
+r = new Rhythm(new Duration[] {d,d,d});
 
 }
