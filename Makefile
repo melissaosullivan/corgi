@@ -18,7 +18,7 @@ parser.ml parser.mli : parser.mly
 
 .PHONY : clean
 clean :
-	rm -rf interpreter parser.ml parser.mli scanner.ml *.cmo *.cmi
+	rm -rf interpreter parser.ml parser.mli scanner.ml *.cmo *.cmi *.output
 
 all : clean interpreter
 
