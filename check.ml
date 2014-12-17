@@ -184,7 +184,7 @@ let verify_tuple_types p d =
 	match type_of_expr p with
 		Int_Type | Pitch_Type -> (match type_of_expr d with
 			Int_Type | Frac_Type | Duration_Type -> true
-			| _ -> raise(Failure("Second term in tuple must be of type (*,)"))
+			| _ -> raise(Failure("Second term in tuple must be of type duration (,*)"))
 		)
 		| _ -> raise(Failure("First term in tuple must be of type pitch (*,)"))
 
@@ -250,7 +250,7 @@ and verify_expr_as_duration d env = match d with
 			raise(Failure("Fraction literal must have integer numerator and denominator."))
 		else D_Frac_Lit(vn, vd, Duration_Type)
 	| Id(s) -> (match (verify_id_get_type s env) with
-		Int_Type | Frac_Type | Pitch_Type -> D_Id(s, Pitch_Type)
+		Int_Type | Frac_Type | Duration_Type -> D_Id(s, Duration_Type)
 		| _ -> raise(Failure("expected expression of type duration (,*)")))
 	| _ -> raise(Failure("expected expression of type duration (,*)"))
 
@@ -406,5 +406,5 @@ let verify_semantics program env =
 	let () = Printf.printf "after verifying gvars \n" in
 	let verified_func_list = map_to_list_env verify_func func_list env in
 	let () = Printf.printf "after verifying functions \n" in
-	let () = prerr_endline "Passed semantic checking \n" in
+	let () = prerr_endline "// Passed semantic checking \n" in
 		{ d_pfuncs = verified_func_list; d_gvars = verified_gvar_list}
