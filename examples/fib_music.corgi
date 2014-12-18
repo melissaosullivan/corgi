@@ -36,8 +36,10 @@ int main() {
 
     composition finalComposition;
 
-    // Use a constant quarter note as the 
+    // Use a constant quarter note as the duration
     d = $1/4$;
+    // Use a starting pitch of 60
+    p = 60;
 
     tempChord = [(p,d)];
     cumulativeTrack = [tempChord];
