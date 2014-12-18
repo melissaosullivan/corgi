@@ -1,5 +1,6 @@
 chord [] c
 composition import(string)
+int [] i
 int export(composition, string)
 int length()
 int main()

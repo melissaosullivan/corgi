@@ -1,6 +1,8 @@
 // Testing chord type declaration
 int main() {
     chord c;
+    int [] i;
+    i = [  1, 2, 3];
     c = [(5,$1/4$), (5,$1/4$), (5,$1/4$)];
     print(c);
 }

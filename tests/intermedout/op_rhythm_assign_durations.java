@@ -7,7 +7,7 @@ Duration d;
 Rhythm r;
 d = new Duration(new Duration(new Frac(1,4)));
 
-r = new Rhythm(new Rhythm[] {d,d,d});
+r = new Rhythm(new Duration [] {d,d,d});
 
 System.out.println((r).toString());
 }}

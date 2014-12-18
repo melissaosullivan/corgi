@@ -96,6 +96,7 @@ let string_of_prim_type = function
   | Track_Type -> "track"
   | Composition_Type -> "composition"
   | PD_Type -> "(pitch, duration)"
+  | Null_Type -> "null"
 
 let string_of_types = function
   Corgi_Prim(t) -> string_of_prim_type t
