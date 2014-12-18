@@ -22,5 +22,6 @@ t2 = c1, c1;
 comp = t1, t2, t1; 
 comp2 = comp; 
 print(comp2@1);
+play(comp2);
 }
 

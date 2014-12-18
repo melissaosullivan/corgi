@@ -1,4 +1,0 @@
-Intermediate.java:1: error: class, interface, or enum expected
-State 0: shift to state 1
-^
-1 error

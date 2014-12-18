@@ -1,4 +1,13 @@
-Intermediate.java:1: error: class, interface, or enum expected
-State 0: shift to state 1
-^
-1 error
+Intermediate.java:8: void cannot be dereferenced
+System.out.println(((p1).subtract(new Pitch(2))).toString());
+                                                ^
+Intermediate.java:9: void cannot be dereferenced
+System.out.println(((p1).add(new Pitch(2))).toString());
+                                           ^
+Intermediate.java:10: void cannot be dereferenced
+System.out.println(((p1).divide(new Pitch(2))).toString());
+                                              ^
+Intermediate.java:11: void cannot be dereferenced
+System.out.println(((p1).multiply(new Pitch(2))).toString());
+                                                ^
+4 errors

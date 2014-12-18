@@ -1,10 +1,7 @@
-Intermediate.java:1: error: class, interface, or enum expected
-State 0: shift to state 1
-^
-Intermediate.java:93: error: ')' expected
+Intermediate.java:6: ')' expected
 d = new Duration(new Duration(1)1);
                                 ^
-Intermediate.java:93: error: illegal start of expression
+Intermediate.java:6: illegal start of expression
 d = new Duration(new Duration(1)1);
                                  ^
-3 errors
+2 errors

@@ -25,4 +25,5 @@ int main() {
     comp2 = comp;
 
     print(comp2 @ 1);
+    play(comp2);
 }

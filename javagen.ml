@@ -90,6 +90,9 @@ let rec write_expr = function
 	| D_Noexpr -> ""
 	| D_Call(str,dexpr_list,t) -> (match str with 
 								  "print" -> "System.out.println("  ^ String.concat "+" (List.map tostring_str dexpr_list) ^ ")"
+								  | "play" -> "Utils." ^ str ^ "(" ^ String.concat "," (List.map write_expr dexpr_list) ^ ")"
+								  | "export" -> "Utils.exportMidi(" ^ String.concat "," (List.map write_expr dexpr_list) ^ ")"
+								  | "import" -> "Utils.exportMidi(" ^ String.concat "," (List.map write_expr dexpr_list) ^ ")"
 								  | _ -> str ^ "(" ^ String.concat "," (List.map write_expr dexpr_list) ^ ")")
 	| D_Access(str,dexpr,t) -> (match t with 
 								 (Bool_Type | Int_Type | Frac_Type | Duration_Type | String_Type | Pitch_Type) ->  str ^ "["  ^ write_expr dexpr ^ "]"
