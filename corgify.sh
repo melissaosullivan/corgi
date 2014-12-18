@@ -10,7 +10,7 @@ fi
 cd javaclasses
 
 echo ""
-echo ""
+echo "Compiling"
 
 javac Intermediate.java
 
