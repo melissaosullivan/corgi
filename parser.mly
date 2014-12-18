@@ -162,7 +162,6 @@ literal:
     BOOL_LIT   { Bool_Lit($1) }
   | INT_LIT    { Int_Lit($1) }
   | STRING_LIT { String_Lit($1) }
-  | NULL       { Null_Lit }
 
 actuals_opt:
     /* nothing */ { [] }
