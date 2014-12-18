@@ -42,5 +42,5 @@ comp = new Composition(new Track [] {t1,t2,t1});
 comp2 = new Composition(comp);
 
 System.out.println((comp2.get(1)).toString());
-play(comp2);
+Utils.play(comp2);
 }}

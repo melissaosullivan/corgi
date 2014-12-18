@@ -21,8 +21,9 @@ d1 = new Duration(new Duration(new Frac(1,4)));
 
 d2 = new Duration(new Duration(new Frac(1,8)));
 
-c1 = new Chord(new Pitch_Duration_Tuple[] {new Pitch_Duration_Tuple(p1,d1),new Pitch_Duration_Tuple(p1,d2),new Pitch_Duration_Tuple(p2,d2)});
+c1 = new Chord(new Pitch_Duration_Tuple[] {new Pitch_Duration_Tuple(p1,d1),new Pitch_Duration_Tuple(new Pitch(6),d2),new Pitch_Duration_Tuple(p2,new Duration(new Frac(1,8)))});
 
+System.out.println((c1).toString());
 c2 = new Chord(new Pitch_Duration_Tuple[] {new Pitch_Duration_Tuple(p1,d1),new Pitch_Duration_Tuple(p1,d2),new Pitch_Duration_Tuple(p2,d2),new Pitch_Duration_Tuple(p2,d1)});
 
 c1 = new Chord(c2);

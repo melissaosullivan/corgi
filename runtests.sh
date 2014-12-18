@@ -107,6 +107,7 @@ done
 
 
 # Testing Final Output
+: '
 echo ""
 echo "----------------Testing Final Output----------------"
 echo ""
@@ -144,7 +145,7 @@ do
         echo
     fi
 done
-
+'
 
 
 echo ""
