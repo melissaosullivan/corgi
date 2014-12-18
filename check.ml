@@ -313,8 +313,7 @@ let verify_id_match_type (id:string) ve env =
 	| _ -> raise(Failure (id ^ " is not a variable")) in
 	let (_,is_array, id_type, _) = vdecl in
 	let vt = type_of_expr ve in
-	let id_is_array = verify_id_is_array id env in
-	if id_is_array then
+	if is_array then
 		(match ve with
 		D_Array_Lit(_, _) -> if id_type = vt then id_type(* Check that it goes into id's type *)
 			else (match(id_type, vt) with
@@ -337,6 +336,9 @@ let verify_id_match_type (id:string) ve env =
 		| D_Tuple(_, _, _) -> (match (id_type, vt) with
 			Chord_Type, PD_Type -> id_type
 			| _, _ -> raise(Failure("Can only assign (pitch, duration) to rhythms")))
+		| D_Binop(_,_,_,t) -> t
+		| D_Access(_,_,t) -> t
+		| D_Call(_,_,t) -> t
 		| _ -> raise(Failure("Cannot assign ...." ^ string_of_prim_type vt ^ " to " ^ id ^ " of type " ^ string_of_prim_type id_type )))
 	else (* id is not an array *)
 		if id_type = vt then id_type else (match (id_type, vt) with
