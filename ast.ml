@@ -34,7 +34,6 @@ type expr =
   | Call of string * expr list
   | Access of string * expr 
   | Tuple of expr * expr
-  | Null_Lit
   | Noexpr
 
 type stmt =
@@ -127,7 +126,6 @@ let rec string_of_expr = function
   | String_Lit(s) -> s
   | Frac_Lit(n, d) -> "$" ^ string_of_expr n ^ "/" ^ string_of_expr d ^ "$"
   | Array_Lit(e) -> String.concat ", " (List.map string_of_expr e) 
-  | Null_Lit -> "null"
   | Id(s) -> s
   | Access(ar, i) -> ar ^ "@" ^ string_of_expr i 
   | Binop(e1, o, e2) ->

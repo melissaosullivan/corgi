@@ -190,6 +190,7 @@ let set_dexpr_type e t = match e with
 	  | D_Call (s, a, _) -> D_Call (s, a, t)
 	  | D_Tuple (p, d, _) -> D_Tuple (p, d, t)
 	  | D_Access (a, i, _) -> D_Access (a, i, t)
+	  | D_Noexpr -> D_Noexpr
 	  
  
 
@@ -243,7 +244,13 @@ let rec verify_expr expr env =
 			let ar_type = verify_id_get_type ar env in
 			let vi = verify_expr i env in
 			let vit = type_of_expr vi in
-			if vit = Int_Type && is_array then D_Access(ar, vi, ar_type)
+			if vit = Int_Type && is_array then 
+				let accessed_type = (match ar_type with
+					Composition_Type -> Track_Type
+					| Track_Type -> Chord_Type
+					| Chord_Type -> PD_Type
+					| Rhythm_Type -> Duration_Type
+					| _ -> ar_type) in D_Access(ar, vi, accessed_type)
 			else raise(Failure("symbol " ^ ar ^ " must be an array, index must be of type int")) 
 		| Noexpr -> D_Noexpr
 
