@@ -18,10 +18,11 @@ int main() {
     g5 = 67;
     quarterNote = $1/4$;
     interestingChord = [(c5, quarterNote)];
+    tempChord = interestingChord;
     // interestingTrack = [interestingChord];
 
     // Import composition analysis
-    compositionAnalysis = import("example.midi");
+    compositionAnalysis = import("result.mid");
 
     count = 0;
     // Iterate through the composition and check 

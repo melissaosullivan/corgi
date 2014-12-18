@@ -92,7 +92,8 @@ let rec write_expr = function
 								  "print" -> "System.out.println("  ^ String.concat "+" (List.map tostring_str dexpr_list) ^ ")"
 								  | "play" -> "Utils." ^ str ^ "(" ^ String.concat "," (List.map write_expr dexpr_list) ^ ")"
 								  | "export" -> "Utils.exportMidi(" ^ String.concat "," (List.map write_expr dexpr_list) ^ ")"
-								  | "import" -> "Utils.exportMidi(" ^ String.concat "," (List.map write_expr dexpr_list) ^ ")"
+								  | "import" -> "Utils.importMidi(" ^ String.concat "," (List.map write_expr dexpr_list) ^ ")"
+								  | "length" ->  String.concat "," (List.map write_expr dexpr_list) ^ ".length()" (* semantic checking ensures length has 1 arg *)
 								  | _ -> str ^ "(" ^ String.concat "," (List.map write_expr dexpr_list) ^ ")")
 	| D_Access(str,dexpr,t) -> (match t with 
 								 (Bool_Type | Int_Type | Frac_Type | Duration_Type | String_Type | Pitch_Type) ->  str ^ "["  ^ write_expr dexpr ^ "]"
