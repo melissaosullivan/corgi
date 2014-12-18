@@ -225,8 +225,7 @@ let rec verify_expr expr env =
 			(* else D_Binop(vl, op, vr, vtype) *)                    (* D_Binop *)
 		| Unop(e, uop) -> 
 			let ve = verify_expr e env in
-			let ve_type = verify_unop_and_get_type ve uop in
-			D_Unop(ve, uop, ve_type)                        (* D_Unop *)
+			D_Unop(ve, uop, verify_unop_and_get_type ve uop)                        (* D_Unop *)
 		| Array_Lit (ar) -> 
 			let (va, va_type) = verify_array ar env in
 			D_Array_Lit(va, va_type)                        (* D_Array_Lit *)
@@ -360,7 +359,6 @@ let rec verify_stmt stmt ret_type env =
 	| Assign(id, e) -> (* Verify that id is compatible type to e *)
 		let ve = verify_expr e env in
 		let vid_type = verify_id_match_type id ve env in 
-		let ve_type = type_of_expr ve in
 		if (match vid_type with Rhythm_Type | Chord_Type | Track_Type | Composition_Type -> true | _ -> false) 
 			then D_Assign(id, ve, vid_type)
 		else D_Assign(id, set_dexpr_type ve vid_type, vid_type)

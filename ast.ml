@@ -174,6 +174,7 @@ let rec string_of_stmt = function
       "for (" ^ string_of_stmt a1 ^ string_of_stmt c ^
       string_of_stmt a2  ^ ") " ^ string_of_block b
   | While(e, b) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_block b
+  | Array_Assign (_, _, _) -> ""
 
 and string_of_block (b:block) =
   "{\n" ^
